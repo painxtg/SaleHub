@@ -1,0 +1,37 @@
+name: Auto Unzip ZIP Files
+
+permissions:
+  contents: write
+
+on:
+  push:
+    paths:
+      - "*.zip"
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install unzip
+        run: sudo apt-get install -y unzip
+
+      - name: Extract ZIP files
+        run: |
+          for file in *.zip; do
+            folder="${file%.*}"
+            mkdir -p "$folder"
+            unzip -o "$file" -d "$folder"
+            rm "$file"
+            echo "Extracted automatically by Mehedi Template" > "$folder/info.txt"
+          done
+
+      - name: Commit extracted files
+        run: |
+          git config --global user.name "mehedi1only"
+          git config --global user.email "mehedi1only@users.noreply.github.com"
+          git add .
+          git commit -m "Auto unzip ZIP files (by Mehedi)" || echo "Nothing to commit"
+          git push
