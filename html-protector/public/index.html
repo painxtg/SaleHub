@@ -3,13 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>HTML Protector • Obfuscate Tool</title>
+<title>Web Protector • Obfuscate Tool</title>
 
 <style>
 :root{
   --bg:#000;
   --panel:#0b0f14;
-  --panel-2:#05070a;
   --border:#1f2937;
   --text:#e5e7eb;
   --muted:#9ca3af;
@@ -22,15 +21,13 @@
 
 body{
   min-height:100vh;
-  background:radial-gradient(900px 500px at 50% -20%, #111827, transparent), var(--bg);
+  background:radial-gradient(900px 500px at 50% -20%, #111827, transparent), #000;
   color:var(--text);
   font-family: system-ui, -apple-system, sans-serif;
-  display:flex;
   padding:10px;
 }
 
 .app{
-  flex:1;
   max-width:1400px;
   margin:0 auto;
   padding:20px;
@@ -40,7 +37,6 @@ body{
 }
 
 .header{
-  position:relative;
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -73,7 +69,6 @@ body{
 }
 
 .main{
-  flex:1;
   display:grid;
   grid-template-columns:1fr auto 1fr;
   gap:18px;
@@ -82,16 +77,13 @@ body{
 
 .panel{
   background:linear-gradient(180deg,rgba(255,255,255,.03),transparent),
-             linear-gradient(180deg,var(--panel),var(--panel-2));
+             linear-gradient(180deg,#0b0f14,#05070a);
   border:1px solid var(--border);
   border-radius:16px;
   padding:18px;
   display:flex;
   flex-direction:column;
   transition:.3s;
-}
-.panel:hover{
-  border-color:#334155;
 }
 
 .panel-header{
@@ -116,7 +108,7 @@ body{
 }
 .textarea-wrapper textarea{
   flex:1;
-  min-height:200px;
+  min-height:300px;
   background:#020409;
   border:1px solid var(--border);
   border-radius:12px;
@@ -127,7 +119,6 @@ body{
   line-height:1.6;
   resize:vertical;
   outline:none;
-  transition:.25s;
   width:100%;
 }
 .textarea-wrapper textarea:focus{
@@ -138,7 +129,6 @@ body{
   color:#4b5563;
 }
 .textarea-wrapper textarea:read-only{
-  caret-color:transparent;
   background:#000;
 }
 
@@ -198,12 +188,6 @@ body{
   background:var(--blue);
   cursor:pointer;
 }
-.size-control .size-label{
-  min-width:30px;
-  text-align:center;
-  font-weight:600;
-  color:var(--text);
-}
 
 .out-actions{
   display:flex;
@@ -220,9 +204,6 @@ body{
   color:var(--text);
   cursor:pointer;
   transition:.25s;
-  display:flex;
-  align-items:center;
-  gap:5px;
   font-weight:500;
 }
 .out-actions button:hover{
@@ -238,9 +219,9 @@ body{
   border-color:var(--blue);
   color:var(--blue);
 }
-.out-actions .btn-clear:hover{
-  border-color:var(--red);
-  color:var(--red);
+.out-actions .btn-test:hover{
+  border-color:#f59e0b;
+  color:#f59e0b;
 }
 
 .status-bar{
@@ -257,7 +238,6 @@ body{
   gap:6px;
   min-height:32px;
   border:1px solid transparent;
-  transition:.3s;
 }
 .status-bar.success{
   border-color:rgba(16,185,129,.2);
@@ -270,15 +250,6 @@ body{
 .status-bar.info{
   border-color:rgba(59,130,246,.2);
   color:var(--blue);
-}
-.status-bar .status-left{
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-.status-bar .status-right{
-  font-size:10px;
-  opacity:.6;
 }
 
 .footer{
@@ -314,6 +285,9 @@ body{
   .header h1{
     font-size:17px;
   }
+  .textarea-wrapper textarea{
+    min-height:200px;
+  }
 }
 
 ::-webkit-scrollbar{
@@ -327,82 +301,71 @@ body{
   background:var(--border);
   border-radius:999px;
 }
-::-webkit-scrollbar-thumb:hover{
-  background:#4b5563;
-}
 </style>
 </head>
 
 <body>
 
 <div class="app">
-
   <div class="header">
-    <h1>
-      🛡️ HTML Protector
-      <span>OBFUSCATE · ENCODE</span>
-    </h1>
-    <div class="header-badge">⚡ VERCEL</div>
+    <h1>🛡️ Web Protector <span>OBFUSCATE · ENCODE · PROTECT</span></h1>
+    <div class="header-badge">⚡ EXECUTABLE</div>
   </div>
 
   <div class="main">
-
     <div class="panel">
       <div class="panel-header">
-        <h2>📥 INPUT</h2>
+        <h2>📥 INPUT (Website Code)</h2>
         <span id="inputCount" style="font-size:10px;color:var(--muted)">0 chars</span>
       </div>
       <div class="textarea-wrapper">
-        <textarea id="input" placeholder="Paste your HTML code here..."></textarea>
+        <textarea id="input" placeholder="Paste your complete HTML website code here..."></textarea>
       </div>
     </div>
 
     <div class="action-bar">
-      <button class="primary-btn" id="btn" onclick="encode()">
-        ⚡ PROTECT
-      </button>
-      
+      <button class="primary-btn" id="btn" onclick="encode()">⚡ PROTECT</button>
       <div class="size-control">
         <span>📦 Size</span>
-        <input type="range" id="sizeSlider" min="1" max="50" value="10" step="1">
-        <span class="size-label" id="sizeLabel">10</span>
+        <input type="range" id="sizeSlider" min="1" max="50" value="5" step="1">
+        <span class="size-label" id="sizeLabel">5</span>
         <span style="font-size:9px;opacity:.5">MB</span>
+      </div>
+      <div style="font-size:9px;color:var(--muted);text-align:center">
+        ⚠️ 5-10MB recommended for best performance
       </div>
     </div>
 
     <div class="panel">
       <div class="panel-header">
-        <h2>📤 OUTPUT</h2>
+        <h2>📤 OUTPUT (Protected)</h2>
         <div class="out-actions">
           <button class="btn-copy" onclick="copyOutput()">📋 COPY</button>
           <button class="btn-download" onclick="downloadOutput()">⬇️ DOWN</button>
-          <button class="btn-clear" onclick="clearOutput()">🗑️ CLEAR</button>
+          <button class="btn-test" onclick="testOutput()">▶️ TEST</button>
+          <button onclick="clearOutput()" style="border-color:var(--red);color:var(--red)">🗑️</button>
         </div>
       </div>
       <div class="textarea-wrapper">
-        <textarea id="output" readonly placeholder="Protected output will appear here..."></textarea>
+        <textarea id="output" readonly placeholder="Protected code will appear here..."></textarea>
       </div>
       <div class="status-bar" id="status">
         <span class="status-left">💡 Ready</span>
         <span class="status-right">v2.0</span>
       </div>
     </div>
-
   </div>
 
-  <div class="footer">⚠️ Generated code may cause performance issues on low-end devices</div>
-
+  <div class="footer">⚠️ Protected code will run exactly like original but is heavily obfuscated</div>
 </div>
 
 <script>
-// ======== API URL (Vercel) ========
-// Vercel-এ ডিপ্লয় করলে এই URL দিন
-const API_URL = '/api/encode';  // লোকালি বা Vercel-এ উভয়ই কাজ করবে
+// ======== API URL ========
+const API_URL = '/api/encode';
 
 // ======== SIZE CONTROL ========
 const slider = document.getElementById('sizeSlider');
 const sizeLabel = document.getElementById('sizeLabel');
-
 slider.addEventListener('input', function() {
   sizeLabel.textContent = this.value;
 });
@@ -412,7 +375,7 @@ document.getElementById('input').addEventListener('input', function() {
   document.getElementById('inputCount').textContent = this.value.length + ' chars';
 });
 
-// ======== ENCODE FUNCTION ========
+// ======== ENCODE ========
 async function encode() {
   const btn = document.getElementById('btn');
   const input = document.getElementById('input').value.trim();
@@ -421,13 +384,13 @@ async function encode() {
   const size = parseInt(document.getElementById('sizeSlider').value);
 
   if (!input) {
-    setStatus('⚠️ Please paste some HTML code first', 'error');
+    setStatus('⚠️ Please paste website code first', 'error');
     return;
   }
 
   btn.innerHTML = '⏳ PROCESSING...';
   btn.disabled = true;
-  setStatus('⏳ Sending to server...', 'info');
+  setStatus('⏳ Encoding... This may take a few seconds', 'info');
 
   try {
     const res = await fetch(API_URL, {
@@ -441,28 +404,38 @@ async function encode() {
     if (data.success) {
       out.value = data.result;
       setStatus(
-        `✅ ${data.stats.increasedBy} larger | ${data.stats.originalSize} → ${data.stats.newSize} bytes (${data.stats.sizeInMB} MB)`,
+        `✅ Success! ${data.stats.increasedBy} larger | ${data.stats.sizeInMB} MB | Ready to use`,
         'success'
       );
     } else {
-      setStatus('❌ Error: ' + (data.error || 'Unknown error'), 'error');
+      setStatus('❌ Error: ' + (data.error || 'Unknown'), 'error');
     }
 
   } catch(e) {
     setStatus('❌ Server error: ' + e.message, 'error');
-    console.error('Error:', e);
+    console.error(e);
   }
 
   btn.innerHTML = '⚡ PROTECT';
   btn.disabled = false;
 }
 
-// ======== STATUS HELPER ========
-function setStatus(message, type = 'info') {
-  const status = document.getElementById('status');
-  const statusLeft = status.querySelector('.status-left');
-  status.className = 'status-bar ' + type;
-  statusLeft.textContent = message;
+// ======== TEST OUTPUT ========
+function testOutput() {
+  const code = document.getElementById('output').value;
+  if (!code) {
+    setStatus('⚠️ No code to test', 'error');
+    return;
+  }
+
+  try {
+    const win = window.open('', '_blank');
+    win.document.write(code);
+    win.document.close();
+    setStatus('✅ Test window opened! Check the new tab', 'success');
+  } catch(e) {
+    setStatus('❌ Test failed: ' + e.message, 'error');
+  }
 }
 
 // ======== COPY ========
@@ -476,8 +449,7 @@ function copyOutput() {
   navigator.clipboard?.writeText(out.value).catch(() => {
     document.execCommand('copy');
   });
-  out.blur();
-  setStatus('📋 Copied to clipboard!', 'success');
+  setStatus('📋 Copied!', 'success');
 }
 
 // ======== DOWNLOAD ========
@@ -488,14 +460,11 @@ function downloadOutput() {
     return;
   }
   const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
+  a.href = URL.createObjectURL(blob);
   a.download = 'protected_' + Date.now() + '.html';
-  document.body.appendChild(a);
   a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 10000);
+  URL.revokeObjectURL(a.href);
   setStatus('📥 Downloaded!', 'success');
 }
 
@@ -504,6 +473,23 @@ function clearOutput() {
   document.getElementById('output').value = '';
   setStatus('🗑️ Cleared', 'info');
 }
+
+// ======== STATUS ========
+function setStatus(message, type = 'info') {
+  const status = document.getElementById('status');
+  status.className = 'status-bar ' + type;
+  status.querySelector('.status-left').textContent = message;
+}
+
+// ======== KEYBOARD ========
+document.addEventListener('keydown', function(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault();
+    encode();
+  }
+});
+
+console.log('🛡️ Web Protector v2.0 loaded');
 </script>
 
 </body>
