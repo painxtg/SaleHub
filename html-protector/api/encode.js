@@ -1,4 +1,4 @@
-// api/encode.js - BJ_DEVS স্টাইল এনক্রিপ্টর
+// api/encode.js - BJ_DEVS Exact Style
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -15,8 +15,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ success: false, error: 'Code required' });
     }
 
-    // BJ_DEVS স্টাইল এনক্রিপ্ট
-    const result = encryptLikeBJDEVS(code, size);
+    const result = encryptBJDEVS(code, size);
 
     return res.status(200).json({
       success: true,
@@ -34,13 +33,13 @@ export default async function handler(req, res) {
   }
 }
 
-// ========== BJ_DEVS স্টাইল এনক্রিপ্টর ==========
-function encryptLikeBJDEVS(originalCode, sizeMB = 5) {
+// ========== BJ_DEVS Exact Style Encryptor ==========
+function encryptBJDEVS(originalCode, sizeMB = 5) {
   
   // 1. আসল কোডকে বেস64 করুন
   const base64 = Buffer.from(originalCode).toString('base64');
   
-  // 2. ইউনিকোড ম্যাপ (জাপানি/চাইনিজ ক্যারেক্টার)
+  // 2. ইউনিকোড ম্যাপ (BJ_DEVS এর মতো)
   const charMap = {
     'A': '亜', 'B': '唖', 'C': '娃', 'D': '阿', 'E': '哀',
     'F': '愛', 'G': '挨', 'H': '姶', 'I': '逢', 'J': '葵',
@@ -63,81 +62,83 @@ function encryptLikeBJDEVS(originalCode, sizeMB = 5) {
     encrypted += charMap[char] || char;
   }
   
-  // 4. রিভার্স ম্যাপ (ডিকোডারের জন্য)
+  // 4. রিভার্স ম্যাপ
   const reverseMap = {};
   for (let [key, value] of Object.entries(charMap)) {
     reverseMap[value] = key;
   }
   
-  // 5. ডিকোডার ফাংশন তৈরি
-  const decoderFunction = `
-  (function(){
-    // ===== ডিকোডার ম্যাপ =====
-    const _map = ${JSON.stringify(reverseMap)};
-    
-    // ===== এনক্রিপ্টেড ডেটা =====
-    const _data = "${encrypted}";
-    
-    // ===== ডিকোড =====
-    let _decoded = '';
-    for(let i=0; i<_data.length; i++) {
-      _decoded += _map[_data[i]] || _data[i];
-    }
-    
-    // ===== বেস64 ডিকোড =====
-    const _html = atob(_decoded);
-    
-    // ===== ইঞ্জেক্ট =====
-    document.open();
-    document.write(_html);
-    document.close();
-  })();
-  `;
+  // 5. ডামি ডেটা জেনারেট (BJ_DEVS স্টাইল)
+  const dummyVars = generateDummyVars(sizeMB);
+  const dummyComments = generateDummyComments(sizeMB);
   
-  // 6. ডামি ডেটা যোগ (সাইজ বাড়ানোর জন্য)
-  const dummyData = generateDummyData(sizeMB);
-  const padding = generatePadding(sizeMB);
-  
-  // 7. ফাইনাল আউটপুট
-  let final = `
-  <!-- Encrypted By Web Protector -->
+  // 6. ডিকোডার তৈরি (BJ_DEVS এর মতো)
+  const decoder = `
+  <!-- Encryption By Web Protector -->
   <script>
-  ${dummyData}
-  ${decoderFunction}
-  ${padding}
-  <\/script>
+  <!--
+  ${dummyVars}
+  
+  var _encrypted = "${encrypted}";
+  var _map = ${JSON.stringify(reverseMap)};
+  
+  // ডিকোড
+  var _decoded = '';
+  for(var i=0; i<_encrypted.length; i++) {
+    _decoded += _map[_encrypted[i]] || _encrypted[i];
+  }
+  
+  // বেস64 ডিকোড
+  var _html = atob(_decoded);
+  
+  // রান
+  document.write(_html);
+  
+  ${dummyComments}
+  //-->
+  </script>
   `;
   
-  // 8. মিনিফাই
-  final = final.replace(/\s+/g, ' ').trim();
+  // 7. মিনিফাই
+  let final = decoder.replace(/\s+/g, ' ').trim();
   
   return final;
 }
 
-// ========== ডামি ডেটা ==========
-function generateDummyData(sizeMB) {
+// ========== ডামি ভেরিয়েবল ==========
+function generateDummyVars(sizeMB) {
   let dummy = '';
   
-  // ডামি ভেরিয়েবল (আকার বাড়ানোর জন্য)
-  for (let i = 0; i < 100; i++) {
-    dummy += `var _d${i} = "${'X'.repeat(1000)}";\n`;
+  // ডামি ভেরিয়েবল (BJ_DEVS স্টাইল)
+  const unicodeVars = ['唖', '娃', '宛', '斡', '姐', '哀', '愛', '挨', '姶', '逢', '葵', '茜', '穐', '悪', '握', '渥', '旭', '葦', '芦', '鯵', '梓', '圧', '扱', '虻'];
+  
+  for (let i = 0; i < 50; i++) {
+    const varName = unicodeVars[i % unicodeVars.length] + unicodeVars[(i+1) % unicodeVars.length] + i;
+    dummy += `var ${varName}="${'X'.repeat(100)}";\n`;
   }
   
   // ডামি অ্যারে
-  dummy += `var _arr = [${'0,'.repeat(10000)}];\n`;
+  dummy += `var _arr=[${'0,'.repeat(5000)}];\n`;
   
   // ডামি ফাংশন
-  for (let i = 0; i < 50; i++) {
-    dummy += `function _f${i}(){ return "${'A'.repeat(500)}"; }\n`;
+  for (let i = 0; i < 30; i++) {
+    dummy += `function _f${i}(){return "${'A'.repeat(200)}";}\n`;
   }
-  
-  // বড় কমেন্ট
-  dummy += `/* ${'Z'.repeat(sizeMB * 1024 * 80)} */\n`;
   
   return dummy;
 }
 
-// ========== প্যাডিং ==========
-function generatePadding(sizeMB) {
-  return `/* ${'P'.repeat(sizeMB * 1024 * 10)} */\n`;
+// ========== ডামি কমেন্ট ==========
+function generateDummyComments(sizeMB) {
+  let dummy = '';
+  
+  // বড় কমেন্ট
+  dummy += `<!-- ${'Z'.repeat(sizeMB * 1024 * 50)} -->\n`;
+  
+  // আরও কমেন্ট
+  for (let i = 0; i < 20; i++) {
+    dummy += `// ${'X'.repeat(1000)}\n`;
+  }
+  
+  return dummy;
     }
