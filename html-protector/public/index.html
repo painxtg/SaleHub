@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HTML Protector • Obfuscate Tool</title>
+
+<style>
+:root{
+  --bg:#000;
+  --panel:#0b0f14;
+  --panel-2:#05070a;
+  --border:#1f2937;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --blue:#3b82f6;
+  --green:#10b981;
+  --red:#ef4444;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  min-height:100vh;
+  background:radial-gradient(900px 500px at 50% -20%, #111827, transparent), var(--bg);
+  color:var(--text);
+  font-family: system-ui, -apple-system, sans-serif;
+  display:flex;
+  padding:10px;
+}
+
+.app{
+  flex:1;
+  max-width:1400px;
+  margin:0 auto;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+
+.header{
+  position:relative;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 24px;
+  background:linear-gradient(180deg,#0b0f14,#05070a);
+  border:1px solid var(--border);
+  border-radius:16px;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.header h1{
+  font-size:20px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.header h1 span{
+  font-size:11px;
+  letter-spacing:.25em;
+  color:var(--muted);
+  font-weight:400;
+}
+.header-badge{
+  background:rgba(59,130,246,.15);
+  border:1px solid rgba(59,130,246,.3);
+  padding:4px 14px;
+  border-radius:999px;
+  font-size:10px;
+  color:var(--blue);
+}
+
+.main{
+  flex:1;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  gap:18px;
+  min-height:500px;
+}
+
+.panel{
+  background:linear-gradient(180deg,rgba(255,255,255,.03),transparent),
+             linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:18px;
+  display:flex;
+  flex-direction:column;
+  transition:.3s;
+}
+.panel:hover{
+  border-color:#334155;
+}
+
+.panel-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.panel-header h2{
+  font-size:11px;
+  letter-spacing:.28em;
+  color:var(--muted);
+  text-transform:uppercase;
+}
+
+.textarea-wrapper{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+.textarea-wrapper textarea{
+  flex:1;
+  min-height:200px;
+  background:#020409;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px;
+  color:var(--text);
+  font-family: ui-monospace, monospace;
+  font-size:13px;
+  line-height:1.6;
+  resize:vertical;
+  outline:none;
+  transition:.25s;
+  width:100%;
+}
+.textarea-wrapper textarea:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(59,130,246,.12);
+}
+.textarea-wrapper textarea::placeholder{
+  color:#4b5563;
+}
+.textarea-wrapper textarea:read-only{
+  caret-color:transparent;
+  background:#000;
+}
+
+.action-bar{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  padding:10px 0;
+}
+.action-bar .primary-btn{
+  padding:18px 48px;
+  border-radius:999px;
+  background:radial-gradient(120% 120% at 50% 0%,#fff,#e5e7eb);
+  border:none;
+  color:#000;
+  font-weight:700;
+  font-size:14px;
+  letter-spacing:.12em;
+  cursor:pointer;
+  transition:.3s;
+  min-width:140px;
+}
+.action-bar .primary-btn:hover{
+  transform:translateY(-2px) scale(1.02);
+  box-shadow:0 18px 45px rgba(255,255,255,.2);
+}
+.action-bar .primary-btn:disabled{
+  opacity:.5;
+  cursor:wait;
+  transform:none;
+}
+
+.size-control{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:11px;
+  color:var(--muted);
+}
+.size-control input[type="range"]{
+  width:80px;
+  height:3px;
+  -webkit-appearance:none;
+  appearance:none;
+  background:var(--border);
+  border-radius:999px;
+  outline:none;
+}
+.size-control input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  background:var(--blue);
+  cursor:pointer;
+}
+.size-control .size-label{
+  min-width:30px;
+  text-align:center;
+  font-weight:600;
+  color:var(--text);
+}
+
+.out-actions{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.out-actions button{
+  padding:5px 12px;
+  font-size:10px;
+  letter-spacing:.12em;
+  border-radius:999px;
+  background:rgba(255,255,255,.06);
+  border:1px solid var(--border);
+  color:var(--text);
+  cursor:pointer;
+  transition:.25s;
+  display:flex;
+  align-items:center;
+  gap:5px;
+  font-weight:500;
+}
+.out-actions button:hover{
+  background:rgba(255,255,255,.12);
+  border-color:var(--blue);
+  transform:translateY(-1px);
+}
+.out-actions .btn-copy:hover{
+  border-color:var(--green);
+  color:var(--green);
+}
+.out-actions .btn-download:hover{
+  border-color:var(--blue);
+  color:var(--blue);
+}
+.out-actions .btn-clear:hover{
+  border-color:var(--red);
+  color:var(--red);
+}
+
+.status-bar{
+  margin-top:10px;
+  padding:8px 12px;
+  background:rgba(255,255,255,.03);
+  border-radius:8px;
+  font-size:11px;
+  color:var(--muted);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:6px;
+  min-height:32px;
+  border:1px solid transparent;
+  transition:.3s;
+}
+.status-bar.success{
+  border-color:rgba(16,185,129,.2);
+  color:var(--green);
+}
+.status-bar.error{
+  border-color:rgba(239,68,68,.2);
+  color:var(--red);
+}
+.status-bar.info{
+  border-color:rgba(59,130,246,.2);
+  color:var(--blue);
+}
+.status-bar .status-left{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.status-bar .status-right{
+  font-size:10px;
+  opacity:.6;
+}
+
+.footer{
+  text-align:center;
+  font-size:10px;
+  letter-spacing:.18em;
+  color:var(--muted);
+  opacity:.3;
+  padding:10px 0;
+}
+
+@media(max-width:900px){
+  .main{
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+  .action-bar{
+    flex-direction:row;
+    flex-wrap:wrap;
+    padding:10px 0;
+  }
+  .action-bar .primary-btn{
+    padding:14px 32px;
+    font-size:13px;
+    min-width:120px;
+  }
+  body{
+    padding:5px;
+  }
+  .app{
+    padding:10px;
+  }
+  .header h1{
+    font-size:17px;
+  }
+}
+
+::-webkit-scrollbar{
+  width:6px;
+  height:6px;
+}
+::-webkit-scrollbar-track{
+  background:#020409;
+}
+::-webkit-scrollbar-thumb{
+  background:var(--border);
+  border-radius:999px;
+}
+::-webkit-scrollbar-thumb:hover{
+  background:#4b5563;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <div class="header">
+    <h1>
+      🛡️ HTML Protector
+      <span>OBFUSCATE · ENCODE</span>
+    </h1>
+    <div class="header-badge">⚡ VERCEL</div>
+  </div>
+
+  <div class="main">
+
+    <div class="panel">
+      <div class="panel-header">
+        <h2>📥 INPUT</h2>
+        <span id="inputCount" style="font-size:10px;color:var(--muted)">0 chars</span>
+      </div>
+      <div class="textarea-wrapper">
+        <textarea id="input" placeholder="Paste your HTML code here..."></textarea>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <button class="primary-btn" id="btn" onclick="encode()">
+        ⚡ PROTECT
+      </button>
+      
+      <div class="size-control">
+        <span>📦 Size</span>
+        <input type="range" id="sizeSlider" min="1" max="50" value="10" step="1">
+        <span class="size-label" id="sizeLabel">10</span>
+        <span style="font-size:9px;opacity:.5">MB</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h2>📤 OUTPUT</h2>
+        <div class="out-actions">
+          <button class="btn-copy" onclick="copyOutput()">📋 COPY</button>
+          <button class="btn-download" onclick="downloadOutput()">⬇️ DOWN</button>
+          <button class="btn-clear" onclick="clearOutput()">🗑️ CLEAR</button>
+        </div>
+      </div>
+      <div class="textarea-wrapper">
+        <textarea id="output" readonly placeholder="Protected output will appear here..."></textarea>
+      </div>
+      <div class="status-bar" id="status">
+        <span class="status-left">💡 Ready</span>
+        <span class="status-right">v2.0</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">⚠️ Generated code may cause performance issues on low-end devices</div>
+
+</div>
+
+<script>
+// ======== API URL (Vercel) ========
+// Vercel-এ ডিপ্লয় করলে এই URL দিন
+const API_URL = '/api/encode';  // লোকালি বা Vercel-এ উভয়ই কাজ করবে
+
+// ======== SIZE CONTROL ========
+const slider = document.getElementById('sizeSlider');
+const sizeLabel = document.getElementById('sizeLabel');
+
+slider.addEventListener('input', function() {
+  sizeLabel.textContent = this.value;
+});
+
+// ======== INPUT COUNTER ========
+document.getElementById('input').addEventListener('input', function() {
+  document.getElementById('inputCount').textContent = this.value.length + ' chars';
+});
+
+// ======== ENCODE FUNCTION ========
+async function encode() {
+  const btn = document.getElementById('btn');
+  const input = document.getElementById('input').value.trim();
+  const out = document.getElementById('output');
+  const status = document.getElementById('status');
+  const size = parseInt(document.getElementById('sizeSlider').value);
+
+  if (!input) {
+    setStatus('⚠️ Please paste some HTML code first', 'error');
+    return;
+  }
+
+  btn.innerHTML = '⏳ PROCESSING...';
+  btn.disabled = true;
+  setStatus('⏳ Sending to server...', 'info');
+
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ html: input, size: size })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      out.value = data.result;
+      setStatus(
+        `✅ ${data.stats.increasedBy} larger | ${data.stats.originalSize} → ${data.stats.newSize} bytes (${data.stats.sizeInMB} MB)`,
+        'success'
+      );
+    } else {
+      setStatus('❌ Error: ' + (data.error || 'Unknown error'), 'error');
+    }
+
+  } catch(e) {
+    setStatus('❌ Server error: ' + e.message, 'error');
+    console.error('Error:', e);
+  }
+
+  btn.innerHTML = '⚡ PROTECT';
+  btn.disabled = false;
+}
+
+// ======== STATUS HELPER ========
+function setStatus(message, type = 'info') {
+  const status = document.getElementById('status');
+  const statusLeft = status.querySelector('.status-left');
+  status.className = 'status-bar ' + type;
+  statusLeft.textContent = message;
+}
+
+// ======== COPY ========
+function copyOutput() {
+  const out = document.getElementById('output');
+  if (!out.value) {
+    setStatus('⚠️ Nothing to copy', 'error');
+    return;
+  }
+  out.select();
+  navigator.clipboard?.writeText(out.value).catch(() => {
+    document.execCommand('copy');
+  });
+  out.blur();
+  setStatus('📋 Copied to clipboard!', 'success');
+}
+
+// ======== DOWNLOAD ========
+function downloadOutput() {
+  const content = document.getElementById('output').value;
+  if (!content) {
+    setStatus('⚠️ No output to download', 'error');
+    return;
+  }
+  const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'protected_' + Date.now() + '.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+  setStatus('📥 Downloaded!', 'success');
+}
+
+// ======== CLEAR ========
+function clearOutput() {
+  document.getElementById('output').value = '';
+  setStatus('🗑️ Cleared', 'info');
+}
+</script>
+
+</body>
+</html>
