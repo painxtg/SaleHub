@@ -9,6 +9,41 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+  @media(max-width:520px){
+
+  .compact-filter{
+    margin-top:10px;
+    border-radius:13px;
+  }
+
+  .compact-filter .section-header{
+    padding:11px 13px;
+  }
+
+  .compact-filter .section-description{
+    font-size:10px;
+  }
+
+  .compact-filter .filter-content{
+    padding:10px;
+  }
+
+  .compact-filter .filter-grid{
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+  }
+
+  .compact-filter
+  .filter-grid input{
+    padding:9px;
+    font-size:11px;
+  }
+
+  .compact-filter
+  .clear-btn{
+    padding:9px;
+  }
+  }
 *{
   box-sizing:border-box;
   margin:0;
@@ -369,32 +404,39 @@ main{
 }
 
 /* =========================
-   FILTER
+   COMPACT FILTER
 ========================= */
 
 .filter-content{
-  padding:15px;
+  padding:10px 12px;
 }
 
 .filter-grid{
   display:grid;
   grid-template-columns:
     1.5fr 1fr 1fr auto;
-  gap:9px;
+  gap:7px;
 }
 
 .filter-grid input{
   min-width:0;
+  padding:9px 10px;
+  font-size:12px;
 }
 
 .clear-btn{
   border:1px solid var(--border2);
   background:var(--panel2);
-  color:#d7dce2;
-  border-radius:10px;
-  padding:0 15px;
+  color:#aeb7c2;
+  border-radius:9px;
+  padding:0 11px;
+  font-size:11px;
 }
 
+.filter-box-title{
+  font-size:12px;
+  color:#8b96a4;
+}
 /* =========================
    REPORT
 ========================= */
@@ -1263,7 +1305,53 @@ main{
 
 </section>
 
+<!-- Search & Filter -->
+<section class="section compact-filter">
 
+  <div class="section-header">
+    <div>
+      <div class="section-title filter-box-title">
+        🔍 Search & Filter
+      </div>
+
+      <div class="section-description">
+        Find sales by amount or date
+      </div>
+    </div>
+  </div>
+
+  <div class="filter-content">
+
+    <div class="filter-grid">
+
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Search..."
+      >
+
+      <input
+        id="fromDate"
+        type="date"
+      >
+
+      <input
+        id="toDate"
+        type="date"
+      >
+
+      <button
+        id="clearFilter"
+        class="clear-btn"
+      >
+        Clear
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
 <!-- FOOTER -->
 
 <footer class="footer">
