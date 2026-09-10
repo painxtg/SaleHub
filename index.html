@@ -2,48 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
 <title>SaleTrack</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-  @media(max-width:520px){
-
-  .compact-filter{
-    margin-top:10px;
-    border-radius:13px;
-  }
-
-  .compact-filter .section-header{
-    padding:11px 13px;
-  }
-
-  .compact-filter .section-description{
-    font-size:10px;
-  }
-
-  .compact-filter .filter-content{
-    padding:10px;
-  }
-
-  .compact-filter .filter-grid{
-    grid-template-columns:1fr 1fr;
-    gap:6px;
-  }
-
-  .compact-filter
-  .filter-grid input{
-    padding:9px;
-    font-size:11px;
-  }
-
-  .compact-filter
-  .clear-btn{
-    padding:9px;
-  }
-  }
 *{
   box-sizing:border-box;
   margin:0;
@@ -51,129 +16,76 @@
 }
 
 :root{
-  --bg:#080b10;
-  --panel:#10151d;
-  --panel2:#0d1219;
-  --border:#202936;
-  --border2:#2a3543;
-  --text:#f5f7fa;
-  --muted:#7f8a99;
-  --green:#4ade80;
-  --red:#ef4444;
-  --blue:#60a5fa;
+  --bg:#07101d;
+  --bg2:#0b1626;
+  --glass:rgba(255,255,255,.055);
+  --glass2:rgba(255,255,255,.075);
+  --border:rgba(255,255,255,.11);
+  --border2:rgba(255,255,255,.17);
+  --text:#f4f7fb;
+  --muted:#8d99a9;
+  --green:#48e0a4;
+  --red:#ff667d;
+  --blue:#70a7ff;
+  --yellow:#ffd76a;
+  --shadow:0 18px 60px rgba(0,0,0,.28);
+}
+
+html{
+  scroll-behavior:smooth;
 }
 
 body{
-  background:var(--bg);
-  color:var(--text);
+  min-height:100vh;
   font-family:
     Inter,
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
-    Arial,
     sans-serif;
-  min-height:100vh;
+
+  color:var(--text);
+
+  background:
+    radial-gradient(
+      circle at 10% 0%,
+      rgba(83,135,255,.16),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 90% 10%,
+      rgba(52,225,164,.10),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      #050c16,
+      #091322 45%,
+      #06101d
+    );
+
+  background-attachment:fixed;
 }
 
 /* =========================
-   COMMON
+   GLASS
 ========================= */
 
-button,
-input{
-  font:inherit;
-}
+.glass{
+  background:linear-gradient(
+    135deg,
+    rgba(255,255,255,.075),
+    rgba(255,255,255,.025)
+  );
 
-button{
-  cursor:pointer;
-}
-
-.hidden{
-  display:none!important;
-}
-
-.container{
-  width:min(100% - 32px,1100px);
-  margin:auto;
-}
-
-/* =========================
-   LOGIN
-========================= */
-
-#loginPage{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-}
-
-.login-card{
-  width:100%;
-  max-width:400px;
-  padding:34px;
-  background:var(--panel);
   border:1px solid var(--border);
-  border-radius:24px;
-  box-shadow:0 25px 70px rgba(0,0,0,.4);
-}
 
-.login-logo{
-  text-align:center;
-  font-size:32px;
-  font-weight:800;
-  letter-spacing:-1px;
-}
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.06),
+    var(--shadow);
 
-.login-logo span{
-  color:var(--green);
-}
-
-.login-subtitle{
-  text-align:center;
-  color:var(--muted);
-  font-size:13px;
-  margin-top:8px;
-  margin-bottom:28px;
-}
-
-.form-group{
-  margin-bottom:16px;
-}
-
-.form-group label{
-  display:block;
-  font-size:12px;
-  color:#a7b0bd;
-  margin-bottom:7px;
-}
-
-input{
-  width:100%;
-  background:#090e14;
-  color:white;
-  border:1px solid var(--border2);
-  border-radius:11px;
-  padding:13px 14px;
-  outline:none;
-  transition:.2s;
-}
-
-input:focus{
-  border-color:var(--green);
-}
-
-.login-button{
-  width:100%;
-  border:0;
-  padding:13px;
-  border-radius:11px;
-  background:var(--green);
-  color:#061009;
-  font-weight:800;
-  margin-top:3px;
+  backdrop-filter:blur(22px);
+  -webkit-backdrop-filter:blur(22px);
 }
 
 /* =========================
@@ -183,106 +95,120 @@ input:focus{
 .header{
   position:sticky;
   top:0;
-  z-index:20;
-  background:rgba(8,11,16,.9);
-  backdrop-filter:blur(15px);
-  border-bottom:1px solid var(--border);
+  z-index:50;
+
+  border-bottom:1px solid rgba(255,255,255,.08);
+
+  background:rgba(5,12,22,.70);
+
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
 }
 
 .header-inner{
-  min-height:70px;
+  max-width:1050px;
+  margin:auto;
+
+  padding:16px 20px;
+
   display:flex;
   align-items:center;
   justify-content:space-between;
-}
-
-.brand-area{
-  display:flex;
-  flex-direction:column;
+  gap:15px;
 }
 
 .brand{
-  font-size:23px;
-  font-weight:800;
-  letter-spacing:-.6px;
+  display:flex;
+  align-items:center;
+  gap:11px;
 }
 
-.brand span{
-  color:var(--green);
+.brand-icon{
+  width:38px;
+  height:38px;
+
+  display:grid;
+  place-items:center;
+
+  border-radius:12px;
+
+  background:linear-gradient(
+    135deg,
+    rgba(112,167,255,.25),
+    rgba(72,224,164,.18)
+  );
+
+  border:1px solid rgba(255,255,255,.12);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.15),
+    0 8px 25px rgba(0,0,0,.2);
+}
+
+.brand-name{
+  font-size:16px;
+  font-weight:800;
+  letter-spacing:-.3px;
 }
 
 .powered{
-  color:#687483;
   font-size:10px;
+  color:var(--muted);
   margin-top:2px;
-  letter-spacing:.2px;
 }
 
-.powered b{
-  color:#9ca7b5;
-  font-weight:600;
-}
-
-.header-right{
+.status{
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:7px;
+
+  padding:7px 10px;
+
+  border:1px solid var(--border);
+  border-radius:20px;
+
+  background:rgba(255,255,255,.035);
+
+  font-size:10px;
+  color:var(--muted);
 }
 
-.connection{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  font-size:11px;
-  color:#8b97a6;
-}
-
-.connection-dot{
+.status-dot{
   width:7px;
   height:7px;
   border-radius:50%;
   background:var(--green);
+
+  box-shadow:
+    0 0 12px rgba(72,224,164,.7);
 }
 
-.connection.offline
-.connection-dot{
+.status.offline .status-dot{
   background:var(--red);
-}
-
-.logout{
-  border:1px solid var(--border2);
-  background:var(--panel);
-  color:#dce1e7;
-  border-radius:9px;
-  padding:8px 12px;
-  font-size:12px;
+  box-shadow:
+    0 0 12px rgba(255,102,125,.7);
 }
 
 /* =========================
-   MAIN
+   CONTAINER
 ========================= */
 
-main{
-  padding:28px 0 50px;
+.container{
+  max-width:1050px;
+  margin:auto;
+  padding:28px 20px 40px;
 }
 
-/* =========================
-   PAGE TITLE
-========================= */
-
-.page-heading{
-  margin-bottom:20px;
+.page-title{
+  font-size:27px;
+  font-weight:800;
+  letter-spacing:-.8px;
 }
 
-.page-heading h1{
-  font-size:25px;
-  letter-spacing:-.5px;
-}
-
-.page-heading p{
+.page-subtitle{
+  margin-top:6px;
   color:var(--muted);
   font-size:13px;
-  margin-top:5px;
 }
 
 /* =========================
@@ -290,48 +216,64 @@ main{
 ========================= */
 
 .stats{
+  margin-top:24px;
+
   display:grid;
   grid-template-columns:
     repeat(4,1fr);
+
   gap:12px;
-  margin-bottom:20px;
 }
 
-.stat-card{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:17px;
-  padding:18px;
-  min-height:105px;
+.stat{
+  padding:17px;
+
+  border-radius:18px;
+
+  position:relative;
+  overflow:hidden;
 }
 
-.stat-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:13px;
+.stat::after{
+  content:"";
+
+  position:absolute;
+
+  width:80px;
+  height:80px;
+
+  right:-30px;
+  bottom:-35px;
+
+  border-radius:50%;
+
+  background:rgba(255,255,255,.035);
 }
 
 .stat-label{
-  color:#8994a3;
-  font-size:12px;
-}
-
-.stat-icon{
-  width:28px;
-  height:28px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:8px;
-  background:#18201c;
-  font-size:13px;
+  color:var(--muted);
+  font-size:11px;
 }
 
 .stat-value{
+  margin-top:8px;
+
   font-size:23px;
   font-weight:800;
-  letter-spacing:-.5px;
+
+  letter-spacing:-.6px;
+}
+
+.green{
+  color:var(--green);
+}
+
+.blue{
+  color:var(--blue);
+}
+
+.yellow{
+  color:var(--yellow);
 }
 
 /* =========================
@@ -339,19 +281,21 @@ main{
 ========================= */
 
 .section{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:18px;
-  margin-bottom:16px;
+  margin-top:18px;
+
+  border-radius:20px;
+
   overflow:hidden;
 }
 
 .section-header{
   padding:17px 18px;
-  border-bottom:1px solid var(--border);
+
   display:flex;
   align-items:center;
   justify-content:space-between;
+
+  border-bottom:1px solid rgba(255,255,255,.07);
 }
 
 .section-title{
@@ -360,52 +304,181 @@ main{
 }
 
 .section-description{
-  color:var(--muted);
-  font-size:11px;
   margin-top:4px;
+
+  color:var(--muted);
+
+  font-size:10px;
 }
 
 /* =========================
-   ACTIONS
+   QUICK ACTIONS
 ========================= */
 
-.action-grid{
+.actions{
   padding:15px;
+
   display:grid;
+
   grid-template-columns:
-    repeat(4,1fr);
+    repeat(5,1fr);
+
   gap:9px;
 }
 
 .action{
-  border:1px solid var(--border2);
-  background:var(--panel2);
-  color:#e8ecf1;
-  border-radius:11px;
-  padding:12px 10px;
-  font-size:12px;
+  border:1px solid var(--border);
+
+  background:rgba(255,255,255,.035);
+
+  color:var(--text);
+
+  padding:11px 8px;
+
+  border-radius:12px;
+
+  cursor:pointer;
+
+  font-size:11px;
   font-weight:650;
-  transition:.18s;
+
+  transition:.2s;
 }
 
 .action:hover{
-  border-color:#3a4655;
+  background:rgba(255,255,255,.09);
+
   transform:translateY(-1px);
 }
 
-.action.primary{
-  background:var(--green);
-  color:#061009;
-  border-color:var(--green);
+.action:active{
+  transform:scale(.97);
 }
 
-.action.danger{
-  color:#ff8585;
+/* =========================
+   SALES HISTORY
+========================= */
+
+.history{
+  padding:12px;
+}
+
+.history-head{
+  display:grid;
+
+  grid-template-columns:
+    55px 1fr 120px 105px 75px;
+
+  gap:10px;
+
+  padding:9px 10px;
+
+  color:#697585;
+
+  font-size:9px;
+  text-transform:uppercase;
+
+  letter-spacing:.5px;
+}
+
+.sale-row{
+  display:grid;
+
+  grid-template-columns:
+    55px 1fr 120px 105px 75px;
+
+  gap:10px;
+
+  align-items:center;
+
+  padding:13px 10px;
+
+  border-top:1px solid rgba(255,255,255,.055);
+
+  font-size:12px;
+}
+
+.sale-row:hover{
+  background:rgba(255,255,255,.025);
+}
+
+.sale-number{
+  color:#6f7b8c;
+}
+
+.sale-amount{
+  font-weight:750;
+}
+
+.sale-date,
+.sale-time{
+  color:var(--muted);
+  font-size:11px;
+}
+
+.row-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:5px;
+}
+
+.small-btn{
+  border:1px solid var(--border);
+
+  background:rgba(255,255,255,.035);
+
+  color:#b9c2ce;
+
+  border-radius:8px;
+
+  padding:6px 8px;
+
+  font-size:10px;
+
+  cursor:pointer;
+}
+
+.small-btn:hover{
+  background:rgba(255,255,255,.08);
+}
+
+.edit-btn:hover{
+  color:var(--blue);
+}
+
+.delete-btn:hover{
+  color:var(--red);
+}
+
+.empty{
+  padding:35px 15px;
+
+  text-align:center;
+
+  color:var(--muted);
+
+  font-size:12px;
 }
 
 /* =========================
    COMPACT FILTER
 ========================= */
+
+.compact-filter{
+  border-radius:16px;
+}
+
+.compact-filter .section-header{
+  padding:11px 13px;
+}
+
+.filter-box-title{
+  font-size:12px;
+}
+
+.compact-filter .section-description{
+  font-size:9px;
+}
 
 .filter-content{
   padding:10px 12px;
@@ -413,58 +486,100 @@ main{
 
 .filter-grid{
   display:grid;
+
   grid-template-columns:
     1.5fr 1fr 1fr auto;
+
   gap:7px;
 }
 
 .filter-grid input{
+  width:100%;
+
   min-width:0;
+
   padding:9px 10px;
-  font-size:12px;
+
+  border-radius:9px;
+
+  border:1px solid var(--border);
+
+  background:rgba(255,255,255,.035);
+
+  color:var(--text);
+
+  outline:none;
+
+  font-size:11px;
+}
+
+.filter-grid input:focus{
+  border-color:rgba(112,167,255,.45);
+
+  background:rgba(255,255,255,.06);
+}
+
+.filter-grid input::placeholder{
+  color:#667283;
 }
 
 .clear-btn{
   border:1px solid var(--border2);
-  background:var(--panel2);
+
+  background:rgba(255,255,255,.045);
+
   color:#aeb7c2;
+
   border-radius:9px;
-  padding:0 11px;
-  font-size:11px;
+
+  padding:0 12px;
+
+  font-size:10px;
+
+  cursor:pointer;
 }
 
-.filter-box-title{
-  font-size:12px;
-  color:#8b96a4;
+.clear-btn:hover{
+  color:#fff;
+  background:rgba(255,255,255,.08);
 }
+
 /* =========================
    REPORT
 ========================= */
 
 .report-grid{
-  padding:15px;
+  padding:14px;
+
   display:grid;
+
   grid-template-columns:
     repeat(4,1fr);
-  gap:10px;
+
+  gap:9px;
 }
 
 .report-card{
-  background:var(--panel2);
+  padding:13px;
+
+  border-radius:13px;
+
+  background:rgba(255,255,255,.035);
+
   border:1px solid var(--border);
-  border-radius:12px;
-  padding:14px;
 }
 
-.report-card span{
-  display:block;
+.report-label{
+  font-size:10px;
   color:var(--muted);
-  font-size:11px;
-  margin-bottom:7px;
 }
 
-.report-card strong{
-  font-size:18px;
+.report-value{
+  margin-top:6px;
+
+  font-size:17px;
+
+  font-weight:800;
 }
 
 /* =========================
@@ -472,77 +587,296 @@ main{
 ========================= */
 
 .backup-content{
-  padding:15px;
+  padding:14px;
+
   display:flex;
-  gap:9px;
+
   flex-wrap:wrap;
+
+  gap:8px;
 }
 
-.backup-content .action{
-  flex:1;
-  min-width:150px;
+.backup-btn{
+  padding:10px 13px;
+
+  border-radius:10px;
+
+  border:1px solid var(--border);
+
+  background:rgba(255,255,255,.04);
+
+  color:#cbd3dd;
+
+  font-size:11px;
+
+  cursor:pointer;
+}
+
+.backup-btn:hover{
+  background:rgba(255,255,255,.08);
 }
 
 /* =========================
-   SALES HISTORY
+   MODAL
 ========================= */
 
-.history-header-right{
-  color:var(--muted);
-  font-size:11px;
-}
+.modal{
+  position:fixed;
 
-#salesList{
-  padding:8px 12px;
-}
+  inset:0;
 
-.sale-row{
-  display:grid;
-  grid-template-columns:
-    35px 1fr 75px 40px;
-  gap:9px;
+  z-index:100;
+
+  display:none;
+
   align-items:center;
-  padding:8px 2px;
-  border-bottom:1px solid #1b232d;
+  justify-content:center;
+
+  padding:20px;
+
+  background:rgba(0,0,0,.62);
+
+  backdrop-filter:blur(10px);
 }
 
-.sale-row:last-child{
-  border-bottom:0;
+.modal.show{
+  display:flex;
 }
 
-.sale-number{
-  color:#626e7d;
-  text-align:center;
-  font-size:11px;
+.modal-box{
+  width:100%;
+  max-width:390px;
+
+  padding:21px;
+
+  border-radius:20px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(25,38,57,.94),
+      rgba(10,19,31,.94)
+    );
+
+  border:1px solid var(--border2);
+
+  box-shadow:
+    0 30px 100px rgba(0,0,0,.55),
+    inset 0 1px 0 rgba(255,255,255,.08);
 }
 
-.sale-input{
-  padding:10px 12px;
+.modal-title{
+  font-size:16px;
+  font-weight:800;
 }
 
-.sale-time{
-  color:#7c8795;
-  font-size:11px;
-  text-align:right;
-  white-space:nowrap;
+.modal-text{
+  margin-top:8px;
+
+  color:var(--muted);
+
+  font-size:12px;
+
+  line-height:1.6;
 }
 
-.delete-btn{
-  width:36px;
-  height:36px;
-  border-radius:9px;
-  border:1px solid #402525;
-  background:#211414;
-  color:#ff7171;
-  font-size:18px;
-}
+.modal-input{
+  width:100%;
 
-.empty{
-  text-align:center;
-  padding:50px 20px;
-  color:#687584;
+  margin-top:14px;
+
+  padding:12px;
+
+  border-radius:11px;
+
+  border:1px solid var(--border);
+
+  background:rgba(0,0,0,.2);
+
+  color:#fff;
+
+  outline:none;
+
   font-size:13px;
-  line-height:1.7;
+}
+
+.modal-actions{
+  margin-top:16px;
+
+  display:flex;
+
+  gap:8px;
+
+  justify-content:flex-end;
+}
+
+.modal-btn{
+  padding:9px 14px;
+
+  border-radius:10px;
+
+  border:1px solid var(--border);
+
+  background:rgba(255,255,255,.05);
+
+  color:#cbd3dd;
+
+  cursor:pointer;
+
+  font-size:11px;
+}
+
+.modal-btn.primary{
+  background:rgba(112,167,255,.15);
+  color:#9fc1ff;
+}
+
+.modal-btn.danger{
+  background:rgba(255,102,125,.10);
+  color:#ff8294;
+}
+
+/* =========================
+   LOGIN
+========================= */
+
+.login-screen{
+  min-height:100vh;
+
+  display:none;
+
+  align-items:center;
+  justify-content:center;
+
+  padding:20px;
+}
+
+.login-box{
+  width:100%;
+  max-width:390px;
+
+  padding:28px;
+
+  border-radius:24px;
+}
+
+.login-brand{
+  text-align:center;
+}
+
+.login-icon{
+  width:58px;
+  height:58px;
+
+  margin:auto;
+
+  display:grid;
+  place-items:center;
+
+  border-radius:17px;
+
+  font-size:26px;
+
+  background:rgba(112,167,255,.12);
+
+  border:1px solid var(--border);
+}
+
+.login-title{
+  margin-top:15px;
+
+  font-size:22px;
+  font-weight:850;
+}
+
+.login-subtitle{
+  margin-top:5px;
+
+  color:var(--muted);
+
+  font-size:11px;
+}
+
+.login-form{
+  margin-top:22px;
+}
+
+.input-label{
+  display:block;
+
+  margin-bottom:6px;
+
+  color:#8f9aaa;
+
+  font-size:10px;
+}
+
+.login-input{
+  width:100%;
+
+  padding:12px;
+
+  margin-bottom:12px;
+
+  border-radius:11px;
+
+  border:1px solid var(--border);
+
+  background:rgba(255,255,255,.035);
+
+  color:#fff;
+
+  outline:none;
+
+  font-size:13px;
+}
+
+.login-input:focus{
+  border-color:rgba(112,167,255,.45);
+}
+
+.login-btn{
+  width:100%;
+
+  padding:12px;
+
+  border:0;
+
+  border-radius:11px;
+
+  background:linear-gradient(
+    135deg,
+    rgba(112,167,255,.9),
+    rgba(72,224,164,.75)
+  );
+
+  color:#06101d;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+  margin-top:4px;
+}
+
+.login-error{
+  display:none;
+
+  margin-top:12px;
+
+  padding:10px;
+
+  border-radius:10px;
+
+  background:rgba(255,102,125,.08);
+
+  border:1px solid rgba(255,102,125,.15);
+
+  color:#ff8294;
+
+  font-size:10px;
+
+  text-align:center;
 }
 
 /* =========================
@@ -551,137 +885,47 @@ main{
 
 .footer{
   text-align:center;
-  padding:25px 0 5px;
-  color:#505b68;
-  font-size:11px;
+
+  padding:8px 0 25px;
+
+  color:#586474;
+
+  font-size:10px;
 }
 
 .footer strong{
-  color:#7d8997;
-  font-weight:600;
+  color:#8a96a5;
 }
 
 /* =========================
-   MODAL
+   COLLAPSE
 ========================= */
 
-.overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.76);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  z-index:100;
+.section-toggle{
+  cursor:pointer;
+  user-select:none;
 }
 
-.modal{
-  width:100%;
-  max-width:390px;
-  background:var(--panel);
-  border:1px solid var(--border2);
-  border-radius:18px;
-  padding:23px;
-  box-shadow:0 25px 80px #0009;
-}
-
-.modal h3{
-  font-size:18px;
-  margin-bottom:8px;
-}
-
-.modal p{
-  color:#8b97a5;
-  font-size:13px;
-  line-height:1.55;
-  margin-bottom:15px;
-}
-
-.modal input{
-  margin-bottom:14px;
-}
-
-.modal-actions{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:9px;
-}
-
-.modal-actions button{
-  padding:11px;
-  border-radius:10px;
-  border:1px solid var(--border2);
-  background:#18212b;
-  color:#fff;
-}
-
-.modal-actions .confirm{
-  background:var(--red);
-  border-color:var(--red);
-}
-
-/* =========================
-   TOAST
-========================= */
-
-#toast{
-  position:fixed;
-  left:50%;
-  bottom:22px;
-  transform:
-    translate(-50%,20px);
-  opacity:0;
-  pointer-events:none;
-  background:#18212b;
-  border:1px solid var(--border2);
-  color:#fff;
-  padding:11px 16px;
-  border-radius:10px;
+.toggle-icon{
+  color:#718093;
   font-size:12px;
-  z-index:300;
-  transition:.25s;
+  transition:.2s;
 }
 
-#toast.show{
-  opacity:1;
-  transform:
-    translate(-50%,0);
+.section.open .toggle-icon{
+  transform:rotate(180deg);
 }
 
-/* =========================
-   UNDO
-========================= */
-
-#undoBar{
-  position:fixed;
-  left:50%;
-  bottom:22px;
-  transform:translateX(-50%);
-  background:#18212b;
-  border:1px solid var(--border2);
-  border-radius:11px;
-  padding:10px 13px;
+.collapsible-content{
   display:none;
-  align-items:center;
-  gap:15px;
-  z-index:250;
-  font-size:12px;
 }
 
-#undoBar.show{
-  display:flex;
-}
-
-#undoBtn{
-  border:0;
-  background:transparent;
-  color:var(--green);
-  font-weight:750;
+.section.open .collapsible-content{
+  display:block;
 }
 
 /* =========================
-   MOBILE
+   RESPONSIVE
 ========================= */
 
 @media(max-width:800px){
@@ -691,14 +935,86 @@ main{
       repeat(2,1fr);
   }
 
-  .action-grid{
+  .actions{
     grid-template-columns:
-      repeat(2,1fr);
+      repeat(3,1fr);
   }
 
-  .report-grid{
+  .history-head,
+  .sale-row{
+    grid-template-columns:
+      40px 1fr 90px 80px 65px;
+  }
+}
+
+@media(max-width:520px){
+
+  .header-inner{
+    padding:13px 14px;
+  }
+
+  .brand-icon{
+    width:34px;
+    height:34px;
+  }
+
+  .brand-name{
+    font-size:14px;
+  }
+
+  .container{
+    padding:21px 12px 30px;
+  }
+
+  .page-title{
+    font-size:22px;
+  }
+
+  .page-subtitle{
+    font-size:11px;
+  }
+
+  .stats{
+    gap:8px;
+    margin-top:18px;
+  }
+
+  .stat{
+    padding:13px;
+    border-radius:15px;
+  }
+
+  .stat-value{
+    font-size:18px;
+  }
+
+  .actions{
     grid-template-columns:
       repeat(2,1fr);
+
+    padding:11px;
+  }
+
+  .section{
+    margin-top:12px;
+    border-radius:16px;
+  }
+
+  .section-header{
+    padding:13px;
+  }
+
+  .history{
+    padding:8px;
+    overflow-x:auto;
+  }
+
+  .history-head,
+  .sale-row{
+    min-width:500px;
+
+    grid-template-columns:
+      40px 1fr 90px 80px 65px;
   }
 
   .filter-grid{
@@ -706,87 +1022,21 @@ main{
       1fr 1fr;
   }
 
-  .clear-btn{
-    padding:11px;
-  }
-}
-
-@media(max-width:520px){
-
-  .container{
-    width:min(100% - 18px,1100px);
-  }
-
-  main{
-    padding-top:20px;
-  }
-
-  .header-inner{
-    min-height:64px;
-  }
-
-  .brand{
-    font-size:20px;
-  }
-
-  .header-right{
-    gap:7px;
-  }
-
-  .connection{
-    font-size:10px;
-  }
-
-  .logout{
-    padding:7px 9px;
-  }
-
-  .page-heading h1{
-    font-size:21px;
-  }
-
-  .stats{
-    gap:8px;
-  }
-
-  .stat-card{
-    padding:13px;
-    min-height:95px;
-  }
-
-  .stat-value{
-    font-size:19px;
-  }
-
-  .action-grid{
-    padding:11px;
-    gap:7px;
-  }
-
-  .action{
-    padding:11px 7px;
-    font-size:11px;
-  }
-
-  .filter-grid{
-    grid-template-columns:1fr;
+  .filter-grid input:first-child{
+    grid-column:1 / -1;
   }
 
   .clear-btn{
-    padding:11px;
+    padding:9px;
   }
 
-  .sale-row{
+  .report-grid{
     grid-template-columns:
-      25px 1fr 38px;
+      repeat(2,1fr);
   }
 
-  .sale-time{
-    display:none;
-  }
-
-  .section-header{
-    padding:14px;
+  .status{
+    padding:6px 8px;
   }
 }
 </style>
@@ -794,577 +1044,562 @@ main{
 
 <body>
 
-
 <!-- =========================
-     LOGIN
+     LOGIN SCREEN
 ========================= -->
 
-<section id="loginPage">
+<div id="loginScreen" class="login-screen">
 
-  <div class="login-card">
+  <div class="login-box glass">
 
-    <div class="login-logo">
-      Sale<span>Track</span>
-    </div>
+    <div class="login-brand">
 
-    <div class="login-subtitle">
-      Simple & professional sales management
-    </div>
-
-    <form id="loginForm">
-
-      <div class="form-group">
-        <label>Email</label>
-
-        <input
-          id="email"
-          type="email"
-          placeholder="Enter your email"
-          required
-        >
+      <div class="login-icon">
+        💰
       </div>
 
-      <div class="form-group">
-        <label>Password</label>
-
-        <input
-          id="password"
-          type="password"
-          placeholder="Enter your password"
-          required
-        >
+      <div class="login-title">
+        SaleTrack
       </div>
+
+      <div class="login-subtitle">
+        Sign in to manage your sales
+      </div>
+
+    </div>
+
+    <form id="loginForm" class="login-form">
+
+      <label class="input-label">
+        Email
+      </label>
+
+      <input
+        id="email"
+        class="login-input"
+        type="email"
+        placeholder="Enter your email"
+        required
+      >
+
+      <label class="input-label">
+        Password
+      </label>
+
+      <input
+        id="password"
+        class="login-input"
+        type="password"
+        placeholder="Enter your password"
+        required
+      >
 
       <button
-        class="login-button"
+        class="login-btn"
         type="submit"
       >
-        Login
+        Sign In
       </button>
+
+      <div
+        id="loginError"
+        class="login-error"
+      ></div>
 
     </form>
 
   </div>
 
-</section>
+</div>
 
 
 <!-- =========================
      APP
 ========================= -->
 
-<section id="appPage" class="hidden">
+<div id="app" style="display:none;">
 
+  <!-- HEADER -->
 
-<header class="header">
+  <header class="header">
 
-  <div class="container header-inner">
-
-    <div class="brand-area">
+    <div class="header-inner">
 
       <div class="brand">
-        Sale<span>Track</span>
+
+        <div class="brand-icon">
+          💰
+        </div>
+
+        <div>
+          <div class="brand-name">
+            SaleTrack
+          </div>
+
+          <div class="powered">
+            Powered by mehedi1only
+          </div>
+        </div>
+
       </div>
 
-      <div class="powered">
-        Powered by <b>mehedi1only</b>
-      </div>
+      <div id="status" class="status">
 
-    </div>
+        <span class="status-dot"></span>
 
-
-    <div class="header-right">
-
-      <div
-        id="connection"
-        class="connection"
-      >
-
-        <span
-          id="connectionDot"
-          class="connection-dot"
-        ></span>
-
-        <span id="connectionText">
+        <span id="statusText">
           Online
         </span>
 
       </div>
 
-      <button
-        id="logoutBtn"
-        class="logout"
-      >
-        Logout
-      </button>
+    </div>
+
+  </header>
+
+
+  <main class="container">
+
+    <!-- PAGE TITLE -->
+
+    <div>
+
+      <div class="page-title">
+        Sales Dashboard
+      </div>
+
+      <div class="page-subtitle">
+        Track, manage and analyze your sales
+      </div>
 
     </div>
 
-  </div>
 
-</header>
+    <!-- =========================
+         STATS
+    ========================= -->
+
+    <div class="stats">
+
+      <div class="stat glass">
+
+        <div class="stat-label">
+          Add Count
+        </div>
+
+        <div
+          id="countValue"
+          class="stat-value blue"
+        >
+          0
+        </div>
+
+      </div>
 
 
-<main class="container">
+      <div class="stat glass">
+
+        <div class="stat-label">
+          Total Sales
+        </div>
+
+        <div
+          id="totalValue"
+          class="stat-value green"
+        >
+          0.00
+        </div>
+
+      </div>
 
 
-<!-- PAGE TITLE -->
+      <div class="stat glass">
 
-<div class="page-heading">
+        <div class="stat-label">
+          Today Sales
+        </div>
 
-  <h1>
-    Sales Dashboard
-  </h1>
+        <div
+          id="todayValue"
+          class="stat-value yellow"
+        >
+          0.00
+        </div>
 
-  <p>
-    Track, manage and analyze your sales.
-  </p>
+      </div>
+
+
+      <div class="stat glass">
+
+        <div class="stat-label">
+          Last Sale
+        </div>
+
+        <div
+          id="lastValue"
+          class="stat-value"
+        >
+          —
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================
+         QUICK ACTIONS
+    ========================= -->
+
+    <section class="section glass">
+
+      <div class="section-header">
+
+        <div>
+          <div class="section-title">
+            Quick Actions
+          </div>
+
+          <div class="section-description">
+            Manage your sales quickly
+          </div>
+        </div>
+
+      </div>
+
+      <div class="actions">
+
+        <button
+          class="action"
+          onclick="addSale()"
+        >
+          ➕ Add Sale
+        </button>
+
+        <button
+          class="action"
+          onclick="exportCSV()"
+        >
+          📤 Export CSV
+        </button>
+
+        <button
+          class="action"
+          onclick="undoDelete()"
+        >
+          ↩️ Undo Delete
+        </button>
+
+        <button
+          class="action"
+          onclick="toggleSection('reportSection')"
+        >
+          📈 Reports
+        </button>
+
+        <button
+          class="action"
+          onclick="toggleSection('backupSection')"
+        >
+          💾 Backup
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         SALES HISTORY
+    ========================= -->
+
+    <section class="section glass">
+
+      <div class="section-header">
+
+        <div>
+
+          <div class="section-title">
+            📜 Sales History
+          </div>
+
+          <div class="section-description">
+            Your complete sales records
+          </div>
+
+        </div>
+
+        <button
+          class="small-btn"
+          onclick="resetAll()"
+        >
+          Reset All
+        </button>
+
+      </div>
+
+
+      <div class="history">
+
+        <div class="history-head">
+
+          <div>#</div>
+          <div>Amount</div>
+          <div>Date</div>
+          <div>Time</div>
+          <div>Action</div>
+
+        </div>
+
+        <div id="salesList"></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         SEARCH & FILTER
+         BELOW SALES HISTORY
+    ========================= -->
+
+    <section class="section compact-filter glass">
+
+      <div class="section-header">
+
+        <div>
+
+          <div class="section-title filter-box-title">
+            🔍 Search & Filter
+          </div>
+
+          <div class="section-description">
+            Find sales by amount or date
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="filter-content">
+
+        <div class="filter-grid">
+
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Search..."
+          >
+
+          <input
+            id="fromDate"
+            type="date"
+          >
+
+          <input
+            id="toDate"
+            type="date"
+          >
+
+          <button
+            id="clearFilter"
+            class="clear-btn"
+          >
+            Clear
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         REPORT
+    ========================= -->
+
+    <section
+      id="reportSection"
+      class="section glass"
+    >
+
+      <div
+        class="section-header section-toggle"
+        onclick="toggleSection('reportSection')"
+      >
+
+        <div>
+
+          <div class="section-title">
+            📈 Sales Report
+          </div>
+
+          <div class="section-description">
+            Quick performance overview
+          </div>
+
+        </div>
+
+        <div class="toggle-icon">
+          ▼
+        </div>
+
+      </div>
+
+
+      <div class="collapsible-content">
+
+        <div class="report-grid">
+
+          <div class="report-card">
+
+            <div class="report-label">
+              Today
+            </div>
+
+            <div
+              id="reportToday"
+              class="report-value green"
+            >
+              0.00
+            </div>
+
+          </div>
+
+
+          <div class="report-card">
+
+            <div class="report-label">
+              Yesterday
+            </div>
+
+            <div
+              id="reportYesterday"
+              class="report-value"
+            >
+              0.00
+            </div>
+
+          </div>
+
+
+          <div class="report-card">
+
+            <div class="report-label">
+              This Week
+            </div>
+
+            <div
+              id="reportWeek"
+              class="report-value blue"
+            >
+              0.00
+            </div>
+
+          </div>
+
+
+          <div class="report-card">
+
+            <div class="report-label">
+              This Month
+            </div>
+
+            <div
+              id="reportMonth"
+              class="report-value yellow"
+            >
+              0.00
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         BACKUP
+    ========================= -->
+
+    <section
+      id="backupSection"
+      class="section glass"
+    >
+
+      <div
+        class="section-header section-toggle"
+        onclick="toggleSection('backupSection')"
+      >
+
+        <div>
+
+          <div class="section-title">
+            💾 Backup & Restore
+          </div>
+
+          <div class="section-description">
+            Keep a local copy of your sales
+          </div>
+
+        </div>
+
+        <div class="toggle-icon">
+          ▼
+        </div>
+
+      </div>
+
+
+      <div class="collapsible-content">
+
+        <div class="backup-content">
+
+          <button
+            class="backup-btn"
+            onclick="backupJSON()"
+          >
+            💾 Download Backup
+          </button>
+
+          <button
+            class="backup-btn"
+            onclick="document.getElementById('restoreFile').click()"
+          >
+            ♻️ Restore Backup
+          </button>
+
+          <input
+            id="restoreFile"
+            type="file"
+            accept=".json"
+            style="display:none"
+          >
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+
+      SaleTrack ·
+      <strong>Powered by mehedi1only</strong>
+
+    </div>
+
+  </main>
 
 </div>
-
-
-<!-- =========================
-     STATS
-========================= -->
-
-<div class="stats">
-
-  <div class="stat-card">
-
-    <div class="stat-top">
-
-      <span class="stat-label">
-        Add Count
-      </span>
-
-      <span class="stat-icon">
-        #
-      </span>
-
-    </div>
-
-    <div
-      id="countValue"
-      class="stat-value"
-    >
-      0
-    </div>
-
-  </div>
-
-
-  <div class="stat-card">
-
-    <div class="stat-top">
-
-      <span class="stat-label">
-        Total Sales
-      </span>
-
-      <span class="stat-icon">
-        $
-      </span>
-
-    </div>
-
-    <div
-      id="totalValue"
-      class="stat-value"
-    >
-      0
-    </div>
-
-  </div>
-
-
-  <div class="stat-card">
-
-    <div class="stat-top">
-
-      <span class="stat-label">
-        Today Sales
-      </span>
-
-      <span class="stat-icon">
-        ◷
-      </span>
-
-    </div>
-
-    <div
-      id="todayValue"
-      class="stat-value"
-    >
-      0
-    </div>
-
-  </div>
-
-
-  <div class="stat-card">
-
-    <div class="stat-top">
-
-      <span class="stat-label">
-        Last Sale
-      </span>
-
-      <span class="stat-icon">
-        🕐
-      </span>
-
-    </div>
-
-    <div
-      id="lastSaleValue"
-      class="stat-value"
-    >
-      —
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- =========================
-     QUICK ACTIONS
-========================= -->
-
-<section class="section">
-
-  <div class="section-header">
-
-    <div>
-
-      <div class="section-title">
-        Quick Actions
-      </div>
-
-      <div class="section-description">
-        Manage your sales quickly
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <div class="action-grid">
-
-    <button
-      id="addBtn"
-      class="action primary"
-    >
-      ＋ Add Sale
-    </button>
-
-    <button
-      id="exportBtn"
-      class="action"
-    >
-      📤 Export CSV
-    </button>
-
-    <button
-      id="reportBtn"
-      class="action"
-    >
-      📈 Reports
-    </button>
-
-    <button
-      id="backupBtn"
-      class="action"
-    >
-      💾 Backup & Restore
-    </button>
-
-    <button
-      id="resetBtn"
-      class="action danger"
-    >
-      🗑️ Reset All
-    </button>
-
-  </div>
-
-</section>
-
-
-<!-- =========================
-     SEARCH
-========================= -->
-
-<section class="section">
-
-  <div class="section-header">
-
-    <div>
-
-      <div class="section-title">
-        🔍 Search & Filter
-      </div>
-
-      <div class="section-description">
-        Find sales by amount or date
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <div class="filter-content">
-
-    <div class="filter-grid">
-
-      <input
-        id="searchInput"
-        type="search"
-        placeholder="Search amount..."
-      >
-
-      <input
-        id="fromDate"
-        type="date"
-      >
-
-      <input
-        id="toDate"
-        type="date"
-      >
-
-      <button
-        id="clearFilter"
-        class="clear-btn"
-      >
-        Clear
-      </button>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- =========================
-     REPORT
-========================= -->
-
-<section
-  id="reportBox"
-  class="section hidden"
->
-
-  <div class="section-header">
-
-    <div>
-
-      <div class="section-title">
-        📈 Sales Report
-      </div>
-
-      <div class="section-description">
-        Sales performance overview
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <div class="report-grid">
-
-    <div class="report-card">
-      <span>Today</span>
-      <strong id="reportToday">
-        0
-      </strong>
-    </div>
-
-    <div class="report-card">
-      <span>Yesterday</span>
-      <strong id="reportYesterday">
-        0
-      </strong>
-    </div>
-
-    <div class="report-card">
-      <span>This Week</span>
-      <strong id="reportWeek">
-        0
-      </strong>
-    </div>
-
-    <div class="report-card">
-      <span>This Month</span>
-      <strong id="reportMonth">
-        0
-      </strong>
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- =========================
-     BACKUP
-========================= -->
-
-<section
-  id="backupBox"
-  class="section hidden"
->
-
-  <div class="section-header">
-
-    <div>
-
-      <div class="section-title">
-        💾 Backup & Restore
-      </div>
-
-      <div class="section-description">
-        Save a copy or restore your sales
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <div class="backup-content">
-
-    <button
-      id="downloadBackup"
-      class="action"
-    >
-      💾 Download Backup
-    </button>
-
-    <button
-      id="chooseRestore"
-      class="action"
-    >
-      ♻️ Restore Backup
-    </button>
-
-    <input
-      id="restoreFile"
-      type="file"
-      accept=".json"
-      class="hidden"
-    >
-
-  </div>
-
-</section>
-
-
-<!-- =========================
-     SALES HISTORY
-========================= -->
-
-<section class="section">
-
-  <div class="section-header">
-
-    <div>
-
-      <div class="section-title">
-        📊 Sales History
-      </div>
-
-      <div class="section-description">
-        Your saved sales records
-      </div>
-
-    </div>
-
-    <div
-      id="salesCountText"
-      class="history-header-right"
-    >
-      0 entries
-    </div>
-
-  </div>
-
-
-  <div id="salesList">
-
-    <div class="empty">
-      No sales yet.<br>
-      Click <b>Add Sale</b> to begin.
-    </div>
-
-  </div>
-
-</section>
-
-<!-- Search & Filter -->
-<section class="section compact-filter">
-
-  <div class="section-header">
-    <div>
-      <div class="section-title filter-box-title">
-        🔍 Search & Filter
-      </div>
-
-      <div class="section-description">
-        Find sales by amount or date
-      </div>
-    </div>
-  </div>
-
-  <div class="filter-content">
-
-    <div class="filter-grid">
-
-      <input
-        id="searchInput"
-        type="search"
-        placeholder="Search..."
-      >
-
-      <input
-        id="fromDate"
-        type="date"
-      >
-
-      <input
-        id="toDate"
-        type="date"
-      >
-
-      <button
-        id="clearFilter"
-        class="clear-btn"
-      >
-        Clear
-      </button>
-
-    </div>
-
-  </div>
-
-</section>
-<!-- FOOTER -->
-
-<footer class="footer">
-
-  SaleTrack © 2026 ·
-  Powered by <strong>mehedi1only</strong>
-
-</footer>
-
-
-</main>
-
-</section>
 
 
 <!-- =========================
@@ -1372,35 +1607,43 @@ main{
 ========================= -->
 
 <div
-  id="overlay"
-  class="overlay hidden"
+  id="modal"
+  class="modal"
 >
 
-  <div class="modal">
+  <div class="modal-box">
 
-    <h3 id="modalTitle">
-      Confirm
-    </h3>
+    <div
+      id="modalTitle"
+      class="modal-title"
+    >
+      Confirmation
+    </div>
 
-    <p id="modalMessage">
-      Are you sure?
-    </p>
+    <div
+      id="modalText"
+      class="modal-text"
+    ></div>
 
     <input
       id="modalInput"
-      class="hidden"
+      class="modal-input"
+      style="display:none;"
       autocomplete="off"
     >
 
     <div class="modal-actions">
 
-      <button id="modalCancel">
+      <button
+        id="modalCancel"
+        class="modal-btn"
+      >
         Cancel
       </button>
 
       <button
         id="modalConfirm"
-        class="confirm"
+        class="modal-btn primary"
       >
         Confirm
       </button>
@@ -1412,31 +1655,11 @@ main{
 </div>
 
 
-<!-- TOAST -->
-
-<div id="toast"></div>
-
-
-<!-- UNDO -->
-
-<div id="undoBar">
-
-  <span id="undoText">
-    Sale deleted
-  </span>
-
-  <button id="undoBtn">
-    Undo
-  </button>
-
-</div>
-
-
 <script>
 
-/* =========================================================
-   SUPABASE CONFIG
-========================================================= */
+/* =====================================================
+   SUPABASE
+===================================================== */
 
 const SUPABASE_URL =
 "https://eavqyzgamuelwyplhqjf.supabase.co";
@@ -1451,292 +1674,87 @@ window.supabase.createClient(
 );
 
 
-/* =========================================================
+/* =====================================================
    STATE
-========================================================= */
+===================================================== */
 
 let currentUser = null;
 
 let sales = [];
 
-let undoData = null;
-
-let undoTimer = null;
-
-let modalResolve = null;
-
-const saveTimers = new Map();
+let deletedSale = null;
 
 
-/* =========================================================
+/* =====================================================
    ELEMENTS
-========================================================= */
+===================================================== */
 
-const loginPage =
-document.getElementById(
-  "loginPage"
-);
+const loginScreen =
+document.getElementById("loginScreen");
 
-const appPage =
-document.getElementById(
-  "appPage"
-);
+const app =
+document.getElementById("app");
 
 const loginForm =
-document.getElementById(
-  "loginForm"
-);
+document.getElementById("loginForm");
 
-const email =
-document.getElementById(
-  "email"
-);
-
-const password =
-document.getElementById(
-  "password"
-);
+const loginError =
+document.getElementById("loginError");
 
 const salesList =
-document.getElementById(
-  "salesList"
-);
-
-const addBtn =
-document.getElementById(
-  "addBtn"
-);
-
-const exportBtn =
-document.getElementById(
-  "exportBtn"
-);
-
-const resetBtn =
-document.getElementById(
-  "resetBtn"
-);
-
-const reportBtn =
-document.getElementById(
-  "reportBtn"
-);
-
-const backupBtn =
-document.getElementById(
-  "backupBtn"
-);
-
-const restoreFile =
-document.getElementById(
-  "restoreFile"
-);
-
-const searchInput =
-document.getElementById(
-  "searchInput"
-);
-
-const fromDate =
-document.getElementById(
-  "fromDate"
-);
-
-const toDate =
-document.getElementById(
-  "toDate"
-);
-
-const clearFilter =
-document.getElementById(
-  "clearFilter"
-);
-
-const reportBox =
-document.getElementById(
-  "reportBox"
-);
-
-const backupBox =
-document.getElementById(
-  "backupBox"
-);
+document.getElementById("salesList");
 
 const countValue =
-document.getElementById(
-  "countValue"
-);
+document.getElementById("countValue");
 
 const totalValue =
-document.getElementById(
-  "totalValue"
-);
+document.getElementById("totalValue");
 
 const todayValue =
-document.getElementById(
-  "todayValue"
-);
+document.getElementById("todayValue");
 
-const lastSaleValue =
-document.getElementById(
-  "lastSaleValue"
-);
+const lastValue =
+document.getElementById("lastValue");
 
-const salesCountText =
-document.getElementById(
-  "salesCountText"
-);
+const searchInput =
+document.getElementById("searchInput");
 
-const connection =
-document.getElementById(
-  "connection"
-);
+const fromDate =
+document.getElementById("fromDate");
 
-const connectionText =
-document.getElementById(
-  "connectionText"
-);
+const toDate =
+document.getElementById("toDate");
 
-const logoutBtn =
-document.getElementById(
-  "logoutBtn"
-);
+const clearFilter =
+document.getElementById("clearFilter");
 
-const overlay =
-document.getElementById(
-  "overlay"
-);
+const status =
+document.getElementById("status");
 
-const modalTitle =
-document.getElementById(
-  "modalTitle"
-);
-
-const modalMessage =
-document.getElementById(
-  "modalMessage"
-);
-
-const modalInput =
-document.getElementById(
-  "modalInput"
-);
-
-const modalCancel =
-document.getElementById(
-  "modalCancel"
-);
-
-const modalConfirm =
-document.getElementById(
-  "modalConfirm"
-);
-
-const toast =
-document.getElementById(
-  "toast"
-);
-
-const undoBar =
-document.getElementById(
-  "undoBar"
-);
-
-const undoText =
-document.getElementById(
-  "undoText"
-);
-
-const undoBtn =
-document.getElementById(
-  "undoBtn"
-);
+const statusText =
+document.getElementById("statusText");
 
 
-/* =========================================================
-   LOGIN
-========================================================= */
+/* =====================================================
+   INIT
+===================================================== */
 
-loginForm.addEventListener(
-"submit",
-async e=>{
+init();
 
-  e.preventDefault();
-
-  const button =
-    loginForm.querySelector(
-      "button"
-    );
-
-  button.disabled = true;
-
-  button.textContent =
-    "Logging in...";
-
-  try{
-
-    const {
-      data,
-      error
-    } =
-      await supabaseClient.auth
-      .signInWithPassword({
-
-        email:
-          email.value.trim(),
-
-        password:
-          password.value
-
-      });
-
-    if(error)
-      throw error;
-
-    currentUser =
-      data.user;
-
-    showApp();
-
-    await loadSales();
-
-  }catch(error){
-
-    showToast(
-      error.message ||
-      "Login failed."
-    );
-
-  }finally{
-
-    button.disabled = false;
-
-    button.textContent =
-      "Login";
-
-  }
-
-});
-
-
-/* =========================================================
-   AUTH
-========================================================= */
-
-async function checkAuth(){
+async function init(){
 
   const {
     data:{
       session
     }
-  } =
-    await supabaseClient.auth
+  } = await supabaseClient
+    .auth
     .getSession();
 
-  if(session?.user){
+  if(session){
 
     currentUser =
-      session.user;
+    session.user;
 
     showApp();
 
@@ -1751,1125 +1769,896 @@ async function checkAuth(){
 }
 
 
-supabaseClient.auth
-.onAuthStateChange(
-(_event,session)=>{
+/* =====================================================
+   AUTH
+===================================================== */
 
-  if(session?.user){
+loginForm.addEventListener(
+  "submit",
+  async function(e){
+
+    e.preventDefault();
+
+    loginError.style.display =
+    "none";
+
+    const email =
+    document.getElementById("email")
+    .value
+    .trim();
+
+    const password =
+    document.getElementById("password")
+    .value;
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .auth
+      .signInWithPassword({
+        email,
+        password
+      });
+
+    if(error){
+
+      loginError.textContent =
+      error.message;
+
+      loginError.style.display =
+      "block";
+
+      return;
+
+    }
 
     currentUser =
-      session.user;
+    data.user;
 
     showApp();
 
-  }else{
-
-    currentUser = null;
-
-    sales = [];
-
-    showLogin();
+    await loadSales();
 
   }
-
-});
+);
 
 
 function showLogin(){
 
-  loginPage
-    .classList
-    .remove("hidden");
+  loginScreen.style.display =
+  "flex";
 
-  appPage
-    .classList
-    .add("hidden");
+  app.style.display =
+  "none";
 
 }
 
 
 function showApp(){
 
-  loginPage
-    .classList
-    .add("hidden");
+  loginScreen.style.display =
+  "none";
 
-  appPage
-    .classList
-    .remove("hidden");
+  app.style.display =
+  "block";
 
 }
 
 
-/* =========================================================
+/* =====================================================
    LOAD SALES
-========================================================= */
+===================================================== */
 
 async function loadSales(){
 
   if(!currentUser)
     return;
 
-  try{
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("sales")
+    .select("*")
+    .eq(
+      "user_id",
+      currentUser.id
+    )
+    .order(
+      "created_at",
+      {
+        ascending:false
+      }
+    );
 
-    const {
-      data,
-      error
-    } =
-      await supabaseClient
-      .from("sales")
-      .select(
-        "id,amount,created_at,user_id"
-      )
-      .eq(
-        "user_id",
-        currentUser.id
-      )
-      .order(
-        "created_at",
-        {
-          ascending:true
-        }
-      );
-
-    if(error)
-      throw error;
-
-    sales =
-      data || [];
-
-    render();
-
-    setStatus(true);
-
-  }catch(error){
+  if(error){
 
     console.error(error);
 
-    setStatus(false);
-
-    showToast(
+    alert(
       "Could not load sales."
     );
+
+    return;
+
+  }
+
+  sales =
+  data || [];
+
+  render();
+
+}
+
+
+/* =====================================================
+   ADD SALE
+===================================================== */
+
+async function addSale(){
+
+  const value =
+  prompt(
+    "Enter sale amount:"
+  );
+
+  if(value === null)
+    return;
+
+  const amount =
+  Number(
+    value.trim()
+  );
+
+  if(
+    !Number.isFinite(amount) ||
+    amount <= 0
+  ){
+
+    alert(
+      "Please enter a valid amount."
+    );
+
+    return;
+
+  }
+
+
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("sales")
+    .insert({
+
+      amount:amount,
+
+      user_id:
+      currentUser.id
+
+    })
+    .select()
+    .single();
+
+
+  if(error){
+
+    console.error(error);
+
+    alert(
+      "Failed to add sale."
+    );
+
+    return;
+
+  }
+
+
+  sales.unshift(data);
+
+  render();
+
+}
+
+
+/* =====================================================
+   EDIT SALE
+===================================================== */
+
+async function editSale(id){
+
+  const sale =
+  sales.find(
+    s => s.id === id
+  );
+
+  if(!sale)
+    return;
+
+
+  const value =
+  prompt(
+    "Edit sale amount:",
+    sale.amount
+  );
+
+  if(value === null)
+    return;
+
+
+  const amount =
+  Number(
+    value.trim()
+  );
+
+
+  if(
+    !Number.isFinite(amount) ||
+    amount <= 0
+  ){
+
+    alert(
+      "Please enter a valid amount."
+    );
+
+    return;
+
+  }
+
+
+  const {
+    error
+  } = await supabaseClient
+    .from("sales")
+    .update({
+      amount:amount
+    })
+    .eq(
+      "id",
+      id
+    )
+    .eq(
+      "user_id",
+      currentUser.id
+    );
+
+
+  if(error){
+
+    console.error(error);
+
+    alert(
+      "Failed to update sale."
+    );
+
+    return;
+
+  }
+
+
+  sale.amount =
+  amount;
+
+  render();
+
+}
+
+
+/* =====================================================
+   DELETE
+===================================================== */
+
+async function deleteSale(id){
+
+  const sale =
+  sales.find(
+    s => s.id === id
+  );
+
+  if(!sale)
+    return;
+
+
+  const confirmed =
+  await secureConfirm(
+    "Delete Sale",
+    "Type DELETE to permanently remove this sale."
+  );
+
+  if(!confirmed)
+    return;
+
+
+  const {
+    error
+  } = await supabaseClient
+    .from("sales")
+    .delete()
+    .eq(
+      "id",
+      id
+    )
+    .eq(
+      "user_id",
+      currentUser.id
+    );
+
+
+  if(error){
+
+    console.error(error);
+
+    alert(
+      "Failed to delete sale."
+    );
+
+    return;
+
+  }
+
+
+  deletedSale =
+  {...sale};
+
+  sales =
+  sales.filter(
+    s => s.id !== id
+  );
+
+  render();
+
+}
+
+
+/* =====================================================
+   UNDO DELETE
+===================================================== */
+
+async function undoDelete(){
+
+  if(!deletedSale){
+
+    alert(
+      "There is nothing to undo."
+    );
+
+    return;
+
+  }
+
+
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("sales")
+    .insert({
+
+      amount:
+      deletedSale.amount,
+
+      created_at:
+      deletedSale.created_at,
+
+      user_id:
+      currentUser.id
+
+    })
+    .select()
+    .single();
+
+
+  if(error){
+
+    console.error(error);
+
+    alert(
+      "Could not restore the sale."
+    );
+
+    return;
+
+  }
+
+
+  sales.unshift(data);
+
+  deletedSale =
+  null;
+
+  render();
+
+}
+
+
+/* =====================================================
+   RESET ALL
+===================================================== */
+
+async function resetAll(){
+
+  if(
+    sales.length === 0
+  ){
+
+    alert(
+      "There are no sales to reset."
+    );
+
+    return;
+
+  }
+
+
+  const confirmed =
+  await secureConfirm(
+    "Reset All Sales",
+    "This will permanently delete ALL your sales. Type RESET ALL to continue."
+  );
+
+
+  if(!confirmed)
+    return;
+
+
+  const finalConfirm =
+  await simpleConfirm(
+    "Final Confirmation",
+    "Are you absolutely sure you want to delete all sales?"
+  );
+
+
+  if(!finalConfirm)
+    return;
+
+
+  const {
+    error
+  } = await supabaseClient
+    .from("sales")
+    .delete()
+    .eq(
+      "user_id",
+      currentUser.id
+    );
+
+
+  if(error){
+
+    console.error(error);
+
+    alert(
+      "Failed to reset sales."
+    );
+
+    return;
+
+  }
+
+
+  deletedSale =
+  null;
+
+  sales =
+  [];
+
+  render();
+
+}
+
+
+/* =====================================================
+   RENDER
+===================================================== */
+
+function render(){
+
+  renderStats();
+
+  renderHistory();
+
+  renderReports();
+
+}
+
+
+/* =====================================================
+   STATS
+===================================================== */
+
+function renderStats(){
+
+  const total =
+  sales.reduce(
+    (sum,s) =>
+      sum + Number(s.amount),
+    0
+  );
+
+
+  const today =
+  sales
+  .filter(
+    s =>
+      isToday(
+        new Date(s.created_at)
+      )
+  )
+  .reduce(
+    (sum,s) =>
+      sum + Number(s.amount),
+    0
+  );
+
+
+  countValue.textContent =
+  sales.length;
+
+  totalValue.textContent =
+  formatMoney(total);
+
+  todayValue.textContent =
+  formatMoney(today);
+
+
+  if(sales.length){
+
+    const last =
+    sales
+    .slice()
+    .sort(
+      (a,b) =>
+        new Date(b.created_at) -
+        new Date(a.created_at)
+    )[0];
+
+
+    lastValue.textContent =
+    formatTime(
+      new Date(last.created_at)
+    );
+
+  }else{
+
+    lastValue.textContent =
+    "—";
 
   }
 
 }
 
 
-/* =========================================================
-   ADD SALE
-========================================================= */
+/* =====================================================
+   HISTORY
+===================================================== */
 
-addBtn.addEventListener(
-"click",
-async()=>{
-
-  const tempId =
-    "temp-" +
-    Date.now() +
-    "-" +
-    Math.random();
-
-  const draft = {
-
-    id:tempId,
-
-    amount:0,
-
-    created_at:
-      new Date().toISOString(),
-
-    user_id:
-      currentUser.id,
-
-    pending:true
-
-  };
-
-  sales.push(draft);
-
-  render();
-
-  requestAnimationFrame(()=>{
-
-    const input =
-      document.querySelector(
-        `[data-id="${tempId}"]`
-      );
-
-    if(input)
-      input.focus();
-
-  });
-
-
-  try{
-
-    const {
-      data,
-      error
-    } =
-      await supabaseClient
-      .from("sales")
-      .insert({
-
-        amount:0,
-
-        user_id:
-          currentUser.id
-
-      })
-      .select()
-      .single();
-
-    if(error)
-      throw error;
-
-    const index =
-      sales.findIndex(
-        x => x.id === tempId
-      );
-
-    if(index !== -1){
-
-      const amount =
-        sales[index].amount;
-
-      sales[index] = {
-
-        ...data,
-
-        amount,
-
-        pending:false
-
-      };
-
-      render();
-
-      if(Number(amount)!==0){
-
-        await saveAmount(
-          data.id,
-          amount
-        );
-
-      }
-
-    }
-
-    setStatus(true);
-
-  }catch(error){
-
-    sales =
-      sales.filter(
-        x => x.id !== tempId
-      );
-
-    render();
-
-    setStatus(false);
-
-    showToast(
-      "Could not create sale."
-    );
-
-  }
-
-});
-
-
-/* =========================================================
-   RENDER
-========================================================= */
-
-function render(){
-
-  const query =
-    searchInput.value
-    .trim()
-    .toLowerCase();
-
-  const from =
-    fromDate.value
-    ? new Date(
-        fromDate.value +
-        "T00:00:00"
-      )
-    : null;
-
-  const to =
-    toDate.value
-    ? new Date(
-        toDate.value +
-        "T23:59:59"
-      )
-    : null;
-
+function renderHistory(){
 
   const filtered =
-    sales.filter(
-      sale=>{
-
-        const amount =
-          String(
-            sale.amount ?? 0
-          );
-
-        const date =
-          new Date(
-            sale.created_at
-          );
-
-        if(
-          query &&
-          !amount.includes(query)
-        )
-          return false;
-
-        if(
-          from &&
-          date < from
-        )
-          return false;
-
-        if(
-          to &&
-          date > to
-        )
-          return false;
-
-        return true;
-
-      }
-    );
+  getFilteredSales();
 
 
   if(!filtered.length){
 
-    salesList.innerHTML = `
+    salesList.innerHTML =
+    `
       <div class="empty">
-        No matching sales found.
+        No sales found.
       </div>
     `;
 
-  }else{
+    return;
 
-    salesList.innerHTML =
-      filtered.map(
-        (sale,index)=>{
+  }
 
-          const date =
-            new Date(
-              sale.created_at
-            );
 
-          return `
+  salesList.innerHTML =
+  filtered
+  .map(
+    (sale,index) => {
 
-          <div class="sale-row">
+      const date =
+      new Date(
+        sale.created_at
+      );
 
-            <div class="sale-number">
-              ${index+1}
-            </div>
+      return `
 
-            <input
-              class="sale-input"
-              data-id="${sale.id}"
-              type="number"
-              inputmode="decimal"
-              min="0"
-              step="0.01"
-              value="${Number(
-                sale.amount || 0
-              )}"
-            >
+        <div class="sale-row">
 
-            <div class="sale-time">
-              ${formatTime(date)}
-            </div>
+          <div class="sale-number">
+            ${index + 1}
+          </div>
+
+          <div class="sale-amount">
+            ${formatMoney(
+              Number(sale.amount)
+            )}
+          </div>
+
+          <div class="sale-date">
+            ${formatDate(date)}
+          </div>
+
+          <div class="sale-time">
+            ${formatTime(date)}
+          </div>
+
+          <div class="row-actions">
 
             <button
-              class="delete-btn"
-              data-delete="${sale.id}"
-              title="Delete"
+              class="small-btn edit-btn"
+              onclick="editSale(${sale.id})"
+            >
+              Edit
+            </button>
+
+            <button
+              class="small-btn delete-btn"
+              onclick="deleteSale(${sale.id})"
             >
               ×
             </button>
 
           </div>
 
-          `;
+        </div>
 
-        }
-      ).join("");
+      `;
 
-  }
-
-  updateDashboard();
-
-  salesCountText.textContent =
-    `${filtered.length} ${
-      filtered.length === 1
-      ? "entry"
-      : "entries"
-    }`;
+    }
+  )
+  .join("");
 
 }
 
 
-/* =========================================================
-   INPUT
-========================================================= */
+/* =====================================================
+   FILTER
+===================================================== */
 
-salesList.addEventListener(
-"input",
-e=>{
+function getFilteredSales(){
 
-  if(
-    !e.target.classList
-    .contains("sale-input")
-  )
-    return;
+  const query =
+  searchInput
+  .value
+  .trim()
+  .toLowerCase();
 
-  const id =
-    e.target.dataset.id;
 
-  const sale =
-    sales.find(
-      x =>
-      String(x.id) ===
-      String(id)
-    );
-
-  if(!sale)
-    return;
-
-  const value =
-    parseFloat(
-      e.target.value
-    );
-
-  sale.amount =
-    Number.isFinite(value)
-    ? value
-    : 0;
-
-  updateDashboard();
-
-  clearTimeout(
-    saveTimers.get(id)
-  );
-
-  saveTimers.set(
-    id,
-    setTimeout(
-      ()=>{
-        saveAmount(
-          id,
-          sale.amount
-        );
-      },
-      500
+  const from =
+  fromDate.value
+  ? new Date(
+      fromDate.value +
+      "T00:00:00"
     )
+  : null;
+
+
+  const to =
+  toDate.value
+  ? new Date(
+      toDate.value +
+      "T23:59:59"
+    )
+  : null;
+
+
+  return sales.filter(
+    sale => {
+
+      const amount =
+      String(
+        sale.amount
+      ).toLowerCase();
+
+
+      const date =
+      new Date(
+        sale.created_at
+      );
+
+
+      if(
+        query &&
+        !amount.includes(query)
+      ){
+
+        return false;
+
+      }
+
+
+      if(
+        from &&
+        date < from
+      ){
+
+        return false;
+
+      }
+
+
+      if(
+        to &&
+        date > to
+      ){
+
+        return false;
+
+      }
+
+
+      return true;
+
+    }
   );
 
-});
+}
 
 
-salesList.addEventListener(
-"blur",
-e=>{
+searchInput.addEventListener(
+  "input",
+  renderHistory
+);
 
-  if(
-    !e.target.classList
-    .contains("sale-input")
-  )
-    return;
+fromDate.addEventListener(
+  "change",
+  renderHistory
+);
 
-  const id =
-    e.target.dataset.id;
-
-  clearTimeout(
-    saveTimers.get(id)
-  );
-
-  const sale =
-    sales.find(
-      x =>
-      String(x.id) ===
-      String(id)
-    );
-
-  if(sale)
-    saveAmount(
-      id,
-      sale.amount
-    );
-
-},
-true
+toDate.addEventListener(
+  "change",
+  renderHistory
 );
 
 
-/* =========================================================
-   SAVE
-========================================================= */
+clearFilter.addEventListener(
+  "click",
+  function(){
 
-async function saveAmount(
-id,
-amount
-){
+    searchInput.value =
+    "";
 
-  if(
-    String(id)
-    .startsWith("temp-")
-  )
-    return;
+    fromDate.value =
+    "";
 
-  try{
+    toDate.value =
+    "";
 
-    const {
-      error
-    } =
-      await supabaseClient
-      .from("sales")
-      .update({
-
-        amount:
-          Number(amount)||0
-
-      })
-      .eq(
-        "id",
-        id
-      )
-      .eq(
-        "user_id",
-        currentUser.id
-      );
-
-    if(error)
-      throw error;
-
-    setStatus(true);
-
-  }catch(error){
-
-    console.error(error);
-
-    setStatus(false);
-
-    showToast(
-      "Sync failed."
-    );
+    renderHistory();
 
   }
+);
 
-}
 
+/* =====================================================
+   REPORTS
+===================================================== */
 
-/* =========================================================
-   DELETE
-========================================================= */
+function renderReports(){
 
-salesList.addEventListener(
-"click",
-async e=>{
-
-  const button =
-    e.target.closest(
-      "[data-delete]"
-    );
-
-  if(!button)
-    return;
-
-  const id =
-    button.dataset.delete;
-
-  const ok =
-    await secureConfirm(
-      "Delete Sale",
-      "Type DELETE to permanently delete this sale.",
-      "DELETE"
-    );
-
-  if(ok)
-    deleteSale(id);
-
-});
-
-
-async function deleteSale(id){
-
-  const index =
-    sales.findIndex(
-      x =>
-      String(x.id) ===
-      String(id)
-    );
-
-  if(index===-1)
-    return;
-
-  const deleted =
-    sales[index];
-
-  sales.splice(
-    index,
-    1
-  );
-
-  render();
-
-
-  if(
-    String(id)
-    .startsWith("temp-")
-  ){
-
-    showUndo(
-      deleted,
-      false
-    );
-
-    return;
-
-  }
-
-
-  try{
-
-    const {
-      error
-    } =
-      await supabaseClient
-      .from("sales")
-      .delete()
-      .eq(
-        "id",
-        id
-      )
-      .eq(
-        "user_id",
-        currentUser.id
-      );
-
-    if(error)
-      throw error;
-
-    setStatus(true);
-
-    showUndo(
-      deleted,
-      true
-    );
-
-  }catch(error){
-
-    sales.splice(
-      index,
-      0,
-      deleted
-    );
-
-    render();
-
-    setStatus(false);
-
-    showToast(
-      "Delete failed."
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   UNDO
-========================================================= */
-
-function showUndo(
-sale,
-serverDeleted
-){
-
-  clearTimeout(
-    undoTimer
-  );
-
-  undoData = {
-    sale,
-    serverDeleted
-  };
-
-  undoText.textContent =
-    "Sale deleted";
-
-  undoBar.classList.add(
-    "show"
-  );
-
-  undoTimer =
-    setTimeout(
-      ()=>{
-        undoData = null;
-
-        undoBar.classList.remove(
-          "show"
-        );
-
-      },
-      7000
-    );
-
-}
-
-
-undoBtn.addEventListener(
-"click",
-async()=>{
-
-  if(!undoData)
-    return;
-
-  clearTimeout(
-    undoTimer
-  );
-
-  const data =
-    undoData;
-
-  undoData = null;
-
-  undoBar.classList.remove(
-    "show"
-  );
-
-  const sale =
-    data.sale;
-
-  if(!data.serverDeleted){
-
-    sales.push(sale);
-
-    render();
-
-    return;
-
-  }
-
-
-  try{
-
-    const {
-      data:restored,
-      error
-    } =
-      await supabaseClient
-      .from("sales")
-      .insert({
-
-        id:
-          sale.id,
-
-        amount:
-          sale.amount,
-
-        created_at:
-          sale.created_at,
-
-        user_id:
-          currentUser.id
-
-      })
-      .select()
-      .single();
-
-    if(error)
-      throw error;
-
-    sales.push(
-      restored
-    );
-
-    sales.sort(
-      (a,b)=>
-        new Date(a.created_at) -
-        new Date(b.created_at)
-    );
-
-    render();
-
-    showToast(
-      "Sale restored."
-    );
-
-  }catch(error){
-
-    showToast(
-      "Restore failed."
-    );
-
-  }
-
-});
-
-
-/* =========================================================
-   RESET
-========================================================= */
-
-resetBtn.addEventListener(
-"click",
-async()=>{
-
-  if(!sales.length){
-
-    showToast(
-      "No sales to reset."
-    );
-
-    return;
-
-  }
-
-  const first =
-    await secureConfirm(
-      "Reset All Sales",
-      "Type RESET ALL to continue.",
-      "RESET ALL"
-    );
-
-  if(!first)
-    return;
-
-  const second =
-    await simpleConfirm(
-      "Final Confirmation",
-      "This will permanently delete ALL your sales. Continue?"
-    );
-
-  if(!second)
-    return;
-
-  const oldSales =
-    [...sales];
-
-  sales = [];
-
-  render();
-
-  try{
-
-    const {
-      error
-    } =
-      await supabaseClient
-      .from("sales")
-      .delete()
-      .eq(
-        "user_id",
-        currentUser.id
-      );
-
-    if(error)
-      throw error;
-
-    showToast(
-      "All sales deleted."
-    );
-
-  }catch(error){
-
-    sales =
-      oldSales;
-
-    render();
-
-    showToast(
-      "Reset failed."
-    );
-
-  }
-
-});
-
-
-/* =========================================================
-   DASHBOARD
-========================================================= */
-
-function updateDashboard(){
-
-  const total =
-    sales.reduce(
-      (sum,sale)=>
-        sum +
-        Number(
-          sale.amount || 0
-        ),
-      0
-    );
+  const now =
+  new Date();
 
 
   const today =
-    sales
-    .filter(
-      x =>
+  sales
+  .filter(
+    s =>
       isToday(
-        x.created_at
+        new Date(s.created_at)
       )
-    )
-    .reduce(
-      (sum,x)=>
-        sum +
-        Number(
-          x.amount || 0
-        ),
-      0
-    );
-
-
-  countValue.textContent =
-    sales.length;
-
-  totalValue.textContent =
-    formatNumber(total);
-
-  todayValue.textContent =
-    formatNumber(today);
-
-
-  /*
-    Last Sale = TIME ONLY
-  */
-
-  if(!sales.length){
-
-    lastSaleValue.textContent =
-      "—";
-
-  }else{
-
-    const last =
-      [...sales].sort(
-        (a,b)=>
-          new Date(b.created_at) -
-          new Date(a.created_at)
-      )[0];
-
-    lastSaleValue.textContent =
-      formatTime(
-        new Date(
-          last.created_at
-        )
-      );
-
-  }
-
-}
-
-
-/* =========================================================
-   REPORT
-========================================================= */
-
-reportBtn.addEventListener(
-"click",
-()=>{
-
-  reportBox.classList.toggle(
-    "hidden"
+  )
+  .reduce(
+    (sum,s) =>
+      sum + Number(s.amount),
+    0
   );
 
-  updateReports();
 
-});
+  const yesterday =
+  sales
+  .filter(
+    s =>
+      isYesterday(
+        new Date(s.created_at)
+      )
+  )
+  .reduce(
+    (sum,s) =>
+      sum + Number(s.amount),
+    0
+  );
 
 
-function updateReports(){
+  const weekStart =
+  new Date(now);
+
+  weekStart.setDate(
+    now.getDate() -
+    ((now.getDay()+6)%7)
+  );
+
+  weekStart.setHours(
+    0,0,0,0
+  );
+
+
+  const week =
+  sales
+  .filter(
+    s =>
+      new Date(
+        s.created_at
+      ) >= weekStart
+  )
+  .reduce(
+    (sum,s) =>
+      sum + Number(s.amount),
+    0
+  );
+
+
+  const monthStart =
+  new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    1
+  );
+
+
+  const month =
+  sales
+  .filter(
+    s =>
+      new Date(
+        s.created_at
+      ) >= monthStart
+  )
+  .reduce(
+    (sum,s) =>
+      sum + Number(s.amount),
+    0
+  );
+
 
   document.getElementById(
     "reportToday"
   ).textContent =
-    formatNumber(
-      periodTotal("today")
-    );
+  formatMoney(today);
+
 
   document.getElementById(
     "reportYesterday"
   ).textContent =
-    formatNumber(
-      periodTotal("yesterday")
-    );
+  formatMoney(yesterday);
+
 
   document.getElementById(
     "reportWeek"
   ).textContent =
-    formatNumber(
-      periodTotal("week")
-    );
+  formatMoney(week);
+
 
   document.getElementById(
     "reportMonth"
   ).textContent =
-    formatNumber(
-      periodTotal("month")
-    );
+  formatMoney(month);
 
 }
 
 
-function periodTotal(type){
-
-  return sales.reduce(
-    (sum,sale)=>{
-
-      const date =
-        new Date(
-          sale.created_at
-        );
-
-      let valid = false;
-
-
-      if(type==="today"){
-
-        valid =
-          isToday(date);
-
-      }
-
-
-      if(type==="yesterday"){
-
-        const yesterday =
-          new Date();
-
-        yesterday.setDate(
-          yesterday.getDate()-1
-        );
-
-        valid =
-          sameDate(
-            date,
-            yesterday
-          );
-
-      }
-
-
-      if(type==="week"){
-
-        valid =
-          date >=
-          getWeekStart();
-
-      }
-
-
-      if(type==="month"){
-
-        const now =
-          new Date();
-
-        valid =
-          date.getFullYear() ===
-          now.getFullYear() &&
-
-          date.getMonth() ===
-          now.getMonth();
-
-      }
-
-
-      return valid
-        ? sum +
-          Number(
-            sale.amount || 0
-          )
-        : sum;
-
-    },
-    0
-  );
-
-}
-
-
-function getWeekStart(){
-
-  const d =
-    new Date();
-
-  const day =
-    d.getDay();
-
-  const diff =
-    day===0
-    ? 6
-    : day-1;
-
-  d.setDate(
-    d.getDate()-diff
-  );
-
-  d.setHours(
-    0,0,0,0
-  );
-
-  return d;
-
-}
-
-
-/* =========================================================
-   SEARCH
-========================================================= */
-
-searchInput.addEventListener(
-"input",
-render
-);
-
-fromDate.addEventListener(
-"change",
-render
-);
-
-toDate.addEventListener(
-"change",
-render
-);
-
-clearFilter.addEventListener(
-"click",
-()=>{
-
-  searchInput.value="";
-  fromDate.value="";
-  toDate.value="";
-
-  render();
-
-});
-
-
-/* =========================================================
+/* =====================================================
    CSV
-========================================================= */
+===================================================== */
 
-exportBtn.addEventListener(
-"click",
-()=>{
+function exportCSV(){
 
   if(!sales.length){
 
-    showToast(
+    alert(
       "No sales to export."
     );
 
@@ -2877,397 +2666,421 @@ exportBtn.addEventListener(
 
   }
 
-  const rows=[
 
+  const rows = [
     [
-      "No",
+      "ID",
       "Amount",
       "Date",
       "Time"
-    ],
-
-    ...sales.map(
-      (sale,index)=>{
-
-        const date =
-          new Date(
-            sale.created_at
-          );
-
-        return [
-
-          index+1,
-
-          sale.amount,
-
-          date.toLocaleDateString(),
-
-          date.toLocaleTimeString()
-
-        ];
-
-      }
-    )
-
+    ]
   ];
 
 
-  const csv =
-    rows
-    .map(
-      row =>
-      row
-      .map(csvEscape)
-      .join(",")
-    )
-    .join("\n");
+  sales.forEach(
+    sale => {
 
-
-  downloadFile(
-    csv,
-    `saletrack-${fileDate()}.csv`,
-    "text/csv"
-  );
-
-  showToast(
-    "CSV exported."
-  );
-
-});
-
-
-function csvEscape(value){
-
-  const str =
-    String(
-      value ?? ""
-    );
-
-  if(
-    str.includes(",") ||
-    str.includes('"') ||
-    str.includes("\n")
-  ){
-
-    return `"${str.replace(
-      /"/g,
-      '""'
-    )}"`;
-
-  }
-
-  return str;
-
-}
-
-
-/* =========================================================
-   BACKUP
-========================================================= */
-
-backupBtn.addEventListener(
-"click",
-()=>{
-
-  backupBox.classList.toggle(
-    "hidden"
-  );
-
-});
-
-
-document.getElementById(
-"downloadBackup"
-).addEventListener(
-"click",
-()=>{
-
-  const backup={
-
-    app:"SaleTrack",
-
-    version:1,
-
-    exported_at:
-      new Date().toISOString(),
-
-    sales:
-      sales.map(
-        sale=>({
-
-          amount:
-            Number(
-              sale.amount || 0
-            ),
-
-          created_at:
-            sale.created_at
-
-        })
-      )
-
-  };
-
-
-  downloadFile(
-
-    JSON.stringify(
-      backup,
-      null,
-      2
-    ),
-
-    `saletrack-backup-${fileDate()}.json`,
-
-    "application/json"
-
-  );
-
-
-  showToast(
-    "Backup downloaded."
-  );
-
-});
-
-
-document.getElementById(
-"chooseRestore"
-).addEventListener(
-"click",
-()=>{
-
-  restoreFile.click();
-
-});
-
-
-restoreFile.addEventListener(
-"change",
-async()=>{
-
-  const file =
-    restoreFile.files[0];
-
-  if(!file)
-    return;
-
-
-  const ok =
-    await simpleConfirm(
-      "Restore Backup",
-      "Restore these sales? Existing sales will remain."
-    );
-
-  if(!ok){
-
-    restoreFile.value="";
-
-    return;
-
-  }
-
-
-  try{
-
-    const text =
-      await file.text();
-
-    const backup =
-      JSON.parse(text);
-
-    if(
-      !Array.isArray(
-        backup.sales
-      )
-    )
-      throw new Error(
-        "Invalid backup"
+      const date =
+      new Date(
+        sale.created_at
       );
 
-
-    let added=0;
-
-
-    for(
-      const sale
-      of backup.sales
-    ){
-
-      const {
-        error
-      } =
-        await supabaseClient
-        .from("sales")
-        .insert({
-
-          amount:
-            Number(
-              sale.amount || 0
-            ),
-
-          created_at:
-            sale.created_at,
-
-          user_id:
-            currentUser.id
-
-        });
-
-      if(!error)
-        added++;
+      rows.push([
+        sale.id,
+        sale.amount,
+        formatDate(date),
+        formatTime(date)
+      ]);
 
     }
+  );
 
 
-    await loadSales();
+  const csv =
+  rows
+  .map(
+    row =>
+      row.join(",")
+  )
+  .join("\n");
 
-    showToast(
-      `${added} sales restored.`
-    );
-
-  }catch(error){
-
-    console.error(error);
-
-    showToast(
-      "Invalid backup file."
-    );
-
-  }
-
-
-  restoreFile.value="";
-
-});
-
-
-/* =========================================================
-   DOWNLOAD
-========================================================= */
-
-function downloadFile(
-content,
-filename,
-type
-){
 
   const blob =
-    new Blob(
-      [content],
-      {type}
-    );
+  new Blob(
+    [csv],
+    {
+      type:
+      "text/csv;charset=utf-8;"
+    }
+  );
+
 
   const url =
-    URL.createObjectURL(
-      blob
-    );
+  URL.createObjectURL(blob);
+
 
   const a =
-    document.createElement(
-      "a"
-    );
+  document.createElement("a");
 
-  a.href=url;
+  a.href =
+  url;
 
-  a.download=filename;
-
-  document.body.appendChild(a);
+  a.download =
+  "saletrack-sales.csv";
 
   a.click();
-
-  a.remove();
 
   URL.revokeObjectURL(url);
 
 }
 
 
-/* =========================================================
-   MODAL
-========================================================= */
+/* =====================================================
+   BACKUP
+===================================================== */
+
+function backupJSON(){
+
+  if(!sales.length){
+
+    alert(
+      "No sales to backup."
+    );
+
+    return;
+
+  }
+
+
+  const backup = {
+
+    app:
+    "SaleTrack",
+
+    version:
+    1,
+
+    exported_at:
+    new Date().toISOString(),
+
+    sales:
+    sales.map(
+      sale => ({
+        amount:
+        sale.amount,
+
+        created_at:
+        sale.created_at
+      })
+    )
+
+  };
+
+
+  const blob =
+  new Blob(
+    [
+      JSON.stringify(
+        backup,
+        null,
+        2
+      )
+    ],
+    {
+      type:
+      "application/json"
+    }
+  );
+
+
+  const url =
+  URL.createObjectURL(blob);
+
+
+  const a =
+  document.createElement("a");
+
+  a.href =
+  url;
+
+  a.download =
+  "saletrack-backup.json";
+
+  a.click();
+
+  URL.revokeObjectURL(url);
+
+}
+
+
+/* =====================================================
+   RESTORE
+===================================================== */
+
+document
+.getElementById("restoreFile")
+.addEventListener(
+  "change",
+  async function(){
+
+    const file =
+    this.files[0];
+
+    if(!file)
+      return;
+
+
+    try{
+
+      const text =
+      await file.text();
+
+      const backup =
+      JSON.parse(text);
+
+
+      if(
+        !backup.sales ||
+        !Array.isArray(
+          backup.sales
+        )
+      ){
+
+        throw new Error(
+          "Invalid backup file."
+        );
+
+      }
+
+
+      const confirmed =
+      await simpleConfirm(
+        "Restore Backup",
+        `Restore ${backup.sales.length} sales as new records?`
+      );
+
+
+      if(!confirmed)
+        return;
+
+
+      const records =
+      backup.sales
+      .map(
+        sale => ({
+          amount:
+          Number(sale.amount),
+
+          created_at:
+          sale.created_at,
+
+          user_id:
+          currentUser.id
+        })
+      )
+      .filter(
+        sale =>
+          Number.isFinite(
+            sale.amount
+          ) &&
+          sale.amount > 0
+      );
+
+
+      if(!records.length){
+
+        alert(
+          "No valid sales found."
+        );
+
+        return;
+
+      }
+
+
+      const {
+        data,
+        error
+      } =
+      await supabaseClient
+      .from("sales")
+      .insert(records)
+      .select();
+
+
+      if(error){
+
+        console.error(error);
+
+        alert(
+          "Restore failed."
+        );
+
+        return;
+
+      }
+
+
+      sales =
+      [
+        ...data,
+        ...sales
+      ];
+
+      render();
+
+
+      alert(
+        `${data.length} sales restored successfully.`
+      );
+
+
+    }catch(error){
+
+      console.error(error);
+
+      alert(
+        "Invalid backup file."
+      );
+
+    }
+
+
+    this.value =
+    "";
+
+  }
+);
+
+
+/* =====================================================
+   MODAL HELPERS
+===================================================== */
+
+function openModal(){
+
+  document
+  .getElementById("modal")
+  .classList
+  .add("show");
+
+}
+
+
+function closeModal(){
+
+  document
+  .getElementById("modal")
+  .classList
+  .remove("show");
+
+}
+
 
 function secureConfirm(
-title,
-message,
-word
+  title,
+  text
 ){
 
   return new Promise(
-    resolve=>{
+    resolve => {
+
+      const modal =
+      document.getElementById(
+        "modal"
+      );
+
+      const modalTitle =
+      document.getElementById(
+        "modalTitle"
+      );
+
+      const modalText =
+      document.getElementById(
+        "modalText"
+      );
+
+      const input =
+      document.getElementById(
+        "modalInput"
+      );
+
+      const cancel =
+      document.getElementById(
+        "modalCancel"
+      );
+
+      const confirm =
+      document.getElementById(
+        "modalConfirm"
+      );
+
 
       modalTitle.textContent =
-        title;
+      title;
 
-      modalMessage.textContent =
-        message;
-
-      modalInput.classList.remove(
-        "hidden"
-      );
-
-      modalInput.value="";
-
-      modalInput.placeholder =
-        `Type ${word}`;
-
-      overlay.classList.remove(
-        "hidden"
-      );
+      modalText.textContent =
+      text;
 
 
-      modalResolve =
-        value=>{
+      input.style.display =
+      "block";
 
-          modalResolve=null;
+      input.value =
+      "";
 
-          overlay.classList.add(
-            "hidden"
-          );
-
-          modalInput.classList.add(
-            "hidden"
-          );
-
-          resolve(value);
-
-        };
+      input.placeholder =
+      "Type confirmation";
 
 
-      modalConfirm.onclick =
-        ()=>{
+      confirm.className =
+      "modal-btn danger";
 
-          if(
-            modalInput.value
-              .trim() !== word
-          ){
-
-            showToast(
-              `Type exactly: ${word}`
-            );
-
-            return;
-
-          }
-
-          modalResolve(true);
-
-        };
+      confirm.textContent =
+      "Confirm";
 
 
-      modalCancel.onclick =
-        ()=>{
-
-          modalResolve(false);
-
-        };
-
+      openModal();
 
       setTimeout(
-        ()=>{
-          modalInput.focus();
-        },
-        50
+        () => input.focus(),
+        100
+      );
+
+
+      const cleanup =
+      result => {
+
+        closeModal();
+
+        input.style.display =
+        "none";
+
+        cancel.onclick =
+        null;
+
+        confirm.onclick =
+        null;
+
+        resolve(result);
+
+      };
+
+
+      cancel.onclick =
+      () =>
+      cleanup(false);
+
+
+      confirm.onclick =
+      () =>
+      cleanup(
+        input.value.trim() ===
+        (
+          title.includes("Reset")
+          ? "RESET ALL"
+          : "DELETE"
+        )
       );
 
     }
@@ -3277,47 +3090,89 @@ word
 
 
 function simpleConfirm(
-title,
-message
+  title,
+  text
 ){
 
   return new Promise(
-    resolve=>{
+    resolve => {
+
+      const modal =
+      document.getElementById(
+        "modal"
+      );
+
+      const modalTitle =
+      document.getElementById(
+        "modalTitle"
+      );
+
+      const modalText =
+      document.getElementById(
+        "modalText"
+      );
+
+      const input =
+      document.getElementById(
+        "modalInput"
+      );
+
+      const cancel =
+      document.getElementById(
+        "modalCancel"
+      );
+
+      const confirm =
+      document.getElementById(
+        "modalConfirm"
+      );
+
 
       modalTitle.textContent =
-        title;
+      title;
 
-      modalMessage.textContent =
-        message;
-
-      modalInput.classList.add(
-        "hidden"
-      );
-
-      overlay.classList.remove(
-        "hidden"
-      );
+      modalText.textContent =
+      text;
 
 
-      modalResolve =
-        value=>{
-
-          modalResolve=null;
-
-          overlay.classList.add(
-            "hidden"
-          );
-
-          resolve(value);
-
-        };
+      input.style.display =
+      "none";
 
 
-      modalConfirm.onclick =
-        ()=>modalResolve(true);
+      confirm.className =
+      "modal-btn primary";
 
-      modalCancel.onclick =
-        ()=>modalResolve(false);
+      confirm.textContent =
+      "Confirm";
+
+
+      openModal();
+
+
+      const cleanup =
+      result => {
+
+        closeModal();
+
+        cancel.onclick =
+        null;
+
+        confirm.onclick =
+        null;
+
+        resolve(result);
+
+      };
+
+
+      cancel.onclick =
+      () =>
+      cleanup(false);
+
+
+      confirm.onclick =
+      () =>
+      cleanup(true);
 
     }
   );
@@ -3325,119 +3180,46 @@ message
 }
 
 
-/* =========================================================
-   LOGOUT
-========================================================= */
+/* =====================================================
+   SECTION TOGGLE
+===================================================== */
 
-logoutBtn.addEventListener(
-"click",
-async()=>{
+function toggleSection(id){
 
-  const ok =
-    await simpleConfirm(
-      "Logout",
-      "Are you sure you want to logout?"
-    );
-
-  if(!ok)
-    return;
-
-  await supabaseClient.auth.signOut();
-
-});
-
-
-/* =========================================================
-   STATUS
-========================================================= */
-
-function setStatus(online){
-
-  if(online){
-
-    connection.classList.remove(
-      "offline"
-    );
-
-    connectionText.textContent =
-      "Online";
-
-  }else{
-
-    connection.classList.add(
-      "offline"
-    );
-
-    connectionText.textContent =
-      "Offline";
-
-  }
+  document
+  .getElementById(id)
+  .classList
+  .toggle("open");
 
 }
 
 
-window.addEventListener(
-"online",
-()=>{
+/* =====================================================
+   FORMAT HELPERS
+===================================================== */
 
-  setStatus(true);
+function formatMoney(value){
 
-  if(currentUser)
-    loadSales();
-
-});
-
-
-window.addEventListener(
-"offline",
-()=>{
-
-  setStatus(false);
-
-});
-
-
-/* =========================================================
-   HELPERS
-========================================================= */
-
-function isToday(value){
-
-  return sameDate(
-    new Date(value),
-    new Date()
-  );
+  return Number(value)
+    .toLocaleString(
+      undefined,
+      {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }
+    );
 
 }
 
 
-function sameDate(a,b){
+function formatDate(date){
 
-  return (
-
-    a.getFullYear() ===
-      b.getFullYear() &&
-
-    a.getMonth() ===
-      b.getMonth() &&
-
-    a.getDate() ===
-      b.getDate()
-
-  );
-
-}
-
-
-function formatNumber(value){
-
-  return Number(
-    value || 0
-  ).toLocaleString(
+  return date.toLocaleDateString(
     undefined,
     {
-      minimumFractionDigits:0,
-      maximumFractionDigits:2
+      year:"numeric",
+      month:"short",
+      day:"2-digit"
     }
   );
 
@@ -3450,59 +3232,129 @@ function formatTime(date){
     undefined,
     {
       hour:"2-digit",
-      minute:"2-digit"
+      minute:"2-digit",
+      hour12:true
     }
   );
 
 }
 
 
-function fileDate(){
+function isToday(date){
 
-  return new Date()
-    .toISOString()
-    .slice(0,10);
+  const now =
+  new Date();
+
+  return (
+    date.getFullYear() ===
+    now.getFullYear() &&
+
+    date.getMonth() ===
+    now.getMonth() &&
+
+    date.getDate() ===
+    now.getDate()
+  );
 
 }
 
 
-let toastTimer;
+function isYesterday(date){
 
-function showToast(message){
+  const yesterday =
+  new Date();
 
-  clearTimeout(
-    toastTimer
+  yesterday.setDate(
+    yesterday.getDate() - 1
   );
 
-  toast.textContent =
-    message;
+  return (
+    date.getFullYear() ===
+    yesterday.getFullYear() &&
 
-  toast.classList.add(
-    "show"
+    date.getMonth() ===
+    yesterday.getMonth() &&
+
+    date.getDate() ===
+    yesterday.getDate()
   );
-
-  toastTimer =
-    setTimeout(
-      ()=>{
-        toast.classList.remove(
-          "show"
-        );
-      },
-      2500
-    );
 
 }
 
 
-/* =========================================================
-   START
-========================================================= */
+/* =====================================================
+   ONLINE / OFFLINE
+===================================================== */
 
-setStatus(
-  navigator.onLine
+function updateOnlineStatus(){
+
+  const online =
+  navigator.onLine;
+
+
+  if(online){
+
+    status.classList
+    .remove("offline");
+
+    statusText.textContent =
+    "Online";
+
+  }else{
+
+    status.classList
+    .add("offline");
+
+    statusText.textContent =
+    "Offline";
+
+  }
+
+}
+
+
+window.addEventListener(
+  "online",
+  updateOnlineStatus
 );
 
-checkAuth();
+window.addEventListener(
+  "offline",
+  updateOnlineStatus
+);
+
+updateOnlineStatus();
+
+
+/* =====================================================
+   AUTH STATE
+===================================================== */
+
+supabaseClient
+.auth
+.onAuthStateChange(
+  async (
+    event,
+    session
+  ) => {
+
+    if(
+      event ===
+      "SIGNED_OUT"
+    ){
+
+      currentUser =
+      null;
+
+      sales =
+      [];
+
+      showLogin();
+
+    }
+
+  }
+);
 
 </script>
 
