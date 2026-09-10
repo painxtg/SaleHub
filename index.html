@@ -1,1376 +1,2213 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>SaleTrack</title>
+  <title>SaleTrack</title>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        body {
-            margin: 0;
-            padding: 18px;
-            background: #0d0f13;
-            color: #ffffff;
-            font-family: Arial, sans-serif;
-        }
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b0f14;
+      color: #fff;
+      min-height: 100vh;
+    }
 
-        button,
-        input {
-            font: inherit;
-        }
+    button,
+    input {
+      font: inherit;
+    }
 
-        .app {
-            width: 100%;
-            max-width: 480px;
-            margin: auto;
-        }
+    button {
+      cursor: pointer;
+    }
 
-        .hidden {
-            display: none !important;
-        }
+    .hidden {
+      display: none !important;
+    }
 
-        /* Login */
+    /* LOGIN */
 
-        .login-box {
-            max-width: 400px;
-            margin: 50px auto;
-            background: #171a20;
-            border: 1px solid #292e38;
-            border-radius: 20px;
-            padding: 22px;
-        }
+    #loginPage {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
 
-        .logo {
-            font-size: 30px;
-            font-weight: 800;
-            margin-bottom: 5px;
-        }
+    .login-box {
+      width: 100%;
+      max-width: 390px;
+      background: #111821;
+      border: 1px solid #202b38;
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 15px 50px rgba(0,0,0,.35);
+    }
 
-        .subtitle {
-            color: #858b98;
-            font-size: 14px;
-            margin-bottom: 22px;
-        }
+    .logo {
+      text-align: center;
+      font-size: 30px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
 
-        .login-box input {
-            width: 100%;
-            height: 48px;
-            margin-bottom: 11px;
-            padding: 0 14px;
-            border-radius: 12px;
-            border: 1px solid #292e38;
-            background: #0f1115;
-            color: white;
-            outline: none;
-        }
+    .logo span {
+      color: #4ade80;
+    }
 
-        .login-box input:focus {
-            border-color: #777;
-        }
+    .subtitle {
+      text-align: center;
+      color: #8b98a8;
+      margin-bottom: 25px;
+      font-size: 14px;
+    }
 
-        .login-btn {
-            width: 100%;
-            height: 48px;
-            border: 0;
-            border-radius: 12px;
-            background: white;
-            color: #111;
-            font-weight: bold;
-            cursor: pointer;
-        }
+    .form-group {
+      margin-bottom: 15px;
+    }
 
-        .message {
-            margin-top: 12px;
-            color: #ff7777;
-            font-size: 14px;
-            line-height: 1.4;
-        }
+    .form-group label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 13px;
+      color: #aab5c2;
+    }
 
-        /* Header */
+    input {
+      width: 100%;
+      border: 1px solid #293544;
+      background: #0b1118;
+      color: #fff;
+      border-radius: 11px;
+      padding: 13px 14px;
+      outline: none;
+    }
 
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 18px;
-        }
+    input:focus {
+      border-color: #4ade80;
+    }
 
-        .header h1 {
-            margin: 0;
-            font-size: 27px;
-        }
+    .primary-btn {
+      width: 100%;
+      border: 0;
+      background: #4ade80;
+      color: #07120b;
+      padding: 13px;
+      border-radius: 11px;
+      font-weight: 700;
+      margin-top: 5px;
+    }
 
-        .header p {
-            margin: 5px 0 0;
-            color: #858b98;
-            font-size: 13px;
-        }
+    .primary-btn:hover {
+      opacity: .9;
+    }
 
-        .logout {
-            border: 1px solid #292e38;
-            background: #171a20;
-            color: #ff7777;
-            border-radius: 10px;
-            padding: 9px 12px;
-            cursor: pointer;
-        }
+    /* APP */
 
-        /* Stats */
+    #appPage {
+      min-height: 100vh;
+      padding-bottom: 50px;
+    }
 
-        .stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 15px;
-        }
+    .container {
+      width: min(100% - 30px, 900px);
+      margin: auto;
+    }
 
-        .card {
-            background: #171a20;
-            border: 1px solid #292e38;
-            border-radius: 16px;
-            padding: 16px;
-        }
+    .topbar {
+      padding: 18px 0;
+      border-bottom: 1px solid #1c2631;
+    }
 
-        .card small {
-            color: #858b98;
-        }
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
 
-        .card h2 {
-            margin: 8px 0 0;
-            font-size: 25px;
-            word-break: break-word;
-        }
+    .brand {
+      font-size: 24px;
+      font-weight: 800;
+    }
 
-        /* Add */
+    .brand span {
+      color: #4ade80;
+    }
 
-        .add-btn {
-            width: 100%;
-            height: 50px;
-            border: 0;
-            border-radius: 14px;
-            background: white;
-            color: #111;
-            font-weight: bold;
-            font-size: 17px;
-            cursor: pointer;
-            margin-bottom: 15px;
-        }
+    .user-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-        .add-btn:active {
-            transform: scale(.98);
-        }
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #aab5c2;
+    }
 
-        /* Sales */
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4ade80;
+    }
 
-        .list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+    .status.offline .status-dot {
+      background: #ef4444;
+    }
 
-        .row {
-            display: flex;
-            gap: 8px;
-        }
+    .logout-btn {
+      border: 1px solid #293544;
+      background: #111821;
+      color: #ddd;
+      border-radius: 9px;
+      padding: 8px 11px;
+      font-size: 12px;
+    }
 
-        .amount {
-            flex: 1;
-            min-width: 0;
-            height: 48px;
-            padding: 0 14px;
-            border-radius: 12px;
-            border: 1px solid #292e38;
-            background: #171a20;
-            color: white;
-            outline: none;
-            font-size: 18px;
-        }
+    /* DASHBOARD */
 
-        .amount:focus {
-            border-color: #777;
-        }
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
 
-        .delete {
-            width: 48px;
-            height: 48px;
-            flex-shrink: 0;
-            border-radius: 12px;
-            border: 1px solid #292e38;
-            background: #171a20;
-            color: #ff6666;
-            font-size: 22px;
-            cursor: pointer;
-        }
+    .card {
+      background: #111821;
+      border: 1px solid #202b38;
+      border-radius: 15px;
+      padding: 16px;
+    }
 
-        .empty {
-            text-align: center;
-            padding: 25px 10px;
-            color: #777e8b;
-            border: 1px dashed #292e38;
-            border-radius: 14px;
-        }
+    .card-label {
+      color: #8491a1;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
 
-        /* Reset */
+    .card-value {
+      font-size: 21px;
+      font-weight: 800;
+      word-break: break-word;
+    }
 
-        .reset-box {
-            margin-top: 18px;
-        }
+    /* ACTIONS */
 
-        .reset-btn {
-            width: 100%;
-            height: 46px;
-            border-radius: 12px;
-            border: 1px solid #3a3030;
-            background: transparent;
-            color: #ff7777;
-            font-weight: bold;
-            cursor: pointer;
-        }
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
 
-        /* Modal */
+    .action-btn {
+      border: 1px solid #293544;
+      background: #111821;
+      color: #fff;
+      padding: 11px 15px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
 
-        .modal-bg {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, .75);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            z-index: 1000;
-        }
+    .action-btn.add {
+      background: #4ade80;
+      color: #07120b;
+      border-color: #4ade80;
+    }
 
-        .modal-bg.show {
-            display: flex;
-        }
+    .action-btn.danger {
+      color: #ff7676;
+    }
 
-        .modal {
-            width: 100%;
-            max-width: 360px;
-            background: #181b21;
-            border: 1px solid #303641;
-            border-radius: 20px;
-            padding: 22px;
-        }
+    .action-btn:hover {
+      opacity: .88;
+    }
 
-        .modal-icon {
-            font-size: 30px;
-            margin-bottom: 10px;
-        }
+    /* SALES LIST */
 
-        .modal h3 {
-            margin: 0 0 8px;
-        }
+    .sales-box {
+      background: #111821;
+      border: 1px solid #202b38;
+      border-radius: 17px;
+      overflow: hidden;
+    }
 
-        .modal p {
-            margin: 0;
-            color: #9298a4;
-            font-size: 14px;
-            line-height: 1.5;
-        }
+    .sales-header {
+      padding: 15px 17px;
+      border-bottom: 1px solid #202b38;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        .modal-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
+    .sales-title {
+      font-weight: 700;
+    }
 
-        .modal-actions button {
-            flex: 1;
-            height: 45px;
-            border-radius: 11px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+    .sales-count {
+      font-size: 12px;
+      color: #7f8b99;
+    }
 
-        .no-btn {
-            border: 1px solid #343944;
-            background: #22262e;
-            color: white;
-        }
+    #salesList {
+      padding: 10px;
+    }
 
-        .yes-btn {
-            border: 0;
-            background: white;
-            color: #111;
-        }
+    .sale-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px;
+      border-bottom: 1px solid #1c2530;
+    }
 
-        .danger-btn {
-            border: 0;
-            background: #d64545;
-            color: white;
-        }
+    .sale-row:last-child {
+      border-bottom: 0;
+    }
 
-        @media (max-width: 360px) {
-            body {
-                padding: 14px;
-            }
+    .sale-number {
+      width: 30px;
+      text-align: center;
+      color: #697686;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
 
-            .header h1 {
-                font-size: 24px;
-            }
+    .sale-input {
+      flex: 1;
+      min-width: 0;
+      padding: 11px 12px;
+      font-size: 16px;
+    }
 
-            .card h2 {
-                font-size: 21px;
-            }
-        }
-    </style>
+    .delete-btn {
+      width: 38px;
+      height: 38px;
+      border: 1px solid #3b2525;
+      background: #1c1313;
+      color: #ff6b6b;
+      border-radius: 9px;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+
+    .pending {
+      opacity: .65;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 45px 20px;
+      color: #667383;
+      font-size: 14px;
+    }
+
+    /* MODAL */
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.72);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 360px;
+      background: #111821;
+      border: 1px solid #293544;
+      border-radius: 17px;
+      padding: 23px;
+    }
+
+    .modal h3 {
+      margin-bottom: 9px;
+    }
+
+    .modal p {
+      color: #8d99a7;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .modal-actions button {
+      flex: 1;
+      padding: 11px;
+      border-radius: 9px;
+      border: 1px solid #293544;
+      background: #18212b;
+      color: #fff;
+    }
+
+    .modal-actions .confirm {
+      background: #ef4444;
+      border-color: #ef4444;
+    }
+
+    /* TOAST */
+
+    #toast {
+      position: fixed;
+      left: 50%;
+      bottom: 25px;
+      transform: translateX(-50%) translateY(20px);
+      background: #17202a;
+      border: 1px solid #293544;
+      color: #fff;
+      padding: 11px 15px;
+      border-radius: 10px;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: .25s;
+      z-index: 200;
+      max-width: calc(100% - 30px);
+      text-align: center;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* UNDO */
+
+    #undoBar {
+      position: fixed;
+      left: 50%;
+      bottom: 25px;
+      transform: translateX(-50%);
+      background: #17202a;
+      border: 1px solid #293544;
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: none;
+      align-items: center;
+      gap: 13px;
+      z-index: 150;
+      box-shadow: 0 10px 30px rgba(0,0,0,.4);
+    }
+
+    #undoBar.show {
+      display: flex;
+    }
+
+    #undoBtn {
+      border: 0;
+      background: transparent;
+      color: #4ade80;
+      font-weight: 700;
+    }
+
+    @media(max-width: 700px) {
+      .dashboard {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media(max-width: 480px) {
+      .container {
+        width: min(100% - 20px, 900px);
+      }
+
+      .topbar-inner {
+        align-items: flex-start;
+      }
+
+      .user-area {
+        flex-direction: column;
+        align-items: flex-end;
+      }
+
+      .dashboard {
+        gap: 8px;
+      }
+
+      .card {
+        padding: 13px;
+      }
+
+      .card-value {
+        font-size: 18px;
+      }
+
+      .actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .action-btn {
+        width: 100%;
+      }
+
+      .action-btn.add {
+        grid-column: span 2;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
+  <!-- LOGIN PAGE -->
+  <section id="loginPage">
 
-<div id="loginPage" class="login-box">
+    <div class="login-box">
 
-    <div class="logo">SaleTrack</div>
+      <div class="logo">
+        Sale<span>Track</span>
+      </div>
 
-    <div class="subtitle">
-        Sign in to manage your sales
-    </div>
+      <div class="subtitle">
+        Simple and fast sales tracker
+      </div>
 
-    <input
-        id="email"
-        type="email"
-        placeholder="Email"
-        autocomplete="email">
+      <form id="loginForm">
 
-    <input
-        id="password"
-        type="password"
-        placeholder="Password"
-        autocomplete="current-password">
-
-    <button
-        id="loginBtn"
-        class="login-btn"
-        type="button">
-        Login
-    </button>
-
-    <div
-        id="loginMessage"
-        class="message">
-    </div>
-
-</div>
-
-
-<!-- APP -->
-
-<div id="app" class="app hidden">
-
-    <div class="header">
-
-        <div>
-            <h1>SaleTrack</h1>
-
-            <p id="userEmail">
-                Sales Manager
-            </p>
+        <div class="form-group">
+          <label>Email</label>
+          <input
+            id="email"
+            type="email"
+            placeholder="Enter your email"
+            autocomplete="email"
+            required
+          >
         </div>
 
-        <button
-            id="logoutBtn"
-            class="logout"
-            type="button">
+        <div class="form-group">
+          <label>Password</label>
+          <input
+            id="password"
+            type="password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required
+          >
+        </div>
+
+        <button class="primary-btn" type="submit">
+          Login
+        </button>
+
+      </form>
+
+    </div>
+
+  </section>
+
+
+  <!-- APP PAGE -->
+  <section id="appPage" class="hidden">
+
+    <header class="topbar">
+      <div class="container topbar-inner">
+
+        <div class="brand">
+          Sale<span>Track</span>
+        </div>
+
+        <div class="user-area">
+
+          <div id="connectionStatus" class="status">
+            <span class="status-dot"></span>
+            <span id="statusText">Online</span>
+          </div>
+
+          <button id="logoutBtn" class="logout-btn">
             Logout
-        </button>
+          </button>
 
-    </div>
+        </div>
+
+      </div>
+    </header>
 
 
-    <!-- STATS -->
+    <main class="container">
 
-    <div class="stats">
+      <!-- DASHBOARD -->
+      <div class="dashboard">
 
         <div class="card">
-            <small>Add Count</small>
-            <h2 id="count">0</h2>
+          <div class="card-label">Add Count</div>
+          <div id="countValue" class="card-value">0</div>
         </div>
 
         <div class="card">
-            <small>Total Sales</small>
-            <h2 id="total">0</h2>
+          <div class="card-label">Total Sales</div>
+          <div id="totalValue" class="card-value">0</div>
         </div>
 
-    </div>
+        <div class="card">
+          <div class="card-label">Today Sales</div>
+          <div id="todayValue" class="card-value">0</div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Last Sale</div>
+          <div id="lastSaleValue" class="card-value">—</div>
+        </div>
+
+      </div>
 
 
-    <!-- ADD -->
+      <!-- ACTIONS -->
+      <div class="actions">
 
-    <button
-        id="addBtn"
-        class="add-btn"
-        type="button">
-        ＋ Add
-    </button>
-
-
-    <!-- SALES -->
-
-    <div
-        id="list"
-        class="list">
-    </div>
-
-
-    <!-- RESET -->
-
-    <div class="reset-box">
-
-        <button
-            id="resetBtn"
-            class="reset-btn"
-            type="button">
-            Reset All
+        <button id="addBtn" class="action-btn add">
+          ＋ Add Sale
         </button>
 
-    </div>
+        <button id="exportBtn" class="action-btn">
+          📤 Export CSV
+        </button>
 
-</div>
+        <button id="resetBtn" class="action-btn danger">
+          🗑️ Reset All
+        </button>
+
+      </div>
 
 
-<!-- MODAL -->
+      <!-- SALES -->
+      <div class="sales-box">
 
-<div
-    id="modalBg"
-    class="modal-bg">
+        <div class="sales-header">
+
+          <div class="sales-title">
+            Sales
+          </div>
+
+          <div id="salesCountText" class="sales-count">
+            0 entries
+          </div>
+
+        </div>
+
+        <div id="salesList">
+
+          <div class="empty">
+            No sales yet.<br>
+            Click "Add Sale" to begin.
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+  </section>
+
+
+  <!-- CONFIRM MODAL -->
+  <div id="modalOverlay" class="modal-overlay hidden">
 
     <div class="modal">
 
-        <div
-            id="modalIcon"
-            class="modal-icon">
-            ⚠️
-        </div>
+      <h3 id="modalTitle">
+        Confirm
+      </h3>
 
-        <h3 id="modalTitle">
-            Confirm
-        </h3>
+      <p id="modalMessage">
+        Are you sure?
+      </p>
 
-        <p id="modalMessage">
-            Are you sure?
-        </p>
+      <div class="modal-actions">
 
-        <div class="modal-actions">
+        <button id="modalCancel">
+          No
+        </button>
 
-            <button
-                id="modalNo"
-                class="no-btn"
-                type="button">
-                No
-            </button>
+        <button id="modalConfirm" class="confirm">
+          Yes
+        </button>
 
-            <button
-                id="modalYes"
-                class="yes-btn"
-                type="button">
-                Yes
-            </button>
-
-        </div>
+      </div>
 
     </div>
 
-</div>
+  </div>
+
+
+  <!-- TOAST -->
+  <div id="toast"></div>
+
+
+  <!-- UNDO BAR -->
+  <div id="undoBar">
+
+    <span id="undoText">
+      Sale deleted
+    </span>
+
+    <button id="undoBtn">
+      Undo
+    </button>
+
+  </div>
 
 
 <script>
-
-/* =========================================
+/* =========================================================
    SUPABASE CONFIG
-========================================= */
+========================================================= */
 
 const SUPABASE_URL =
-    "https://eavqyzgamuelwyplhqjf.supabase.co";
+  "https://eavqyzgamuelwyplhqjf.supabase.co";
 
 const SUPABASE_KEY =
-    "sb_publishable_OSypObpmAQMHjMZrct7QNQ_AtrYXY8Z";
-
+  "sb_publishable_OSypObpmAQMHjMZrct7QNQ_AtrYXY8Z";
 
 const supabaseClient =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-    );
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
 
-/* =========================================
-   ELEMENTS
-========================================= */
-
-const loginPage =
-    document.getElementById("loginPage");
-
-const app =
-    document.getElementById("app");
-
-const emailInput =
-    document.getElementById("email");
-
-const passwordInput =
-    document.getElementById("password");
-
-const loginBtn =
-    document.getElementById("loginBtn");
-
-const loginMessage =
-    document.getElementById("loginMessage");
-
-const logoutBtn =
-    document.getElementById("logoutBtn");
-
-const userEmail =
-    document.getElementById("userEmail");
-
-const list =
-    document.getElementById("list");
-
-const count =
-    document.getElementById("count");
-
-const total =
-    document.getElementById("total");
-
-const addBtn =
-    document.getElementById("addBtn");
-
-const resetBtn =
-    document.getElementById("resetBtn");
-
-
-/* Modal */
-
-const modalBg =
-    document.getElementById("modalBg");
-
-const modalIcon =
-    document.getElementById("modalIcon");
-
-const modalTitle =
-    document.getElementById("modalTitle");
-
-const modalMessage =
-    document.getElementById("modalMessage");
-
-const modalNo =
-    document.getElementById("modalNo");
-
-const modalYes =
-    document.getElementById("modalYes");
-
-
-/* =========================================
+/* =========================================================
    STATE
-========================================= */
-
-let sales = [];
+========================================================= */
 
 let currentUser = null;
 
+let sales = [];
 
-/* =========================================
+let pendingDeletes = [];
+
+let undoData = null;
+
+let undoTimer = null;
+
+let modalAction = null;
+
+const saveTimers = new Map();
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const loginPage =
+  document.getElementById("loginPage");
+
+const appPage =
+  document.getElementById("appPage");
+
+const loginForm =
+  document.getElementById("loginForm");
+
+const emailInput =
+  document.getElementById("email");
+
+const passwordInput =
+  document.getElementById("password");
+
+const addBtn =
+  document.getElementById("addBtn");
+
+const exportBtn =
+  document.getElementById("exportBtn");
+
+const resetBtn =
+  document.getElementById("resetBtn");
+
+const logoutBtn =
+  document.getElementById("logoutBtn");
+
+const salesList =
+  document.getElementById("salesList");
+
+const countValue =
+  document.getElementById("countValue");
+
+const totalValue =
+  document.getElementById("totalValue");
+
+const todayValue =
+  document.getElementById("todayValue");
+
+const lastSaleValue =
+  document.getElementById("lastSaleValue");
+
+const salesCountText =
+  document.getElementById("salesCountText");
+
+const connectionStatus =
+  document.getElementById("connectionStatus");
+
+const statusText =
+  document.getElementById("statusText");
+
+const modalOverlay =
+  document.getElementById("modalOverlay");
+
+const modalTitle =
+  document.getElementById("modalTitle");
+
+const modalMessage =
+  document.getElementById("modalMessage");
+
+const modalCancel =
+  document.getElementById("modalCancel");
+
+const modalConfirm =
+  document.getElementById("modalConfirm");
+
+const toast =
+  document.getElementById("toast");
+
+const undoBar =
+  document.getElementById("undoBar");
+
+const undoText =
+  document.getElementById("undoText");
+
+const undoBtn =
+  document.getElementById("undoBtn");
+
+
+/* =========================================================
    LOGIN
-========================================= */
+========================================================= */
 
-async function login() {
+loginForm.addEventListener("submit", async (e) => {
 
-    const email =
-        emailInput.value.trim();
+  e.preventDefault();
 
-    const password =
-        passwordInput.value;
+  const email =
+    emailInput.value.trim();
 
+  const password =
+    passwordInput.value;
 
-    if (!email || !password) {
+  if (!email || !password) {
+    showToast("Enter email and password.");
+    return;
+  }
 
-        loginMessage.textContent =
-            "Please enter your email and password.";
+  const button =
+    loginForm.querySelector("button");
 
-        return;
-    }
+  button.disabled = true;
+  button.textContent = "Logging in...";
 
+  try {
 
-    loginBtn.disabled = true;
-
-    loginBtn.textContent =
-        "Logging in...";
-
-    loginMessage.textContent = "";
-
-
-    const {
-        data,
-        error
-    } =
-        await supabaseClient.auth.signInWithPassword({
-            email: email,
-            password: password
-        });
-
-
-    loginBtn.disabled = false;
-
-    loginBtn.textContent =
-        "Login";
-
+    const { data, error } =
+      await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
 
     if (error) {
-
-        loginMessage.textContent =
-            error.message;
-
-        return;
+      throw error;
     }
 
-
-    currentUser =
-        data.user;
+    currentUser = data.user;
 
     showApp();
 
-}
+    await loadSales();
+
+  } catch (error) {
+
+    console.error(error);
+
+    showToast(
+      error.message || "Login failed."
+    );
+
+  } finally {
+
+    button.disabled = false;
+    button.textContent = "Login";
+
+  }
+
+});
 
 
-/* =========================================
-   SHOW APP
-========================================= */
+/* =========================================================
+   AUTH CHECK
+========================================================= */
 
-async function showApp() {
+async function checkAuth() {
 
-    loginPage.classList.add("hidden");
-
-    app.classList.remove("hidden");
-
-
-    if (currentUser) {
-
-        userEmail.textContent =
-            currentUser.email || "Sales Manager";
-
+  const {
+    data: {
+      session
     }
+  } = await supabaseClient.auth.getSession();
 
+  if (session && session.user) {
+
+    currentUser =
+      session.user;
+
+    showApp();
 
     await loadSales();
 
-}
+  } else {
 
+    showLogin();
 
-/* =========================================
-   LOAD SALES
-========================================= */
-
-async function loadSales() {
-
-    list.innerHTML =
-        '<div class="empty">Loading...</div>';
-
-
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-            .from("sales")
-            .select("*")
-            .order("created_at", {
-                ascending: true
-            });
-
-
-    if (error) {
-
-        list.innerHTML =
-            '<div class="empty">Failed to load sales.</div>';
-
-        console.error(error);
-
-        return;
-    }
-
-
-    sales =
-        data || [];
-
-    render();
+  }
 
 }
 
 
-/* =========================================
-   FORMAT NUMBER
-========================================= */
+supabaseClient.auth.onAuthStateChange(
+  async (_event, session) => {
 
-function formatNumber(value) {
+    if (session && session.user) {
 
-    const number =
-        Number(value);
+      currentUser =
+        session.user;
 
-    if (!Number.isFinite(number)) {
-        return "0";
-    }
-
-
-    return number.toLocaleString(
-        "en-US",
-        {
-            maximumFractionDigits: 2
-        }
-    );
-
-}
-
-
-/* =========================================
-   UPDATE STATS
-========================================= */
-
-function updateStats() {
-
-    count.textContent =
-        sales.length;
-
-
-    let sum = 0;
-
-
-    for (const item of sales) {
-
-        const value =
-            Number(item.amount);
-
-        if (Number.isFinite(value)) {
-            sum += value;
-        }
-
-    }
-
-
-    total.textContent =
-        formatNumber(sum);
-
-}
-
-
-/* =========================================
-   RENDER
-========================================= */
-
-function render() {
-
-    list.innerHTML = "";
-
-
-    if (sales.length === 0) {
-
-        const empty =
-            document.createElement("div");
-
-        empty.className =
-            "empty";
-
-        empty.textContent =
-            "No sales added yet.";
-
-        list.appendChild(empty);
+      showApp();
 
     } else {
 
-        sales.forEach(
-            (item, index) => {
+      currentUser = null;
 
-                const row =
-                    document.createElement("div");
+      sales = [];
 
-                row.className =
-                    "row";
-
-
-                const input =
-                    document.createElement("input");
-
-                input.className =
-                    "amount";
-
-                input.type =
-                    "number";
-
-                input.inputMode =
-                    "decimal";
-
-                input.placeholder =
-                    "Enter amount";
-
-                input.value =
-                    item.amount;
-
-
-                input.addEventListener(
-                    "change",
-                    () => updateSale(
-                        item.id,
-                        input.value,
-                        index
-                    )
-                );
-
-
-                const deleteBtn =
-                    document.createElement("button");
-
-                deleteBtn.className =
-                    "delete";
-
-                deleteBtn.type =
-                    "button";
-
-                deleteBtn.textContent =
-                    "×";
-
-                deleteBtn.title =
-                    "Delete";
-
-
-                deleteBtn.addEventListener(
-                    "click",
-                    () => confirmDelete(
-                        item.id
-                    )
-                );
-
-
-                row.appendChild(input);
-
-                row.appendChild(deleteBtn);
-
-                list.appendChild(row);
-
-            }
-        );
+      showLogin();
 
     }
 
+  }
+);
 
-    updateStats();
+
+/* =========================================================
+   PAGE SWITCH
+========================================================= */
+
+function showLogin() {
+
+  loginPage.classList.remove("hidden");
+
+  appPage.classList.add("hidden");
 
 }
 
 
-/* =========================================
-   ADD SALE
-========================================= */
+function showApp() {
 
-async function addSale() {
+  loginPage.classList.add("hidden");
 
-    addBtn.disabled = true;
+  appPage.classList.remove("hidden");
 
-    addBtn.textContent =
-        "Adding...";
+}
 
 
-    const {
-        data: {
-            user
-        }
-    } =
-        await supabaseClient.auth.getUser();
+/* =========================================================
+   LOAD SALES
+========================================================= */
 
+async function loadSales() {
 
-    if (!user) {
+  if (!currentUser) return;
 
-        addBtn.disabled = false;
+  setOnlineStatus(
+    navigator.onLine
+  );
 
-        addBtn.textContent =
-            "＋ Add";
-
-        return;
-    }
-
+  try {
 
     const {
-        data,
-        error
-    } =
-        await supabaseClient
-            .from("sales")
-            .insert({
-                amount: 0,
-                user_id: user.id
-            })
-            .select()
-            .single();
-
-
-    addBtn.disabled = false;
-
-    addBtn.textContent =
-        "＋ Add";
-
+      data,
+      error
+    } = await supabaseClient
+      .from("sales")
+      .select("id, amount, created_at, user_id")
+      .eq("user_id", currentUser.id)
+      .order("created_at", {
+        ascending: true
+      });
 
     if (error) {
-
-        alert(
-            "Could not add sale: " +
-            error.message
-        );
-
-        return;
+      throw error;
     }
 
+    sales = data || [];
 
-    sales.push(data);
+    renderSales();
 
-    render();
+    setOnlineStatus(true);
 
+  } catch (error) {
 
-    const inputs =
-        list.querySelectorAll(
-            ".amount"
-        );
+    console.error(error);
 
+    setOnlineStatus(false);
 
-    if (inputs.length) {
+    showToast(
+      "Could not load sales. Check your connection."
+    );
 
-        inputs[
-            inputs.length - 1
-        ].focus();
-
-    }
+  }
 
 }
 
 
-/* =========================================
-   UPDATE SALE
-========================================= */
+/* =========================================================
+   ADD SALE
+========================================================= */
 
-async function updateSale(
-    id,
-    value,
-    index
-) {
+addBtn.addEventListener("click", async () => {
 
-    const number =
-        Number(value);
+  if (!currentUser) return;
 
+  /*
+    Optimistic UI:
+    Row appears immediately without waiting
+    for Supabase.
+  */
+
+  const tempId =
+    "temp-" + Date.now() + "-" + Math.random();
+
+  const newSale = {
+
+    id: tempId,
+
+    amount: 0,
+
+    created_at:
+      new Date().toISOString(),
+
+    user_id:
+      currentUser.id,
+
+    pending: true
+
+  };
+
+  sales.push(newSale);
+
+  renderSales();
+
+  requestAnimationFrame(() => {
+
+    const input =
+      document.querySelector(
+        `[data-id="${tempId}"]`
+      );
+
+    if (input) {
+
+      input.focus();
+
+      input.select();
+
+    }
+
+  });
+
+  /*
+    Save empty sale in background.
+  */
+
+  try {
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("sales")
+      .insert({
+        amount: 0,
+        user_id: currentUser.id
+      })
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    const index =
+      sales.findIndex(
+        item => item.id === tempId
+      );
+
+    if (index !== -1) {
+
+      const currentAmount =
+        sales[index].amount;
+
+      sales[index] = {
+        ...data,
+        amount: currentAmount
+      };
+
+      sales[index].pending = false;
+
+      renderSales();
+
+      /*
+        If user typed while insert was happening,
+        save that value.
+      */
+
+      if (Number(currentAmount) !== 0) {
+
+        await updateSale(
+          data.id,
+          currentAmount
+        );
+
+      }
+
+    }
+
+    setOnlineStatus(true);
+
+  } catch (error) {
+
+    console.error(error);
+
+    sales =
+      sales.filter(
+        item => item.id !== tempId
+      );
+
+    renderSales();
+
+    setOnlineStatus(false);
+
+    showToast(
+      "Could not create sale."
+    );
+
+  }
+
+});
+
+
+/* =========================================================
+   RENDER SALES
+========================================================= */
+
+function renderSales() {
+
+  if (!sales.length) {
+
+    salesList.innerHTML = `
+      <div class="empty">
+        No sales yet.<br>
+        Click "Add Sale" to begin.
+      </div>
+    `;
+
+    updateDashboard();
+
+    return;
+  }
+
+  salesList.innerHTML =
+    sales.map((sale, index) => {
+
+      const amount =
+        Number(sale.amount || 0);
+
+      return `
+
+        <div class="sale-row
+          ${sale.pending ? "pending" : ""}
+        ">
+
+          <div class="sale-number">
+            ${index + 1}
+          </div>
+
+          <input
+            class="sale-input"
+            data-id="${sale.id}"
+            type="number"
+            inputmode="decimal"
+            step="0.01"
+            min="0"
+            value="${amount}"
+            placeholder="Enter amount"
+          >
+
+          <button
+            class="delete-btn"
+            data-delete="${sale.id}"
+            title="Delete"
+          >
+            ×
+          </button>
+
+        </div>
+
+      `;
+
+    }).join("");
+
+  updateDashboard();
+
+}
+
+
+/* =========================================================
+   INPUT EVENTS
+========================================================= */
+
+salesList.addEventListener(
+  "input",
+  (e) => {
 
     if (
-        value !== "" &&
-        !Number.isFinite(number)
-    ) {
+      !e.target.classList.contains(
+        "sale-input"
+      )
+    ) return;
 
-        alert(
-            "Please enter a valid amount."
+    const id =
+      e.target.dataset.id;
+
+    const value =
+      parseFloat(e.target.value);
+
+    const sale =
+      sales.find(
+        item => String(item.id) === String(id)
+      );
+
+    if (!sale) return;
+
+    sale.amount =
+      Number.isFinite(value)
+        ? value
+        : 0;
+
+    /*
+      Update dashboard instantly.
+    */
+
+    updateDashboard();
+
+    /*
+      Don't send a request on every keypress.
+      Wait 500ms.
+    */
+
+    clearTimeout(
+      saveTimers.get(id)
+    );
+
+    const timer =
+      setTimeout(() => {
+
+        saveSaleValue(
+          id,
+          sale.amount
         );
 
-        render();
+      }, 500);
 
-        return;
-    }
+    saveTimers.set(id, timer);
+
+  }
+);
 
 
-    const amount =
-        value === ""
-            ? 0
-            : number;
+/* =========================================================
+   BLUR = SAVE IMMEDIATELY
+========================================================= */
 
+salesList.addEventListener(
+  "focusout",
+  (e) => {
+
+    if (
+      !e.target.classList.contains(
+        "sale-input"
+      )
+    ) return;
+
+    const id =
+      e.target.dataset.id;
+
+    clearTimeout(
+      saveTimers.get(id)
+    );
+
+    const sale =
+      sales.find(
+        item => String(item.id) === String(id)
+      );
+
+    if (!sale) return;
+
+    saveSaleValue(
+      id,
+      sale.amount
+    );
+
+  }
+);
+
+
+/* =========================================================
+   DELETE BUTTON
+========================================================= */
+
+salesList.addEventListener(
+  "click",
+  (e) => {
+
+    const button =
+      e.target.closest(
+        "[data-delete]"
+      );
+
+    if (!button) return;
+
+    const id =
+      button.dataset.delete;
+
+    openConfirm(
+      "Delete Sale",
+      "Are you sure you want to delete this sale?",
+      () => deleteSale(id)
+    );
+
+  }
+);
+
+
+/* =========================================================
+   SAVE SALE
+========================================================= */
+
+async function saveSaleValue(
+  id,
+  amount
+) {
+
+  /*
+    Temporary ID = not inserted yet.
+    Add handler already handles it.
+  */
+
+  if (String(id).startsWith("temp-")) {
+    return;
+  }
+
+  try {
 
     const {
-        error
-    } =
-        await supabaseClient
-            .from("sales")
-            .update({
-                amount: amount
-            })
-            .eq("id", id);
-
+      error
+    } = await supabaseClient
+      .from("sales")
+      .update({
+        amount:
+          Number(amount) || 0
+      })
+      .eq("id", id)
+      .eq("user_id", currentUser.id);
 
     if (error) {
-
-        alert(
-            "Update failed: " +
-            error.message
-        );
-
-        await loadSales();
-
-        return;
+      throw error;
     }
 
+    setOnlineStatus(true);
 
-    if (sales[index]) {
+  } catch (error) {
 
-        sales[index].amount =
-            amount;
+    console.error(error);
 
+    setOnlineStatus(false);
+
+    showToast(
+      "Sync failed. Please check your connection."
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   UPDATE SALE
+========================================================= */
+
+async function updateSale(
+  id,
+  amount
+) {
+
+  try {
+
+    const {
+      error
+    } = await supabaseClient
+      .from("sales")
+      .update({
+        amount:
+          Number(amount) || 0
+      })
+      .eq("id", id)
+      .eq("user_id", currentUser.id);
+
+    if (error) {
+      throw error;
     }
 
+  } catch (error) {
 
-    updateStats();
+    console.error(error);
 
-}
-
-
-/* =========================================
-   MODAL CLOSE
-========================================= */
-
-function closeModal() {
-
-    modalBg.classList.remove(
-        "show"
-    );
+  }
 
 }
 
 
-/* =========================================
-   DELETE CONFIRMATION
-========================================= */
-
-function confirmDelete(id) {
-
-    modalIcon.textContent =
-        "🗑️";
-
-    modalTitle.textContent =
-        "Delete this sale?";
-
-    modalMessage.textContent =
-        "This sales entry will be permanently deleted.";
-
-    modalNo.textContent =
-        "No";
-
-    modalYes.textContent =
-        "Yes";
-
-    modalYes.className =
-        "yes-btn";
-
-
-    modalBg.classList.add(
-        "show"
-    );
-
-
-    modalNo.onclick =
-        () => closeModal();
-
-
-    modalYes.onclick =
-        async () => {
-
-            await deleteSale(id);
-
-            closeModal();
-
-        };
-
-}
-
-
-/* =========================================
+/* =========================================================
    DELETE SALE
-========================================= */
+========================================================= */
 
 async function deleteSale(id) {
 
-    const {
-        error
-    } =
-        await supabaseClient
-            .from("sales")
-            .delete()
-            .eq("id", id);
+  const index =
+    sales.findIndex(
+      item => String(item.id) === String(id)
+    );
 
+  if (index === -1) return;
+
+  const deleted =
+    sales[index];
+
+  /*
+    Remove instantly from UI.
+  */
+
+  sales.splice(index, 1);
+
+  renderSales();
+
+  /*
+    If this is still a temporary sale,
+    nothing exists in database yet.
+  */
+
+  if (String(id).startsWith("temp-")) {
+
+    showUndo(deleted, false);
+
+    return;
+
+  }
+
+  try {
+
+    const {
+      error
+    } = await supabaseClient
+      .from("sales")
+      .delete()
+      .eq("id", id)
+      .eq("user_id", currentUser.id);
 
     if (error) {
-
-        alert(
-            "Delete failed: " +
-            error.message
-        );
-
-        return;
+      throw error;
     }
 
+    setOnlineStatus(true);
+
+    showUndo(deleted, true);
+
+  } catch (error) {
+
+    console.error(error);
+
+    /*
+      Restore if delete failed.
+    */
+
+    sales.splice(
+      index,
+      0,
+      deleted
+    );
+
+    renderSales();
+
+    setOnlineStatus(false);
+
+    showToast(
+      "Delete failed."
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   UNDO
+========================================================= */
+
+function showUndo(
+  deletedSale,
+  wasInDatabase
+) {
+
+  clearTimeout(undoTimer);
+
+  undoData = {
+    sale: deletedSale,
+    wasInDatabase
+  };
+
+  undoText.textContent =
+    `Deleted ${formatNumber(deletedSale.amount)}`;
+
+  undoBar.classList.add("show");
+
+  undoTimer =
+    setTimeout(() => {
+
+      undoData = null;
+
+      undoBar.classList.remove(
+        "show"
+      );
+
+    }, 7000);
+
+}
+
+
+undoBtn.addEventListener(
+  "click",
+  async () => {
+
+    if (!undoData) return;
+
+    clearTimeout(undoTimer);
+
+    const data =
+      undoData;
+
+    undoData = null;
+
+    undoBar.classList.remove(
+      "show"
+    );
+
+    const sale =
+      data.sale;
+
+    /*
+      Temporary sale:
+      just restore locally.
+    */
+
+    if (!data.wasInDatabase) {
+
+      sales.push(sale);
+
+      renderSales();
+
+      showToast(
+        "Sale restored."
+      );
+
+      return;
+
+    }
+
+    /*
+      Restore database record.
+    */
+
+    try {
+
+      const {
+        data: restored,
+        error
+      } = await supabaseClient
+        .from("sales")
+        .insert({
+          id: sale.id,
+          amount: sale.amount,
+          created_at: sale.created_at,
+          user_id: currentUser.id
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      sales.push(restored);
+
+      sales.sort(
+        (a, b) =>
+          new Date(a.created_at) -
+          new Date(b.created_at)
+      );
+
+      renderSales();
+
+      setOnlineStatus(true);
+
+      showToast(
+        "Sale restored."
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      showToast(
+        "Could not restore sale."
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   RESET ALL
+========================================================= */
+
+resetBtn.addEventListener(
+  "click",
+  () => {
+
+    if (!sales.length) {
+
+      showToast(
+        "There are no sales to reset."
+      );
+
+      return;
+
+    }
+
+    /*
+      FIRST confirmation
+    */
+
+    openConfirm(
+      "Reset All Sales",
+      "This will delete ALL your sales. Continue?",
+      () => {
+
+        /*
+          SECOND confirmation
+        */
+
+        openConfirm(
+          "Final Confirmation",
+          "This action cannot be easily undone. Delete ALL sales?",
+          () => resetAllSales()
+        );
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================================================
+   RESET DATABASE
+========================================================= */
+
+async function resetAllSales() {
+
+  const oldSales =
+    [...sales];
+
+  sales = [];
+
+  renderSales();
+
+  try {
+
+    const {
+      error
+    } = await supabaseClient
+      .from("sales")
+      .delete()
+      .eq("user_id", currentUser.id);
+
+    if (error) {
+      throw error;
+    }
+
+    setOnlineStatus(true);
+
+    showToast(
+      "All sales have been deleted."
+    );
+
+  } catch (error) {
+
+    console.error(error);
 
     sales =
-        sales.filter(
-            item => item.id !== id
-        );
+      oldSales;
 
+    renderSales();
 
-    render();
+    setOnlineStatus(false);
 
-}
-
-
-/* =========================================
-   RESET STEP 1
-========================================= */
-
-function resetStepOne() {
-
-    modalIcon.textContent =
-        "⚠️";
-
-    modalTitle.textContent =
-        "Reset All?";
-
-    modalMessage.textContent =
-        "All of your sales records will be deleted. Continue?";
-
-    modalNo.textContent =
-        "No";
-
-    modalYes.textContent =
-        "Yes";
-
-    modalYes.className =
-        "yes-btn";
-
-
-    modalBg.classList.add(
-        "show"
+    showToast(
+      "Reset failed. Your sales were restored."
     );
 
-
-    modalNo.onclick =
-        () => closeModal();
-
-
-    modalYes.onclick =
-        () => {
-
-            closeModal();
-
-            setTimeout(
-                resetStepTwo,
-                150
-            );
-
-        };
+  }
 
 }
 
 
-/* =========================================
-   RESET STEP 2
-========================================= */
+/* =========================================================
+   DASHBOARD
+========================================================= */
 
-function resetStepTwo() {
+function updateDashboard() {
 
-    modalIcon.textContent =
-        "🚨";
+  const count =
+    sales.length;
 
-    modalTitle.textContent =
-        "Final Confirmation";
-
-    modalMessage.textContent =
-        "This will permanently delete ALL your sales. This action cannot be undone.";
-
-    modalNo.textContent =
-        "Cancel";
-
-    modalYes.textContent =
-        "Reset Everything";
-
-    modalYes.className =
-        "danger-btn";
-
-
-    modalBg.classList.add(
-        "show"
+  const total =
+    sales.reduce(
+      (sum, sale) =>
+        sum + Number(sale.amount || 0),
+      0
     );
 
+  const todayTotal =
+    sales.reduce(
+      (sum, sale) => {
 
-    modalNo.onclick =
-        () => closeModal();
+        if (
+          isToday(
+            sale.created_at
+          )
+        ) {
 
+          return sum +
+            Number(sale.amount || 0);
 
-    modalYes.onclick =
-        async () => {
-
-            await resetAll();
-
-            closeModal();
-
-        };
-
-}
-
-
-/* =========================================
-   RESET ALL
-========================================= */
-
-async function resetAll() {
-
-    const {
-        data: {
-            user
         }
-    } =
-        await supabaseClient.auth.getUser();
+
+        return sum;
+
+      },
+      0
+    );
+
+  countValue.textContent =
+    count;
+
+  totalValue.textContent =
+    formatNumber(total);
+
+  todayValue.textContent =
+    formatNumber(todayTotal);
+
+  salesCountText.textContent =
+    `${count} ${count === 1 ? "entry" : "entries"}`;
 
 
-    if (!user) {
-        return;
-    }
+  /*
+    Last Sale
+  */
 
+  if (!sales.length) {
 
-    const {
-        error
-    } =
-        await supabaseClient
-            .from("sales")
-            .delete()
-            .eq(
-                "user_id",
-                user.id
-            );
+    lastSaleValue.textContent =
+      "—";
 
+  } else {
 
-    if (error) {
+    const last =
+      [...sales]
+        .sort(
+          (a, b) =>
+            new Date(b.created_at) -
+            new Date(a.created_at)
+        )[0];
 
-        alert(
-            "Reset failed: " +
-            error.message
-        );
+    lastSaleValue.textContent =
+      formatNumber(last.amount);
 
-        return;
-    }
-
-
-    sales = [];
-
-    render();
+  }
 
 }
 
 
-/* =========================================
-   LOGOUT
-========================================= */
+/* =========================================================
+   TODAY CHECK
+========================================================= */
 
-async function logout() {
+function isToday(dateValue) {
+
+  const date =
+    new Date(dateValue);
+
+  const now =
+    new Date();
+
+  return (
+    date.getFullYear() ===
+      now.getFullYear() &&
+
+    date.getMonth() ===
+      now.getMonth() &&
+
+    date.getDate() ===
+      now.getDate()
+  );
+
+}
+
+
+/* =========================================================
+   NUMBER FORMAT
+========================================================= */
+
+function formatNumber(value) {
+
+  return Number(value || 0)
+    .toLocaleString(
+      undefined,
+      {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2
+      }
+    );
+
+}
+
+
+/* =========================================================
+   EXPORT CSV
+========================================================= */
+
+exportBtn.addEventListener(
+  "click",
+  () => {
+
+    if (!sales.length) {
+
+      showToast(
+        "No sales to export."
+      );
+
+      return;
+
+    }
+
+    const headers = [
+      "No",
+      "Amount",
+      "Date",
+      "Time"
+    ];
+
+    const rows =
+      sales.map(
+        (sale, index) => {
+
+          const date =
+            new Date(
+              sale.created_at
+            );
+
+          return [
+            index + 1,
+            Number(sale.amount || 0),
+            date.toLocaleDateString(),
+            date.toLocaleTimeString()
+          ];
+
+        }
+      );
+
+    const csv = [
+      headers,
+      ...rows
+    ]
+      .map(
+        row =>
+          row
+            .map(csvEscape)
+            .join(",")
+      )
+      .join("\n");
+
+    const blob =
+      new Blob(
+        [csv],
+        {
+          type:
+            "text/csv;charset=utf-8;"
+        }
+      );
+
+    const url =
+      URL.createObjectURL(blob);
+
+    const link =
+      document.createElement("a");
+
+    const date =
+      new Date()
+        .toISOString()
+        .slice(0, 10);
+
+    link.href = url;
+
+    link.download =
+      `saletrack-sales-${date}.csv`;
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+
+    URL.revokeObjectURL(url);
+
+    showToast(
+      "CSV exported successfully."
+    );
+
+  }
+);
+
+
+function csvEscape(value) {
+
+  const string =
+    String(value ?? "");
+
+  if (
+    string.includes(",") ||
+    string.includes('"') ||
+    string.includes("\n")
+  ) {
+
+    return `"${string.replace(
+      /"/g,
+      '""'
+    )}"`;
+
+  }
+
+  return string;
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+logoutBtn.addEventListener(
+  "click",
+  async () => {
+
+    const confirmed =
+      await askConfirmation(
+        "Logout",
+        "Are you sure you want to logout?"
+      );
+
+    if (!confirmed) return;
 
     await supabaseClient.auth.signOut();
 
-    currentUser = null;
-
     sales = [];
 
-    app.classList.add(
-        "hidden"
-    );
+    currentUser = null;
 
-    loginPage.classList.remove(
-        "hidden"
-    );
+    showLogin();
 
-    passwordInput.value = "";
+  }
+);
+
+
+/* =========================================================
+   CONFIRM MODAL
+========================================================= */
+
+function openConfirm(
+  title,
+  message,
+  action
+) {
+
+  modalTitle.textContent =
+    title;
+
+  modalMessage.textContent =
+    message;
+
+  modalAction =
+    action;
+
+  modalOverlay.classList.remove(
+    "hidden"
+  );
 
 }
 
 
-/* =========================================
-   AUTH STATE
-========================================= */
+modalCancel.addEventListener(
+  "click",
+  () => {
 
-supabaseClient.auth.onAuthStateChange(
-    async (event, session) => {
+    closeModal();
 
-        if (session && session.user) {
+  }
+);
 
-            currentUser =
-                session.user;
 
-            showApp();
+modalConfirm.addEventListener(
+  "click",
+  () => {
 
-        } else {
+    const action =
+      modalAction;
 
-            currentUser = null;
+    closeModal();
 
-            app.classList.add(
-                "hidden"
-            );
+    if (typeof action === "function") {
+      action();
+    }
 
-            loginPage.classList.remove(
-                "hidden"
-            );
+  }
+);
 
-        }
+
+function closeModal() {
+
+  modalOverlay.classList.add(
+    "hidden"
+  );
+
+  modalAction = null;
+
+}
+
+
+/*
+  Promise confirmation for logout.
+*/
+
+function askConfirmation(
+  title,
+  message
+) {
+
+  return new Promise(
+    resolve => {
+
+      modalTitle.textContent =
+        title;
+
+      modalMessage.textContent =
+        message;
+
+      modalOverlay.classList.remove(
+        "hidden"
+      );
+
+      const yesHandler = () => {
+
+        cleanup();
+
+        resolve(true);
+
+      };
+
+      const noHandler = () => {
+
+        cleanup();
+
+        resolve(false);
+
+      };
+
+      function cleanup() {
+
+        modalOverlay.classList.add(
+          "hidden"
+        );
+
+        modalConfirm.removeEventListener(
+          "click",
+          yesHandler
+        );
+
+        modalCancel.removeEventListener(
+          "click",
+          noHandler
+        );
+
+      }
+
+      modalConfirm.addEventListener(
+        "click",
+        yesHandler
+      );
+
+      modalCancel.addEventListener(
+        "click",
+        noHandler
+      );
 
     }
-);
+  );
+
+}
 
 
-/* =========================================
-   EVENTS
-========================================= */
+/* =========================================================
+   ONLINE / OFFLINE
+========================================================= */
 
-loginBtn.addEventListener(
-    "click",
-    login
-);
+function setOnlineStatus(online) {
 
-passwordInput.addEventListener(
-    "keydown",
-    event => {
+  if (online) {
 
-        if (event.key === "Enter") {
-            login();
-        }
+    connectionStatus.classList.remove(
+      "offline"
+    );
 
+    statusText.textContent =
+      "Online";
+
+  } else {
+
+    connectionStatus.classList.add(
+      "offline"
+    );
+
+    statusText.textContent =
+      "Offline";
+
+  }
+
+}
+
+
+window.addEventListener(
+  "online",
+  () => {
+
+    setOnlineStatus(true);
+
+    /*
+      Automatically refresh when
+      internet comes back.
+    */
+
+    if (currentUser) {
+      loadSales();
     }
+
+  }
 );
 
 
-addBtn.addEventListener(
-    "click",
-    addSale
+window.addEventListener(
+  "offline",
+  () => {
+
+    setOnlineStatus(false);
+
+  }
 );
 
 
-resetBtn.addEventListener(
-    "click",
-    () => {
+/* =========================================================
+   TOAST
+========================================================= */
 
-        if (sales.length === 0) {
+let toastTimer = null;
 
-            alert(
-                "There are no sales to reset."
-            );
+function showToast(message) {
 
-            return;
-        }
+  clearTimeout(toastTimer);
 
-        resetStepOne();
+  toast.textContent =
+    message;
 
-    }
+  toast.classList.add(
+    "show"
+  );
+
+  toastTimer =
+    setTimeout(() => {
+
+      toast.classList.remove(
+        "show"
+      );
+
+    }, 2500);
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+setOnlineStatus(
+  navigator.onLine
 );
 
-
-logoutBtn.addEventListener(
-    "click",
-    logout
-);
+checkAuth();
 
 </script>
 
 </body>
-  </html>
+    </html>
