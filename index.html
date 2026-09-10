@@ -1754,33 +1754,35 @@ function updateDashboard() {
   salesCountText.textContent =
     `${count} ${count === 1 ? "entry" : "entries"}`;
 
+/*
+  Last Sale Time
+*/
 
-  /*
-    Last Sale
-  */
+if (!sales.length) {
 
-  if (!sales.length) {
+  lastSaleValue.textContent = "—";
 
-    lastSaleValue.textContent =
-      "—";
+} else {
 
-  } else {
+  const last =
+    [...sales].sort(
+      (a, b) =>
+        new Date(b.created_at) -
+        new Date(a.created_at)
+    )[0];
 
-    const last =
-      [...sales]
-        .sort(
-          (a, b) =>
-            new Date(b.created_at) -
-            new Date(a.created_at)
-        )[0];
+  const lastTime =
+    new Date(last.created_at);
 
-    lastSaleValue.textContent =
-      formatNumber(last.amount);
-
-  }
-
+  lastSaleValue.textContent =
+    lastTime.toLocaleTimeString(
+      undefined,
+      {
+        hour: "2-digit",
+        minute: "2-digit"
+      }
+    );
 }
-
 
 /* =========================================================
    TODAY CHECK
