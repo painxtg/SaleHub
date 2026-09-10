@@ -1,0 +1,3558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b0f14">
+
+<title>SaleTrack</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root{
+  --bg:#080b10;
+  --panel:#10151c;
+  --panel2:#151b23;
+  --panel3:#1a212b;
+  --border:#222b36;
+  --border2:#2c3744;
+  --text:#f3f6f9;
+  --muted:#8995a3;
+  --green:#20c879;
+  --green2:#18a965;
+  --red:#ff5266;
+  --yellow:#f5b942;
+  --blue:#4d9cff;
+  --shadow:0 14px 40px rgba(0,0,0,.25);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at top right,rgba(32,200,121,.06),transparent 28%),
+    var(--bg);
+  color:var(--text);
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Arial,
+    sans-serif;
+  min-height:100vh;
+}
+
+button,
+input{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+
+button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+/* =========================
+   LOGIN
+========================= */
+
+.login-screen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.login-card{
+  width:100%;
+  max-width:390px;
+  background:rgba(16,21,28,.96);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:30px;
+  box-shadow:var(--shadow);
+}
+
+.login-logo{
+  width:58px;
+  height:58px;
+  border-radius:17px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(32,200,121,.12);
+  border:1px solid rgba(32,200,121,.25);
+  font-size:27px;
+  margin-bottom:18px;
+}
+
+.login-title{
+  font-size:26px;
+  font-weight:800;
+  margin-bottom:6px;
+}
+
+.login-subtitle{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:25px;
+}
+
+.form-label{
+  display:block;
+  color:#aeb8c4;
+  font-size:12px;
+  font-weight:600;
+  margin-bottom:7px;
+}
+
+.input{
+  width:100%;
+  border:1px solid var(--border2);
+  background:#0b1016;
+  color:var(--text);
+  outline:none;
+  border-radius:11px;
+  padding:12px 13px;
+  margin-bottom:15px;
+  transition:.2s;
+}
+
+.input:focus{
+  border-color:var(--green);
+  box-shadow:0 0 0 3px rgba(32,200,121,.08);
+}
+
+.primary-btn{
+  width:100%;
+  border:0;
+  border-radius:11px;
+  padding:12px 14px;
+  background:var(--green);
+  color:#04130b;
+  font-weight:800;
+  transition:.2s;
+}
+
+.primary-btn:hover{
+  background:#2bdd8b;
+}
+
+.login-error{
+  display:none;
+  color:#ff7c8b;
+  background:rgba(255,82,102,.08);
+  border:1px solid rgba(255,82,102,.2);
+  border-radius:10px;
+  padding:10px;
+  font-size:12px;
+  margin-bottom:14px;
+}
+
+/* =========================
+   APP
+========================= */
+
+.app{
+  display:none;
+}
+
+.container{
+  width:min(1080px,calc(100% - 28px));
+  margin:auto;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:rgba(8,11,16,.88);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.header-inner{
+  min-height:68px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:11px;
+}
+
+.brand-icon{
+  width:38px;
+  height:38px;
+  border-radius:11px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(32,200,121,.12);
+  border:1px solid rgba(32,200,121,.2);
+  font-size:18px;
+}
+
+.brand-name{
+  font-weight:800;
+  font-size:17px;
+  letter-spacing:-.3px;
+}
+
+.brand-powered{
+  font-size:9px;
+  color:var(--muted);
+  margin-top:2px;
+}
+
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.status{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  color:var(--muted);
+  font-size:10px;
+  padding:7px 9px;
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:var(--panel);
+}
+
+.status-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--green);
+}
+
+.status.offline .status-dot{
+  background:var(--red);
+}
+
+.logout-btn{
+  border:1px solid var(--border2);
+  background:var(--panel);
+  color:#aeb8c4;
+  border-radius:9px;
+  padding:7px 10px;
+  font-size:11px;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+main{
+  padding:30px 0 45px;
+}
+
+.page-heading{
+  margin-bottom:22px;
+}
+
+.page-heading h1{
+  margin:0;
+  font-size:27px;
+  letter-spacing:-.7px;
+}
+
+.page-heading p{
+  margin:6px 0 0;
+  color:var(--muted);
+  font-size:12px;
+}
+
+/* =========================
+   STATS
+========================= */
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:11px;
+  margin-bottom:18px;
+}
+
+.stat-card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:16px;
+  min-width:0;
+}
+
+.stat-label{
+  color:var(--muted);
+  font-size:10px;
+  margin-bottom:8px;
+}
+
+.stat-value{
+  font-size:22px;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.stat-value.green{
+  color:var(--green);
+}
+
+.stat-value.blue{
+  color:#6daeff;
+}
+
+/* =========================
+   SECTION
+========================= */
+
+.section{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:16px;
+  margin-bottom:14px;
+  overflow:hidden;
+}
+
+.section-header{
+  padding:15px 16px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.section-title{
+  font-size:13px;
+  font-weight:750;
+}
+
+.section-description{
+  color:var(--muted);
+  font-size:10px;
+  margin-top:3px;
+}
+
+/* =========================
+   QUICK ACTIONS
+========================= */
+
+.quick-content{
+  padding:14px;
+}
+
+.sale-form{
+  display:flex;
+  gap:8px;
+}
+
+.sale-form input{
+  flex:1;
+  margin:0;
+}
+
+.add-btn{
+  min-width:100px;
+  border:0;
+  border-radius:10px;
+  background:var(--green);
+  color:#031109;
+  font-weight:800;
+  padding:0 17px;
+}
+
+.action-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:7px;
+  margin-top:9px;
+}
+
+.action-btn{
+  border:1px solid var(--border2);
+  background:var(--panel2);
+  color:#c3ccd5;
+  border-radius:10px;
+  padding:10px 7px;
+  font-size:11px;
+  transition:.2s;
+}
+
+.action-btn:hover{
+  border-color:#3a4654;
+  background:var(--panel3);
+}
+
+.action-btn.danger{
+  color:#ff7382;
+}
+
+/* =========================
+   HISTORY
+========================= */
+
+.history-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.history-count{
+  color:var(--muted);
+  font-size:10px;
+}
+
+.history-list{
+  padding:5px 12px 10px;
+}
+
+.sale-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:12px 4px;
+  border-bottom:1px solid rgba(255,255,255,.045);
+}
+
+.sale-row:last-child{
+  border-bottom:0;
+}
+
+.sale-left{
+  min-width:0;
+}
+
+.sale-number{
+  color:var(--muted);
+  font-size:9px;
+  margin-bottom:3px;
+}
+
+.sale-amount{
+  font-size:14px;
+  font-weight:750;
+}
+
+.sale-meta{
+  color:#707b88;
+  font-size:9px;
+  margin-top:3px;
+}
+
+.sale-right{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.edit-btn,
+.delete-btn{
+  border-radius:8px;
+  padding:7px 9px;
+  font-size:10px;
+  border:1px solid var(--border2);
+  background:var(--panel2);
+}
+
+.edit-btn{
+  color:#8ebfff;
+}
+
+.delete-btn{
+  color:#ff7180;
+}
+
+.empty{
+  text-align:center;
+  padding:30px 10px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+/* =========================
+   COMPACT FILTER
+========================= */
+
+.compact-filter{
+  margin-top:10px;
+}
+
+.compact-filter .section-header{
+  padding:11px 13px;
+}
+
+.filter-box-title{
+  font-size:12px;
+}
+
+.compact-filter .section-description{
+  font-size:9px;
+}
+
+.filter-content{
+  padding:10px;
+}
+
+.filter-grid{
+  display:grid;
+  grid-template-columns:1.5fr 1fr 1fr auto;
+  gap:7px;
+}
+
+.filter-grid input{
+  min-width:0;
+  border:1px solid var(--border2);
+  background:#0b1016;
+  color:var(--text);
+  border-radius:9px;
+  padding:9px 10px;
+  font-size:11px;
+  outline:none;
+}
+
+.filter-grid input:focus{
+  border-color:var(--green);
+}
+
+.clear-btn{
+  border:1px solid var(--border2);
+  background:var(--panel2);
+  color:#aeb7c2;
+  border-radius:9px;
+  padding:0 11px;
+  font-size:10px;
+}
+
+/* =========================
+   REPORT
+========================= */
+
+details.section > summary{
+  list-style:none;
+  cursor:pointer;
+}
+
+details.section > summary::-webkit-details-marker{
+  display:none;
+}
+
+.report-content{
+  padding:12px;
+}
+
+.report-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+}
+
+.report-card{
+  background:var(--panel2);
+  border:1px solid var(--border);
+  border-radius:11px;
+  padding:12px;
+}
+
+.report-name{
+  color:var(--muted);
+  font-size:10px;
+}
+
+.report-value{
+  font-size:16px;
+  font-weight:800;
+  margin-top:6px;
+}
+
+/* =========================
+   BACKUP
+========================= */
+
+.backup-content{
+  padding:12px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.backup-btn{
+  border:1px solid var(--border2);
+  background:var(--panel2);
+  color:#c3ccd5;
+  border-radius:10px;
+  padding:10px;
+  font-size:11px;
+}
+
+.file-label{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid var(--border2);
+  background:var(--panel2);
+  color:#c3ccd5;
+  border-radius:10px;
+  padding:10px;
+  font-size:11px;
+  cursor:pointer;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer{
+  text-align:center;
+  color:#5f6975;
+  font-size:9px;
+  padding:5px 0 25px;
+}
+
+.footer strong{
+  color:#87919d;
+}
+
+/* =========================
+   TOAST
+========================= */
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:22px;
+  transform:translate(-50%,20px);
+  background:#171e27;
+  border:1px solid var(--border2);
+  color:#e9edf1;
+  border-radius:10px;
+  padding:10px 14px;
+  font-size:11px;
+  box-shadow:var(--shadow);
+  opacity:0;
+  pointer-events:none;
+  transition:.25s;
+  z-index:9999;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:10000;
+  background:rgba(0,0,0,.7);
+  backdrop-filter:blur(6px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+
+.modal-backdrop.show{
+  display:flex;
+}
+
+.modal{
+  width:100%;
+  max-width:360px;
+  background:#11171f;
+  border:1px solid var(--border2);
+  border-radius:17px;
+  padding:20px;
+  box-shadow:var(--shadow);
+}
+
+.modal-title{
+  font-size:16px;
+  font-weight:800;
+  margin-bottom:7px;
+}
+
+.modal-text{
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.5;
+  margin-bottom:15px;
+}
+
+.modal-input{
+  width:100%;
+  border:1px solid var(--border2);
+  background:#090e14;
+  color:white;
+  border-radius:10px;
+  padding:11px;
+  outline:none;
+  font-size:12px;
+  margin-bottom:13px;
+}
+
+.modal-actions{
+  display:flex;
+  gap:7px;
+}
+
+.modal-actions button{
+  flex:1;
+  border-radius:10px;
+  padding:10px;
+  font-size:11px;
+  font-weight:700;
+}
+
+.modal-cancel{
+  border:1px solid var(--border2);
+  background:var(--panel2);
+  color:#aeb7c2;
+}
+
+.modal-confirm{
+  border:0;
+  background:var(--green);
+  color:#031109;
+}
+
+.modal-confirm.danger{
+  background:var(--red);
+  color:white;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:760px){
+
+  .stats{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .report-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .action-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+}
+
+@media(max-width:520px){
+
+  .container{
+    width:min(100% - 18px,1080px);
+  }
+
+  main{
+    padding-top:22px;
+  }
+
+  .header-inner{
+    min-height:61px;
+  }
+
+  .brand-icon{
+    width:34px;
+    height:34px;
+  }
+
+  .brand-name{
+    font-size:15px;
+  }
+
+  .status{
+    display:none;
+  }
+
+  .logout-btn{
+    font-size:10px;
+    padding:7px 9px;
+  }
+
+  .page-heading h1{
+    font-size:23px;
+  }
+
+  .stats{
+    gap:7px;
+  }
+
+  .stat-card{
+    padding:13px;
+    border-radius:13px;
+  }
+
+  .stat-label{
+    font-size:9px;
+  }
+
+  .stat-value{
+    font-size:18px;
+  }
+
+  .sale-form{
+    display:grid;
+    grid-template-columns:1fr auto;
+  }
+
+  .add-btn{
+    min-width:82px;
+    padding:0 12px;
+  }
+
+  .action-grid{
+    gap:6px;
+  }
+
+  .action-btn{
+    padding:9px 5px;
+    font-size:10px;
+  }
+
+  .history-list{
+    padding-left:10px;
+    padding-right:10px;
+  }
+
+  .sale-row{
+    padding:11px 2px;
+  }
+
+  .sale-amount{
+    font-size:13px;
+  }
+
+  .edit-btn,
+  .delete-btn{
+    padding:6px 8px;
+    font-size:9px;
+  }
+
+  .filter-grid{
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+  }
+
+  .filter-grid input{
+    padding:9px;
+    font-size:10px;
+  }
+
+  .clear-btn{
+    padding:9px;
+  }
+
+  .backup-content{
+    grid-template-columns:1fr;
+  }
+
+}
+
+@media(max-width:350px){
+
+  .sale-right{
+    flex-direction:column;
+    align-items:flex-end;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     LOGIN SCREEN
+========================= -->
+
+<div id="loginScreen" class="login-screen">
+
+  <div class="login-card">
+
+    <div class="login-logo">💰</div>
+
+    <div class="login-title">
+      SaleTrack
+    </div>
+
+    <div class="login-subtitle">
+      Sign in to manage your sales
+    </div>
+
+    <div id="loginError" class="login-error"></div>
+
+    <label class="form-label">
+      Email
+    </label>
+
+    <input
+      id="emailInput"
+      class="input"
+      type="email"
+      placeholder="Enter your email"
+      autocomplete="email"
+    >
+
+    <label class="form-label">
+      Password
+    </label>
+
+    <input
+      id="passwordInput"
+      class="input"
+      type="password"
+      placeholder="Enter your password"
+      autocomplete="current-password"
+    >
+
+    <button
+      id="loginBtn"
+      class="primary-btn"
+    >
+      Sign In
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- =========================
+     APP
+========================= -->
+
+<div id="app" class="app">
+
+  <!-- HEADER -->
+
+  <header class="header">
+
+    <div class="container header-inner">
+
+      <div class="brand">
+
+        <div class="brand-icon">
+          💰
+        </div>
+
+        <div>
+          <div class="brand-name">
+            SaleTrack
+          </div>
+
+          <div class="brand-powered">
+            Powered by mehedi1only
+          </div>
+        </div>
+
+      </div>
+
+      <div class="header-right">
+
+        <div id="onlineStatus" class="status">
+
+          <span class="status-dot"></span>
+
+          <span id="statusText">
+            Online
+          </span>
+
+        </div>
+
+        <button
+          id="logoutBtn"
+          class="logout-btn"
+        >
+          Logout
+        </button>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- MAIN -->
+
+  <main>
+
+    <div class="container">
+
+      <!-- PAGE TITLE -->
+
+      <div class="page-heading">
+
+        <h1>
+          Sales Dashboard
+        </h1>
+
+        <p>
+          Track and manage your sales in one place.
+        </p>
+
+      </div>
+
+
+      <!-- STATS -->
+
+      <section class="stats">
+
+        <div class="stat-card">
+
+          <div class="stat-label">
+            Add Count
+          </div>
+
+          <div
+            id="countValue"
+            class="stat-value"
+          >
+            0
+          </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+          <div class="stat-label">
+            Total Sales
+          </div>
+
+          <div
+            id="totalValue"
+            class="stat-value green"
+          >
+            0.00
+          </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+          <div class="stat-label">
+            Today Sales
+          </div>
+
+          <div
+            id="todayValue"
+            class="stat-value blue"
+          >
+            0.00
+          </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+          <div class="stat-label">
+            Last Sale
+          </div>
+
+          <div
+            id="lastSaleValue"
+            class="stat-value"
+          >
+            —
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- QUICK ACTIONS -->
+
+      <section class="section">
+
+        <div class="section-header">
+
+          <div>
+
+            <div class="section-title">
+              Quick Actions
+            </div>
+
+            <div class="section-description">
+              Add a new sale or manage your data
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="quick-content">
+
+          <div class="sale-form">
+
+            <input
+              id="amountInput"
+              class="input"
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="Enter sale amount"
+            >
+
+            <button
+              id="addSaleBtn"
+              class="add-btn"
+            >
+              + Add Sale
+            </button>
+
+          </div>
+
+
+          <div class="action-grid">
+
+            <button
+              id="exportCsvBtn"
+              class="action-btn"
+            >
+              📤 Export CSV
+            </button>
+
+            <button
+              id="undoBtn"
+              class="action-btn"
+            >
+              ↩️ Undo Delete
+            </button>
+
+            <button
+              id="resetBtn"
+              class="action-btn danger"
+            >
+              🗑️ Reset All
+            </button>
+
+            <button
+              id="refreshBtn"
+              class="action-btn"
+            >
+              🔄 Refresh
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- SALES HISTORY -->
+
+      <section class="section">
+
+        <div class="section-header history-header">
+
+          <div>
+
+            <div class="section-title">
+              Sales History
+            </div>
+
+            <div class="section-description">
+              Your recent sales
+            </div>
+
+          </div>
+
+          <div
+            id="historyCount"
+            class="history-count"
+          >
+            0 sales
+          </div>
+
+        </div>
+
+
+        <div
+          id="historyList"
+          class="history-list"
+        ></div>
+
+      </section>
+
+
+      <!-- SEARCH & FILTER
+           BELOW SALES HISTORY -->
+
+      <section class="section compact-filter">
+
+        <div class="section-header">
+
+          <div>
+
+            <div class="section-title filter-box-title">
+              🔍 Search & Filter
+            </div>
+
+            <div class="section-description">
+              Find sales by amount or date
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="filter-content">
+
+          <div class="filter-grid">
+
+            <input
+              id="searchInput"
+              type="search"
+              placeholder="Search..."
+            >
+
+            <input
+              id="fromDate"
+              type="date"
+            >
+
+            <input
+              id="toDate"
+              type="date"
+            >
+
+            <button
+              id="clearFilter"
+              class="clear-btn"
+            >
+              Clear
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- REPORTS -->
+
+      <details class="section">
+
+        <summary class="section-header">
+
+          <div>
+
+            <div class="section-title">
+              📈 Reports
+            </div>
+
+            <div class="section-description">
+              Today, yesterday, week and month
+            </div>
+
+          </div>
+
+        </summary>
+
+
+        <div class="report-content">
+
+          <div class="report-grid">
+
+            <div class="report-card">
+
+              <div class="report-name">
+                Today
+              </div>
+
+              <div
+                id="reportToday"
+                class="report-value"
+              >
+                0.00
+              </div>
+
+            </div>
+
+
+            <div class="report-card">
+
+              <div class="report-name">
+                Yesterday
+              </div>
+
+              <div
+                id="reportYesterday"
+                class="report-value"
+              >
+                0.00
+              </div>
+
+            </div>
+
+
+            <div class="report-card">
+
+              <div class="report-name">
+                This Week
+              </div>
+
+              <div
+                id="reportWeek"
+                class="report-value"
+              >
+                0.00
+              </div>
+
+            </div>
+
+
+            <div class="report-card">
+
+              <div class="report-name">
+                This Month
+              </div>
+
+              <div
+                id="reportMonth"
+                class="report-value"
+              >
+                0.00
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </details>
+
+
+      <!-- BACKUP -->
+
+      <details class="section">
+
+        <summary class="section-header">
+
+          <div>
+
+            <div class="section-title">
+              💾 Backup & Restore
+            </div>
+
+            <div class="section-description">
+              Save or restore your sales data
+            </div>
+
+          </div>
+
+        </summary>
+
+
+        <div class="backup-content">
+
+          <button
+            id="backupBtn"
+            class="backup-btn"
+          >
+            💾 Download Backup
+          </button>
+
+          <label class="file-label">
+
+            ♻️ Restore Backup
+
+            <input
+              id="restoreInput"
+              type="file"
+              accept=".json,application/json"
+              hidden
+            >
+
+          </label>
+
+        </div>
+
+      </details>
+
+
+      <!-- FOOTER -->
+
+      <footer class="footer">
+
+        <strong>SaleTrack</strong>
+        <br>
+
+        Powered by mehedi1only
+
+      </footer>
+
+    </div>
+
+  </main>
+
+</div>
+
+
+<!-- =========================
+     MODAL
+========================= -->
+
+<div
+  id="modalBackdrop"
+  class="modal-backdrop"
+>
+
+  <div class="modal">
+
+    <div
+      id="modalTitle"
+      class="modal-title"
+    >
+      Confirmation
+    </div>
+
+    <div
+      id="modalText"
+      class="modal-text"
+    ></div>
+
+    <input
+      id="modalInput"
+      class="modal-input"
+      style="display:none"
+      autocomplete="off"
+    >
+
+    <div class="modal-actions">
+
+      <button
+        id="modalCancel"
+        class="modal-cancel"
+      >
+        Cancel
+      </button>
+
+      <button
+        id="modalConfirm"
+        class="modal-confirm"
+      >
+        Confirm
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- TOAST -->
+
+<div
+  id="toast"
+  class="toast"
+></div>
+
+
+<script>
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+  "https://eavqyzgamuelwyplhqjf.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_OSypObpmAQMHjMZrct7QNQ_AtrYXY8Z";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let sales = [];
+let deletedSale = null;
+let currentUser = null;
+
+let filterTimer = null;
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const $ = id =>
+  document.getElementById(id);
+
+const loginScreen =
+  $("loginScreen");
+
+const app =
+  $("app");
+
+const loginBtn =
+  $("loginBtn");
+
+const logoutBtn =
+  $("logoutBtn");
+
+const emailInput =
+  $("emailInput");
+
+const passwordInput =
+  $("passwordInput");
+
+const loginError =
+  $("loginError");
+
+const amountInput =
+  $("amountInput");
+
+const addSaleBtn =
+  $("addSaleBtn");
+
+const historyList =
+  $("historyList");
+
+const searchInput =
+  $("searchInput");
+
+const fromDate =
+  $("fromDate");
+
+const toDate =
+  $("toDate");
+
+const clearFilter =
+  $("clearFilter");
+
+const modalBackdrop =
+  $("modalBackdrop");
+
+const modalTitle =
+  $("modalTitle");
+
+const modalText =
+  $("modalText");
+
+const modalInput =
+  $("modalInput");
+
+const modalCancel =
+  $("modalCancel");
+
+const modalConfirm =
+  $("modalConfirm");
+
+const toast =
+  $("toast");
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function money(value){
+
+  return Number(value || 0)
+    .toLocaleString(undefined,{
+      minimumFractionDigits:2,
+      maximumFractionDigits:2
+    });
+
+}
+
+
+function formatTime(date){
+
+  return new Intl.DateTimeFormat(
+    undefined,
+    {
+      hour:"2-digit",
+      minute:"2-digit",
+      hour12:true
+    }
+  ).format(date);
+
+}
+
+
+function formatDate(date){
+
+  return new Intl.DateTimeFormat(
+    undefined,
+    {
+      year:"numeric",
+      month:"short",
+      day:"numeric",
+      hour:"2-digit",
+      minute:"2-digit",
+      hour12:true
+    }
+  ).format(date);
+
+}
+
+
+function dateKey(date){
+
+  const y =
+    date.getFullYear();
+
+  const m =
+    String(date.getMonth()+1)
+      .padStart(2,"0");
+
+  const d =
+    String(date.getDate())
+      .padStart(2,"0");
+
+  return `${y}-${m}-${d}`;
+
+}
+
+
+function showToast(message){
+
+  toast.textContent =
+    message;
+
+  toast.classList.add("show");
+
+  clearTimeout(
+    showToast.timer
+  );
+
+  showToast.timer =
+    setTimeout(()=>{
+      toast.classList.remove("show");
+    },2200);
+
+}
+
+
+function escapeHtml(value){
+
+  return String(value)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+function openModal({
+  title,
+  text,
+  input = false,
+  confirmText = "Confirm",
+  danger = false
+}){
+
+  return new Promise(resolve => {
+
+    modalTitle.textContent =
+      title;
+
+    modalText.textContent =
+      text;
+
+    modalInput.style.display =
+      input ? "block" : "none";
+
+    modalInput.value =
+      "";
+
+    modalConfirm.textContent =
+      confirmText;
+
+    modalConfirm.classList.toggle(
+      "danger",
+      danger
+    );
+
+    modalBackdrop.classList.add(
+      "show"
+    );
+
+    if(input){
+
+      setTimeout(()=>{
+        modalInput.focus();
+      },50);
+
+    }
+
+    let finished = false;
+
+    const finish = value => {
+
+      if(finished) return;
+
+      finished = true;
+
+      modalBackdrop.classList.remove(
+        "show"
+      );
+
+      modalCancel.onclick =
+        null;
+
+      modalConfirm.onclick =
+        null;
+
+      modalBackdrop.onclick =
+        null;
+
+      resolve(value);
+
+    };
+
+
+    modalCancel.onclick =
+      () => finish(null);
+
+
+    modalConfirm.onclick =
+      () => {
+
+        if(input){
+
+          finish(
+            modalInput.value.trim()
+          );
+
+        }else{
+
+          finish(true);
+
+        }
+
+      };
+
+
+    modalBackdrop.onclick =
+      event => {
+
+        if(
+          event.target ===
+          modalBackdrop
+        ){
+
+          finish(null);
+
+        }
+
+      };
+
+  });
+
+}
+
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+async function checkSession(){
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .auth
+      .getSession();
+
+  if(error){
+
+    console.error(error);
+
+    return;
+
+  }
+
+  if(data.session){
+
+    currentUser =
+      data.session.user;
+
+    showApp();
+
+    await loadSales();
+
+  }else{
+
+    showLogin();
+
+  }
+
+}
+
+
+function showLogin(){
+
+  loginScreen.style.display =
+    "flex";
+
+  app.style.display =
+    "none";
+
+}
+
+
+function showApp(){
+
+  loginScreen.style.display =
+    "none";
+
+  app.style.display =
+    "block";
+
+}
+
+
+loginBtn.addEventListener(
+  "click",
+  login
+);
+
+
+passwordInput.addEventListener(
+  "keydown",
+  event => {
+
+    if(event.key === "Enter"){
+      login();
+    }
+
+  }
+);
+
+
+emailInput.addEventListener(
+  "keydown",
+  event => {
+
+    if(event.key === "Enter"){
+      passwordInput.focus();
+    }
+
+  }
+);
+
+
+async function login(){
+
+  const email =
+    emailInput.value.trim();
+
+  const password =
+    passwordInput.value;
+
+  loginError.style.display =
+    "none";
+
+  if(!email || !password){
+
+    loginError.textContent =
+      "Please enter email and password.";
+
+    loginError.style.display =
+      "block";
+
+    return;
+
+  }
+
+  loginBtn.disabled =
+    true;
+
+  loginBtn.textContent =
+    "Signing in...";
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .auth
+      .signInWithPassword({
+        email,
+        password
+      });
+
+
+  loginBtn.disabled =
+    false;
+
+  loginBtn.textContent =
+    "Sign In";
+
+
+  if(error){
+
+    loginError.textContent =
+      error.message;
+
+    loginError.style.display =
+      "block";
+
+    return;
+
+  }
+
+
+  currentUser =
+    data.user;
+
+  showApp();
+
+  await loadSales();
+
+}
+
+
+logoutBtn.addEventListener(
+  "click",
+  async () => {
+
+    await supabaseClient
+      .auth
+      .signOut();
+
+    sales = [];
+
+    currentUser = null;
+
+    showLogin();
+
+  }
+);
+
+
+/* =========================================================
+   LOAD SALES
+========================================================= */
+
+async function loadSales(){
+
+  if(!currentUser)
+    return;
+
+
+  historyList.innerHTML = `
+    <div class="empty">
+      Loading sales...
+    </div>
+  `;
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("sales")
+      .select("*")
+      .eq(
+        "user_id",
+        currentUser.id
+      )
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
+
+
+  if(error){
+
+    console.error(error);
+
+    showToast(
+      "Failed to load sales."
+    );
+
+    historyList.innerHTML = `
+      <div class="empty">
+        Failed to load sales.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  sales =
+    data || [];
+
+  render();
+
+}
+
+
+/* =========================================================
+   ADD SALE
+========================================================= */
+
+addSaleBtn.addEventListener(
+  "click",
+  addSale
+);
+
+
+amountInput.addEventListener(
+  "keydown",
+  event => {
+
+    if(event.key === "Enter"){
+      addSale();
+    }
+
+  }
+);
+
+
+async function addSale(){
+
+  const amount =
+    Number(
+      amountInput.value
+    );
+
+
+  if(
+    !Number.isFinite(amount) ||
+    amount <= 0
+  ){
+
+    showToast(
+      "Enter a valid sale amount."
+    );
+
+    amountInput.focus();
+
+    return;
+
+  }
+
+
+  if(!currentUser){
+
+    showToast(
+      "Please sign in again."
+    );
+
+    return;
+
+  }
+
+
+  addSaleBtn.disabled =
+    true;
+
+  addSaleBtn.textContent =
+    "Adding...";
+
+
+  const optimistic = {
+
+    id:
+      "temp-" +
+      Date.now(),
+
+    amount,
+
+    created_at:
+      new Date().toISOString(),
+
+    user_id:
+      currentUser.id
+
+  };
+
+
+  sales.unshift(
+    optimistic
+  );
+
+  render();
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("sales")
+      .insert({
+
+        amount,
+
+        user_id:
+          currentUser.id
+
+      })
+      .select()
+      .single();
+
+
+  if(error){
+
+    sales =
+      sales.filter(
+        item =>
+          item.id !==
+          optimistic.id
+      );
+
+    render();
+
+    console.error(error);
+
+    showToast(
+      "Could not save sale."
+    );
+
+  }else{
+
+    const index =
+      sales.findIndex(
+        item =>
+          item.id ===
+          optimistic.id
+      );
+
+    if(index !== -1){
+
+      sales[index] =
+        data;
+
+    }
+
+    render();
+
+    showToast(
+      "Sale added successfully."
+    );
+
+  }
+
+
+  amountInput.value =
+    "";
+
+  addSaleBtn.disabled =
+    false;
+
+  addSaleBtn.textContent =
+    "+ Add Sale";
+
+}
+
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function getFilteredSales(){
+
+  const search =
+    searchInput.value
+      .trim()
+      .toLowerCase();
+
+  const from =
+    fromDate.value;
+
+  const to =
+    toDate.value;
+
+
+  return sales.filter(
+    sale => {
+
+      const amountText =
+        String(sale.amount);
+
+      const date =
+        new Date(
+          sale.created_at
+        );
+
+      const saleDate =
+        dateKey(date);
+
+
+      if(
+        search &&
+        !amountText
+          .toLowerCase()
+          .includes(search)
+      ){
+
+        return false;
+
+      }
+
+
+      if(
+        from &&
+        saleDate < from
+      ){
+
+        return false;
+
+      }
+
+
+      if(
+        to &&
+        saleDate > to
+      ){
+
+        return false;
+
+      }
+
+
+      return true;
+
+    }
+  );
+
+}
+
+
+function render(){
+
+  renderStats();
+
+  renderHistory();
+
+  renderReports();
+
+}
+
+
+function renderStats(){
+
+  const total =
+    sales.reduce(
+      (sum,sale) =>
+        sum +
+        Number(sale.amount || 0),
+      0
+    );
+
+
+  const today =
+    dateKey(
+      new Date()
+    );
+
+
+  const todayTotal =
+    sales
+      .filter(
+        sale =>
+          dateKey(
+            new Date(
+              sale.created_at
+            )
+          ) === today
+      )
+      .reduce(
+        (sum,sale) =>
+          sum +
+          Number(sale.amount || 0),
+        0
+      );
+
+
+  $("countValue").textContent =
+    sales.length;
+
+
+  $("totalValue").textContent =
+    money(total);
+
+
+  $("todayValue").textContent =
+    money(todayTotal);
+
+
+  if(sales.length){
+
+    $("lastSaleValue").textContent =
+      formatTime(
+        new Date(
+          sales[0].created_at
+        )
+      );
+
+  }else{
+
+    $("lastSaleValue").textContent =
+      "—";
+
+  }
+
+}
+
+
+function renderHistory(){
+
+  const filtered =
+    getFilteredSales();
+
+
+  $("historyCount").textContent =
+    `${filtered.length} ${
+      filtered.length === 1
+        ? "sale"
+        : "sales"
+    }`;
+
+
+  if(!filtered.length){
+
+    historyList.innerHTML = `
+      <div class="empty">
+        ${
+          sales.length
+            ? "No sales match your filter."
+            : "No sales yet. Add your first sale."
+        }
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  historyList.innerHTML =
+    filtered.map(
+      (sale,index) => {
+
+        const date =
+          new Date(
+            sale.created_at
+          );
+
+
+        return `
+
+          <div class="sale-row">
+
+            <div class="sale-left">
+
+              <div class="sale-number">
+                Sale #${index + 1}
+              </div>
+
+              <div class="sale-amount">
+                ${money(sale.amount)}
+              </div>
+
+              <div class="sale-meta">
+                ${escapeHtml(
+                  formatDate(date)
+                )}
+              </div>
+
+            </div>
+
+
+            <div class="sale-right">
+
+              <button
+                class="edit-btn"
+                onclick="editSale('${sale.id}')"
+              >
+                Edit
+              </button>
+
+              <button
+                class="delete-btn"
+                onclick="deleteSale('${sale.id}')"
+              >
+                Delete
+              </button>
+
+            </div>
+
+          </div>
+
+        `;
+
+      }
+    ).join("");
+
+}
+
+
+/* =========================================================
+   EDIT SALE
+========================================================= */
+
+window.editSale =
+  async function(id){
+
+    const sale =
+      sales.find(
+        item =>
+          String(item.id) ===
+          String(id)
+      );
+
+
+    if(!sale)
+      return;
+
+
+    const result =
+      await openModal({
+
+        title:
+          "Edit Sale",
+
+        text:
+          "Enter the new sale amount.",
+
+        input:
+          true,
+
+        confirmText:
+          "Save"
+
+      });
+
+
+    if(result === null)
+      return;
+
+
+    const newAmount =
+      Number(result);
+
+
+    if(
+      !Number.isFinite(newAmount) ||
+      newAmount <= 0
+    ){
+
+      showToast(
+        "Invalid sale amount."
+      );
+
+      return;
+
+    }
+
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from("sales")
+        .update({
+          amount:newAmount
+        })
+        .eq(
+          "id",
+          sale.id
+        )
+        .eq(
+          "user_id",
+          currentUser.id
+        )
+        .select()
+        .single();
+
+
+    if(error){
+
+      console.error(error);
+
+      showToast(
+        "Failed to update sale."
+      );
+
+      return;
+
+    }
+
+
+    const index =
+      sales.findIndex(
+        item =>
+          String(item.id) ===
+          String(id)
+      );
+
+
+    if(index !== -1){
+
+      sales[index] =
+        data;
+
+    }
+
+
+    sales.sort(
+      (a,b) =>
+        new Date(b.created_at) -
+        new Date(a.created_at)
+    );
+
+
+    render();
+
+    showToast(
+      "Sale updated."
+    );
+
+  };
+
+
+/* =========================================================
+   DELETE SALE
+========================================================= */
+
+window.deleteSale =
+  async function(id){
+
+    const sale =
+      sales.find(
+        item =>
+          String(item.id) ===
+          String(id)
+      );
+
+
+    if(!sale)
+      return;
+
+
+    const result =
+      await openModal({
+
+        title:
+          "Delete Sale",
+
+        text:
+          "Type DELETE to permanently remove this sale.",
+
+        input:
+          true,
+
+        confirmText:
+          "Delete",
+
+        danger:
+          true
+
+      });
+
+
+    if(result === null)
+      return;
+
+
+    if(result !== "DELETE"){
+
+      showToast(
+        "Confirmation text is incorrect."
+      );
+
+      return;
+
+    }
+
+
+    const {
+      error
+    } =
+      await supabaseClient
+        .from("sales")
+        .delete()
+        .eq(
+          "id",
+          sale.id
+        )
+        .eq(
+          "user_id",
+          currentUser.id
+        );
+
+
+    if(error){
+
+      console.error(error);
+
+      showToast(
+        "Failed to delete sale."
+      );
+
+      return;
+
+    }
+
+
+    deletedSale =
+      {
+        ...sale
+      };
+
+
+    sales =
+      sales.filter(
+        item =>
+          String(item.id) !==
+          String(id)
+      );
+
+
+    render();
+
+    showToast(
+      "Sale deleted. You can undo it."
+    );
+
+  };
+
+
+/* =========================================================
+   UNDO DELETE
+========================================================= */
+
+$("undoBtn").addEventListener(
+  "click",
+  undoDelete
+);
+
+
+async function undoDelete(){
+
+  if(!deletedSale){
+
+    showToast(
+      "Nothing to undo."
+    );
+
+    return;
+
+  }
+
+
+  const restore =
+    {
+      amount:
+        Number(
+          deletedSale.amount
+        ),
+
+      created_at:
+        deletedSale.created_at,
+
+      user_id:
+        currentUser.id
+
+    };
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("sales")
+      .insert(
+        restore
+      )
+      .select()
+      .single();
+
+
+  if(error){
+
+    console.error(error);
+
+    showToast(
+      "Undo failed."
+    );
+
+    return;
+
+  }
+
+
+  sales.push(data);
+
+
+  sales.sort(
+    (a,b) =>
+      new Date(b.created_at) -
+      new Date(a.created_at)
+  );
+
+
+  deletedSale =
+    null;
+
+  render();
+
+  showToast(
+    "Deleted sale restored."
+  );
+
+}
+
+
+/* =========================================================
+   RESET ALL
+========================================================= */
+
+$("resetBtn").addEventListener(
+  "click",
+  resetAll
+);
+
+
+async function resetAll(){
+
+  if(!sales.length){
+
+    showToast(
+      "There are no sales to reset."
+    );
+
+    return;
+
+  }
+
+
+  const first =
+    await openModal({
+
+      title:
+        "Reset All Sales",
+
+      text:
+        "This will permanently delete all your sales. Type RESET ALL to continue.",
+
+      input:
+        true,
+
+      confirmText:
+        "Continue",
+
+      danger:
+        true
+
+    });
+
+
+  if(first === null)
+    return;
+
+
+  if(first !== "RESET ALL"){
+
+    showToast(
+      "Confirmation text is incorrect."
+    );
+
+    return;
+
+  }
+
+
+  const second =
+    await openModal({
+
+      title:
+        "Final Confirmation",
+
+      text:
+        "Are you absolutely sure? This action cannot be undone.",
+
+      confirmText:
+        "Yes, Delete All",
+
+      danger:
+        true
+
+    });
+
+
+  if(!second)
+    return;
+
+
+  const {
+    error
+  } =
+    await supabaseClient
+      .from("sales")
+      .delete()
+      .eq(
+        "user_id",
+        currentUser.id
+      );
+
+
+  if(error){
+
+    console.error(error);
+
+    showToast(
+      "Reset failed."
+    );
+
+    return;
+
+  }
+
+
+  deletedSale =
+    null;
+
+  sales = [];
+
+  render();
+
+  showToast(
+    "All sales deleted."
+  );
+
+}
+
+
+/* =========================================================
+   SEARCH & FILTER
+========================================================= */
+
+function filterChanged(){
+
+  clearTimeout(
+    filterTimer
+  );
+
+  filterTimer =
+    setTimeout(
+      renderHistory,
+      100
+    );
+
+}
+
+
+searchInput.addEventListener(
+  "input",
+  filterChanged
+);
+
+fromDate.addEventListener(
+  "change",
+  filterChanged
+);
+
+toDate.addEventListener(
+  "change",
+  filterChanged
+);
+
+
+clearFilter.addEventListener(
+  "click",
+  () => {
+
+    searchInput.value =
+      "";
+
+    fromDate.value =
+      "";
+
+    toDate.value =
+      "";
+
+    renderHistory();
+
+  }
+);
+
+
+/* =========================================================
+   REPORTS
+========================================================= */
+
+function renderReports(){
+
+  const now =
+    new Date();
+
+
+  const today =
+    dateKey(now);
+
+
+  const yesterdayDate =
+    new Date(now);
+
+  yesterdayDate.setDate(
+    yesterdayDate.getDate() - 1
+  );
+
+
+  const yesterday =
+    dateKey(
+      yesterdayDate
+    );
+
+
+  const weekStart =
+    new Date(now);
+
+  const day =
+    weekStart.getDay();
+
+  const diff =
+    day === 0 ? 6 : day - 1;
+
+  weekStart.setDate(
+    weekStart.getDate() - diff
+  );
+
+  weekStart.setHours(
+    0,0,0,0
+  );
+
+
+  const monthStart =
+    new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      1
+    );
+
+
+  let todayTotal = 0;
+  let yesterdayTotal = 0;
+  let weekTotal = 0;
+  let monthTotal = 0;
+
+
+  sales.forEach(
+    sale => {
+
+      const amount =
+        Number(
+          sale.amount || 0
+        );
+
+      const date =
+        new Date(
+          sale.created_at
+        );
+
+
+      if(
+        dateKey(date) ===
+        today
+      ){
+
+        todayTotal += amount;
+
+      }
+
+
+      if(
+        dateKey(date) ===
+        yesterday
+      ){
+
+        yesterdayTotal += amount;
+
+      }
+
+
+      if(
+        date >= weekStart
+      ){
+
+        weekTotal += amount;
+
+      }
+
+
+      if(
+        date >= monthStart
+      ){
+
+        monthTotal += amount;
+
+      }
+
+    }
+  );
+
+
+  $("reportToday").textContent =
+    money(todayTotal);
+
+  $("reportYesterday").textContent =
+    money(yesterdayTotal);
+
+  $("reportWeek").textContent =
+    money(weekTotal);
+
+  $("reportMonth").textContent =
+    money(monthTotal);
+
+}
+
+
+/* =========================================================
+   CSV EXPORT
+========================================================= */
+
+$("exportCsvBtn").addEventListener(
+  "click",
+  exportCsv
+);
+
+
+function exportCsv(){
+
+  if(!sales.length){
+
+    showToast(
+      "No sales to export."
+    );
+
+    return;
+
+  }
+
+
+  const rows = [
+
+    [
+      "ID",
+      "Amount",
+      "Created At"
+    ]
+
+  ];
+
+
+  sales.forEach(
+    sale => {
+
+      rows.push([
+        sale.id,
+        Number(
+          sale.amount
+        ).toFixed(2),
+        sale.created_at
+      ]);
+
+    }
+  );
+
+
+  const csv =
+    rows
+      .map(
+        row =>
+          row
+            .map(
+              value =>
+                `"${String(value)
+                  .replaceAll('"','""')}"`
+            )
+            .join(",")
+      )
+      .join("\n");
+
+
+  const blob =
+    new Blob(
+      [csv],
+      {
+        type:
+          "text/csv;charset=utf-8;"
+      }
+    );
+
+
+  downloadBlob(
+    blob,
+    `saletrack-${dateKey(new Date())}.csv`
+  );
+
+
+  showToast(
+    "CSV exported."
+  );
+
+}
+
+
+/* =========================================================
+   BACKUP
+========================================================= */
+
+$("backupBtn").addEventListener(
+  "click",
+  backupData
+);
+
+
+function backupData(){
+
+  if(!sales.length){
+
+    showToast(
+      "No sales to backup."
+    );
+
+    return;
+
+  }
+
+
+  const backup = {
+
+    app:
+      "SaleTrack",
+
+    version:
+      1,
+
+    exported_at:
+      new Date().toISOString(),
+
+    sales:
+      sales.map(
+        sale => ({
+
+          amount:
+            Number(
+              sale.amount
+            ),
+
+          created_at:
+            sale.created_at
+
+        })
+      )
+
+  };
+
+
+  const blob =
+    new Blob(
+      [
+        JSON.stringify(
+          backup,
+          null,
+          2
+        )
+      ],
+      {
+        type:
+          "application/json"
+      }
+    );
+
+
+  downloadBlob(
+    blob,
+    `saletrack-backup-${dateKey(new Date())}.json`
+  );
+
+
+  showToast(
+    "Backup downloaded."
+  );
+
+}
+
+
+function downloadBlob(
+  blob,
+  filename
+){
+
+  const url =
+    URL.createObjectURL(
+      blob
+    );
+
+  const a =
+    document.createElement(
+      "a"
+    );
+
+  a.href =
+    url;
+
+  a.download =
+    filename;
+
+  document.body.appendChild(a);
+
+  a.click();
+
+  a.remove();
+
+  URL.revokeObjectURL(
+    url
+  );
+
+}
+
+
+/* =========================================================
+   RESTORE
+========================================================= */
+
+$("restoreInput").addEventListener(
+  "change",
+  restoreBackup
+);
+
+
+async function restoreBackup(event){
+
+  const file =
+    event.target.files[0];
+
+
+  event.target.value =
+    "";
+
+
+  if(!file)
+    return;
+
+
+  try{
+
+    const text =
+      await file.text();
+
+    const backup =
+      JSON.parse(text);
+
+
+    if(
+      !backup ||
+      !Array.isArray(
+        backup.sales
+      )
+    ){
+
+      throw new Error(
+        "Invalid backup format."
+      );
+
+    }
+
+
+    if(!backup.sales.length){
+
+      showToast(
+        "Backup contains no sales."
+      );
+
+      return;
+
+    }
+
+
+    const confirm =
+      await openModal({
+
+        title:
+          "Restore Backup",
+
+        text:
+          `This will add ${backup.sales.length} sales to your current data. Existing sales will not be deleted.`,
+
+        confirmText:
+          "Restore"
+
+      });
+
+
+    if(!confirm)
+      return;
+
+
+    const rows =
+      backup.sales
+        .map(
+          sale => ({
+
+            amount:
+              Number(
+                sale.amount
+              ),
+
+            created_at:
+              sale.created_at
+                || new Date().toISOString(),
+
+            user_id:
+              currentUser.id
+
+          })
+        )
+        .filter(
+          sale =>
+            Number.isFinite(
+              sale.amount
+            ) &&
+            sale.amount > 0
+        );
+
+
+    if(!rows.length){
+
+      showToast(
+        "No valid sales found."
+      );
+
+      return;
+
+    }
+
+
+    const {
+      error
+    } =
+      await supabaseClient
+        .from("sales")
+        .insert(rows);
+
+
+    if(error){
+
+      console.error(error);
+
+      showToast(
+        "Restore failed."
+      );
+
+      return;
+
+    }
+
+
+    await loadSales();
+
+    showToast(
+      `${rows.length} sales restored.`
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    showToast(
+      "Invalid backup file."
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   REFRESH
+========================================================= */
+
+$("refreshBtn").addEventListener(
+  "click",
+  async () => {
+
+    await loadSales();
+
+    showToast(
+      "Sales refreshed."
+    );
+
+  }
+);
+
+
+/* =========================================================
+   ONLINE / OFFLINE
+========================================================= */
+
+function updateOnlineStatus(){
+
+  const online =
+    navigator.onLine;
+
+  const status =
+    $("onlineStatus");
+
+  $("statusText").textContent =
+    online
+      ? "Online"
+      : "Offline";
+
+
+  status.classList.toggle(
+    "offline",
+    !online
+  );
+
+}
+
+
+window.addEventListener(
+  "online",
+  () => {
+
+    updateOnlineStatus();
+
+    showToast(
+      "Connection restored."
+    );
+
+  }
+);
+
+
+window.addEventListener(
+  "offline",
+  () => {
+
+    updateOnlineStatus();
+
+    showToast(
+      "You are offline."
+    );
+
+  }
+);
+
+
+updateOnlineStatus();
+
+
+/* =========================================================
+   AUTH STATE
+========================================================= */
+
+supabaseClient
+  .auth
+  .onAuthStateChange(
+    async (event,session) => {
+
+      if(session){
+
+        currentUser =
+          session.user;
+
+        showApp();
+
+        if(event === "SIGNED_IN"){
+
+          await loadSales();
+
+        }
+
+      }else{
+
+        currentUser =
+          null;
+
+        sales = [];
+
+        showLogin();
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   START
+========================================================= */
+
+checkSession();
+
+</script>
+
+</body>
+</html>
