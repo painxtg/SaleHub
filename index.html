@@ -1754,35 +1754,33 @@ function updateDashboard() {
   salesCountText.textContent =
     `${count} ${count === 1 ? "entry" : "entries"}`;
 
-/*
-  Last Sale Time
-*/
 
-if (!sales.length) {
+  /*
+    Last Sale
+  */
 
-  lastSaleValue.textContent = "—";
+  if (!sales.length) {
 
-} else {
+    lastSaleValue.textContent =
+      "—";
 
-  const last =
-    [...sales].sort(
-      (a, b) =>
-        new Date(b.created_at) -
-        new Date(a.created_at)
-    )[0];
+  } else {
 
-  const lastTime =
-    new Date(last.created_at);
+    const last =
+      [...sales]
+        .sort(
+          (a, b) =>
+            new Date(b.created_at) -
+            new Date(a.created_at)
+        )[0];
 
-  lastSaleValue.textContent =
-    lastTime.toLocaleTimeString(
-      undefined,
-      {
-        hour: "2-digit",
-        minute: "2-digit"
-      }
-    );
+    lastSaleValue.textContent =
+      formatNumber(last.amount);
+
+  }
+
 }
+
 
 /* =========================================================
    TODAY CHECK
@@ -2212,4 +2210,4 @@ checkAuth();
 </script>
 
 </body>
-    </html>
+  </html>
