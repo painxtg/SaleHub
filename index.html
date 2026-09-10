@@ -1,697 +1,932 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>SaleTrack</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: Arial, sans-serif;
-      background: #0b0f14;
-      color: #fff;
-      min-height: 100vh;
-    }
-
-    button,
-    input {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    /* LOGIN */
-
-    #loginPage {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .login-box {
-      width: 100%;
-      max-width: 390px;
-      background: #111821;
-      border: 1px solid #202b38;
-      border-radius: 20px;
-      padding: 28px;
-      box-shadow: 0 15px 50px rgba(0,0,0,.35);
-    }
-
-    .logo {
-      text-align: center;
-      font-size: 30px;
-      font-weight: 800;
-      margin-bottom: 8px;
-    }
-
-    .logo span {
-      color: #4ade80;
-    }
-
-    .subtitle {
-      text-align: center;
-      color: #8b98a8;
-      margin-bottom: 25px;
-      font-size: 14px;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 7px;
-      font-size: 13px;
-      color: #aab5c2;
-    }
-
-    input {
-      width: 100%;
-      border: 1px solid #293544;
-      background: #0b1118;
-      color: #fff;
-      border-radius: 11px;
-      padding: 13px 14px;
-      outline: none;
-    }
-
-    input:focus {
-      border-color: #4ade80;
-    }
-
-    .primary-btn {
-      width: 100%;
-      border: 0;
-      background: #4ade80;
-      color: #07120b;
-      padding: 13px;
-      border-radius: 11px;
-      font-weight: 700;
-      margin-top: 5px;
-    }
-
-    .primary-btn:hover {
-      opacity: .9;
-    }
-
-    /* APP */
-
-    #appPage {
-      min-height: 100vh;
-      padding-bottom: 50px;
-    }
-
-    .container {
-      width: min(100% - 30px, 900px);
-      margin: auto;
-    }
-
-    .topbar {
-      padding: 18px 0;
-      border-bottom: 1px solid #1c2631;
-    }
-
-    .topbar-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-    }
-
-    .brand {
-      font-size: 24px;
-      font-weight: 800;
-    }
-
-    .brand span {
-      color: #4ade80;
-    }
-
-    .user-area {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .status {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: #aab5c2;
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #4ade80;
-    }
-
-    .status.offline .status-dot {
-      background: #ef4444;
-    }
-
-    .logout-btn {
-      border: 1px solid #293544;
-      background: #111821;
-      color: #ddd;
-      border-radius: 9px;
-      padding: 8px 11px;
-      font-size: 12px;
-    }
-
-    /* DASHBOARD */
-
-    .dashboard {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin: 20px 0;
-    }
-
-    .card {
-      background: #111821;
-      border: 1px solid #202b38;
-      border-radius: 15px;
-      padding: 16px;
-    }
-
-    .card-label {
-      color: #8491a1;
-      font-size: 12px;
-      margin-bottom: 8px;
-    }
-
-    .card-value {
-      font-size: 21px;
-      font-weight: 800;
-      word-break: break-word;
-    }
-
-    /* ACTIONS */
-
-    .actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 15px;
-    }
-
-    .action-btn {
-      border: 1px solid #293544;
-      background: #111821;
-      color: #fff;
-      padding: 11px 15px;
-      border-radius: 10px;
-      font-weight: 600;
-    }
-
-    .action-btn.add {
-      background: #4ade80;
-      color: #07120b;
-      border-color: #4ade80;
-    }
-
-    .action-btn.danger {
-      color: #ff7676;
-    }
-
-    .action-btn:hover {
-      opacity: .88;
-    }
-
-    /* SALES LIST */
-
-    .sales-box {
-      background: #111821;
-      border: 1px solid #202b38;
-      border-radius: 17px;
-      overflow: hidden;
-    }
-
-    .sales-header {
-      padding: 15px 17px;
-      border-bottom: 1px solid #202b38;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .sales-title {
-      font-weight: 700;
-    }
-
-    .sales-count {
-      font-size: 12px;
-      color: #7f8b99;
-    }
-
-    #salesList {
-      padding: 10px;
-    }
-
-    .sale-row {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      padding: 7px;
-      border-bottom: 1px solid #1c2530;
-    }
-
-    .sale-row:last-child {
-      border-bottom: 0;
-    }
-
-    .sale-number {
-      width: 30px;
-      text-align: center;
-      color: #697686;
-      font-size: 12px;
-      flex-shrink: 0;
-    }
-
-    .sale-input {
-      flex: 1;
-      min-width: 0;
-      padding: 11px 12px;
-      font-size: 16px;
-    }
-
-    .delete-btn {
-      width: 38px;
-      height: 38px;
-      border: 1px solid #3b2525;
-      background: #1c1313;
-      color: #ff6b6b;
-      border-radius: 9px;
-      font-size: 17px;
-      flex-shrink: 0;
-    }
-
-    .pending {
-      opacity: .65;
-    }
-
-    .empty {
-      text-align: center;
-      padding: 45px 20px;
-      color: #667383;
-      font-size: 14px;
-    }
-
-    /* MODAL */
-
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.72);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      z-index: 100;
-    }
-
-    .modal {
-      width: 100%;
-      max-width: 360px;
-      background: #111821;
-      border: 1px solid #293544;
-      border-radius: 17px;
-      padding: 23px;
-    }
-
-    .modal h3 {
-      margin-bottom: 9px;
-    }
-
-    .modal p {
-      color: #8d99a7;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .modal-actions button {
-      flex: 1;
-      padding: 11px;
-      border-radius: 9px;
-      border: 1px solid #293544;
-      background: #18212b;
-      color: #fff;
-    }
-
-    .modal-actions .confirm {
-      background: #ef4444;
-      border-color: #ef4444;
-    }
-
-    /* TOAST */
-
-    #toast {
-      position: fixed;
-      left: 50%;
-      bottom: 25px;
-      transform: translateX(-50%) translateY(20px);
-      background: #17202a;
-      border: 1px solid #293544;
-      color: #fff;
-      padding: 11px 15px;
-      border-radius: 10px;
-      font-size: 13px;
-      opacity: 0;
-      pointer-events: none;
-      transition: .25s;
-      z-index: 200;
-      max-width: calc(100% - 30px);
-      text-align: center;
-    }
-
-    #toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    /* UNDO */
-
-    #undoBar {
-      position: fixed;
-      left: 50%;
-      bottom: 25px;
-      transform: translateX(-50%);
-      background: #17202a;
-      border: 1px solid #293544;
-      border-radius: 12px;
-      padding: 10px 12px;
-      display: none;
-      align-items: center;
-      gap: 13px;
-      z-index: 150;
-      box-shadow: 0 10px 30px rgba(0,0,0,.4);
-    }
-
-    #undoBar.show {
-      display: flex;
-    }
-
-    #undoBtn {
-      border: 0;
-      background: transparent;
-      color: #4ade80;
-      font-weight: 700;
-    }
-
-    @media(max-width: 700px) {
-      .dashboard {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media(max-width: 480px) {
-      .container {
-        width: min(100% - 20px, 900px);
-      }
-
-      .topbar-inner {
-        align-items: flex-start;
-      }
-
-      .user-area {
-        flex-direction: column;
-        align-items: flex-end;
-      }
-
-      .dashboard {
-        gap: 8px;
-      }
-
-      .card {
-        padding: 13px;
-      }
-
-      .card-value {
-        font-size: 18px;
-      }
-
-      .actions {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .action-btn {
-        width: 100%;
-      }
-
-      .action-btn.add {
-        grid-column: span 2;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SaleTrack</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0
+}
+
+body{
+  font-family:Arial,sans-serif;
+  background:#090d12;
+  color:#fff;
+  min-height:100vh
+}
+
+button,input{
+  font:inherit
+}
+
+button{
+  cursor:pointer
+}
+
+.hidden{
+  display:none!important
+}
+
+/* LOGIN */
+
+#loginPage{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px
+}
+
+.login-box{
+  width:100%;
+  max-width:390px;
+  background:#111820;
+  border:1px solid #222d39;
+  border-radius:20px;
+  padding:28px;
+  box-shadow:0 20px 60px #0008
+}
+
+.logo{
+  text-align:center;
+  font-size:30px;
+  font-weight:800
+}
+
+.logo span,
+.brand span{
+  color:#4ade80
+}
+
+.subtitle{
+  text-align:center;
+  color:#7f8b99;
+  font-size:14px;
+  margin:8px 0 25px
+}
+
+.group{
+  margin-bottom:15px
+}
+
+.group label{
+  display:block;
+  font-size:13px;
+  color:#9aa6b4;
+  margin-bottom:7px
+}
+
+input{
+  width:100%;
+  background:#0a1016;
+  color:#fff;
+  border:1px solid #293541;
+  border-radius:10px;
+  padding:12px;
+  outline:none
+}
+
+input:focus{
+  border-color:#4ade80
+}
+
+.primary{
+  width:100%;
+  border:0;
+  background:#4ade80;
+  color:#061009;
+  padding:13px;
+  border-radius:10px;
+  font-weight:bold
+}
+
+/* TOPBAR */
+
+.topbar{
+  border-bottom:1px solid #1e2731;
+  padding:17px 0
+}
+
+.container{
+  width:min(100% - 24px,950px);
+  margin:auto
+}
+
+.top-inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px
+}
+
+.brand{
+  font-size:24px;
+  font-weight:800
+}
+
+.user-area{
+  display:flex;
+  align-items:center;
+  gap:12px
+}
+
+.status{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  color:#9ba7b5;
+  font-size:12px
+}
+
+.dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#4ade80
+}
+
+.status.offline .dot{
+  background:#ef4444
+}
+
+.logout{
+  background:#111820;
+  border:1px solid #293541;
+  color:#ddd;
+  border-radius:8px;
+  padding:8px 11px;
+  font-size:12px
+}
+
+/* DASHBOARD */
+
+.dashboard{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin:18px 0
+}
+
+.card{
+  background:#111820;
+  border:1px solid #202b36;
+  border-radius:14px;
+  padding:15px
+}
+
+.card-label{
+  color:#7f8b99;
+  font-size:12px;
+  margin-bottom:8px
+}
+
+.card-value{
+  font-size:21px;
+  font-weight:800;
+  word-break:break-word
+}
+
+/* ACTIONS */
+
+.actions{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  margin-bottom:12px
+}
+
+.btn{
+  background:#111820;
+  color:#fff;
+  border:1px solid #293541;
+  padding:10px 13px;
+  border-radius:9px;
+  font-weight:600
+}
+
+.btn.add{
+  background:#4ade80;
+  color:#061009;
+  border-color:#4ade80
+}
+
+.btn.danger{
+  color:#ff7777
+}
+
+.btn:hover{
+  opacity:.85
+}
+
+/* FILTER */
+
+.filter-box{
+  background:#111820;
+  border:1px solid #202b36;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:12px
+}
+
+.filter-grid{
+  display:grid;
+  grid-template-columns:1.5fr 1fr 1fr auto;
+  gap:8px
+}
+
+.filter-title{
+  font-size:13px;
+  color:#8c98a6;
+  margin-bottom:9px
+}
+
+.clear-filter{
+  background:#18212b;
+  color:#ddd;
+  border:1px solid #293541;
+  border-radius:9px;
+  padding:0 13px
+}
+
+/* REPORT */
+
+.report{
+  background:#111820;
+  border:1px solid #202b36;
+  border-radius:14px;
+  padding:15px;
+  margin-bottom:12px
+}
+
+.report h3{
+  font-size:15px;
+  margin-bottom:12px
+}
+
+.report-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px
+}
+
+.report-item{
+  background:#0b1117;
+  border:1px solid #202b36;
+  border-radius:10px;
+  padding:11px
+}
+
+.report-item small{
+  display:block;
+  color:#7f8b99;
+  font-size:11px;
+  margin-bottom:6px
+}
+
+.report-item strong{
+  font-size:17px
+}
+
+/* SALES */
+
+.sales-box{
+  background:#111820;
+  border:1px solid #202b36;
+  border-radius:15px;
+  overflow:hidden
+}
+
+.sales-header{
+  padding:14px 16px;
+  border-bottom:1px solid #202b36;
+  display:flex;
+  justify-content:space-between
+}
+
+.sales-title{
+  font-weight:bold
+}
+
+.sales-count{
+  color:#7f8b99;
+  font-size:12px
+}
+
+#salesList{
+  padding:8px
+}
+
+.sale-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 3px;
+  border-bottom:1px solid #1c2630
+}
+
+.sale-row:last-child{
+  border-bottom:0
+}
+
+.sale-number{
+  width:28px;
+  text-align:center;
+  color:#667383;
+  font-size:12px
+}
+
+.sale-input{
+  flex:1
+}
+
+.sale-time{
+  color:#697685;
+  font-size:11px;
+  min-width:70px;
+  text-align:right
+}
+
+.delete-btn{
+  width:36px;
+  height:36px;
+  border-radius:8px;
+  background:#211414;
+  border:1px solid #402424;
+  color:#ff6d6d;
+  font-size:18px
+}
+
+.empty{
+  text-align:center;
+  padding:45px 15px;
+  color:#687584;
+  font-size:14px
+}
+
+/* MODAL */
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:#000b;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+  z-index:100
+}
+
+.modal{
+  width:100%;
+  max-width:390px;
+  background:#111820;
+  border:1px solid #293541;
+  border-radius:16px;
+  padding:22px
+}
+
+.modal h3{
+  margin-bottom:8px
+}
+
+.modal p{
+  color:#8995a3;
+  font-size:14px;
+  line-height:1.5;
+  margin-bottom:15px
+}
+
+.modal input{
+  margin-bottom:15px
+}
+
+.modal-actions{
+  display:flex;
+  gap:8px
+}
+
+.modal-actions button{
+  flex:1;
+  padding:11px;
+  border-radius:9px;
+  border:1px solid #293541;
+  background:#19222c;
+  color:#fff
+}
+
+.modal-actions .confirm{
+  background:#ef4444;
+  border-color:#ef4444
+}
+
+/* TOAST */
+
+#toast{
+  position:fixed;
+  left:50%;
+  bottom:20px;
+  transform:translate(-50%,20px);
+  background:#18212b;
+  border:1px solid #293541;
+  padding:11px 15px;
+  border-radius:10px;
+  font-size:13px;
+  opacity:0;
+  pointer-events:none;
+  transition:.25s;
+  z-index:300
+}
+
+#toast.show{
+  opacity:1;
+  transform:translate(-50%,0)
+}
+
+/* UNDO */
+
+#undoBar{
+  position:fixed;
+  left:50%;
+  bottom:20px;
+  transform:translateX(-50%);
+  background:#18212b;
+  border:1px solid #293541;
+  border-radius:10px;
+  padding:10px 13px;
+  display:none;
+  align-items:center;
+  gap:15px;
+  z-index:250
+}
+
+#undoBar.show{
+  display:flex
+}
+
+#undoBtn{
+  border:0;
+  background:transparent;
+  color:#4ade80;
+  font-weight:bold
+}
+
+/* BACKUP */
+
+.backup-box{
+  background:#111820;
+  border:1px solid #202b36;
+  border-radius:14px;
+  padding:15px;
+  margin:12px 0
+}
+
+.backup-box h3{
+  font-size:15px;
+  margin-bottom:10px
+}
+
+.backup-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap
+}
+
+/* RESPONSIVE */
+
+@media(max-width:750px){
+
+  .dashboard{
+    grid-template-columns:repeat(2,1fr)
+  }
+
+  .filter-grid{
+    grid-template-columns:1fr 1fr
+  }
+
+  .report-grid{
+    grid-template-columns:repeat(2,1fr)
+  }
+
+  .sale-time{
+    display:none
+  }
+}
+
+@media(max-width:480px){
+
+  .container{
+    width:min(100% - 18px,950px)
+  }
+
+  .top-inner{
+    align-items:flex-start
+  }
+
+  .user-area{
+    flex-direction:column;
+    align-items:flex-end;
+    gap:6px
+  }
+
+  .actions{
+    display:grid;
+    grid-template-columns:1fr 1fr
+  }
+
+  .btn.add{
+    grid-column:span 2
+  }
+
+  .filter-grid{
+    grid-template-columns:1fr
+  }
+
+  .clear-filter{
+    padding:11px
+  }
+
+  .report-grid{
+    grid-template-columns:1fr 1fr
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <!-- LOGIN PAGE -->
-  <section id="loginPage">
+<!-- LOGIN -->
 
-    <div class="login-box">
+<section id="loginPage">
 
-      <div class="logo">
-        Sale<span>Track</span>
-      </div>
+  <div class="login-box">
 
-      <div class="subtitle">
-        Simple and fast sales tracker
-      </div>
-
-      <form id="loginForm">
-
-        <div class="form-group">
-          <label>Email</label>
-          <input
-            id="email"
-            type="email"
-            placeholder="Enter your email"
-            autocomplete="email"
-            required
-          >
-        </div>
-
-        <div class="form-group">
-          <label>Password</label>
-          <input
-            id="password"
-            type="password"
-            placeholder="Enter your password"
-            autocomplete="current-password"
-            required
-          >
-        </div>
-
-        <button class="primary-btn" type="submit">
-          Login
-        </button>
-
-      </form>
-
+    <div class="logo">
+      Sale<span>Track</span>
     </div>
 
-  </section>
+    <div class="subtitle">
+      Simple Sales Management
+    </div>
 
+    <form id="loginForm">
 
-  <!-- APP PAGE -->
-  <section id="appPage" class="hidden">
-
-    <header class="topbar">
-      <div class="container topbar-inner">
-
-        <div class="brand">
-          Sale<span>Track</span>
-        </div>
-
-        <div class="user-area">
-
-          <div id="connectionStatus" class="status">
-            <span class="status-dot"></span>
-            <span id="statusText">Online</span>
-          </div>
-
-          <button id="logoutBtn" class="logout-btn">
-            Logout
-          </button>
-
-        </div>
-
-      </div>
-    </header>
-
-
-    <main class="container">
-
-      <!-- DASHBOARD -->
-      <div class="dashboard">
-
-        <div class="card">
-          <div class="card-label">Add Count</div>
-          <div id="countValue" class="card-value">0</div>
-        </div>
-
-        <div class="card">
-          <div class="card-label">Total Sales</div>
-          <div id="totalValue" class="card-value">0</div>
-        </div>
-
-        <div class="card">
-          <div class="card-label">Today Sales</div>
-          <div id="todayValue" class="card-value">0</div>
-        </div>
-
-        <div class="card">
-          <div class="card-label">Last Sale</div>
-          <div id="lastSaleValue" class="card-value">—</div>
-        </div>
-
+      <div class="group">
+        <label>Email</label>
+        <input
+          id="email"
+          type="email"
+          placeholder="Email"
+          required
+        >
       </div>
 
-
-      <!-- ACTIONS -->
-      <div class="actions">
-
-        <button id="addBtn" class="action-btn add">
-          ＋ Add Sale
-        </button>
-
-        <button id="exportBtn" class="action-btn">
-          📤 Export CSV
-        </button>
-
-        <button id="resetBtn" class="action-btn danger">
-          🗑️ Reset All
-        </button>
-
+      <div class="group">
+        <label>Password</label>
+        <input
+          id="password"
+          type="password"
+          placeholder="Password"
+          required
+        >
       </div>
 
+      <button class="primary">
+        Login
+      </button>
 
-      <!-- SALES -->
-      <div class="sales-box">
+    </form>
 
-        <div class="sales-header">
+  </div>
 
-          <div class="sales-title">
-            Sales
-          </div>
+</section>
 
-          <div id="salesCountText" class="sales-count">
-            0 entries
-          </div>
 
-        </div>
+<!-- APP -->
 
-        <div id="salesList">
+<section id="appPage" class="hidden">
 
-          <div class="empty">
-            No sales yet.<br>
-            Click "Add Sale" to begin.
-          </div>
+<header class="topbar">
 
-        </div>
+  <div class="container top-inner">
 
+    <div class="brand">
+      Sale<span>Track</span>
+    </div>
+
+    <div class="user-area">
+
+      <div id="status" class="status">
+        <span class="dot"></span>
+        <span id="statusText">Online</span>
       </div>
 
-    </main>
-
-  </section>
-
-
-  <!-- CONFIRM MODAL -->
-  <div id="modalOverlay" class="modal-overlay hidden">
-
-    <div class="modal">
-
-      <h3 id="modalTitle">
-        Confirm
-      </h3>
-
-      <p id="modalMessage">
-        Are you sure?
-      </p>
-
-      <div class="modal-actions">
-
-        <button id="modalCancel">
-          No
-        </button>
-
-        <button id="modalConfirm" class="confirm">
-          Yes
-        </button>
-
-      </div>
+      <button id="logoutBtn" class="logout">
+        Logout
+      </button>
 
     </div>
 
   </div>
 
-
-  <!-- TOAST -->
-  <div id="toast"></div>
+</header>
 
 
-  <!-- UNDO BAR -->
-  <div id="undoBar">
+<main class="container">
 
-    <span id="undoText">
-      Sale deleted
-    </span>
 
-    <button id="undoBtn">
-      Undo
+<!-- DASHBOARD -->
+
+<div class="dashboard">
+
+  <div class="card">
+    <div class="card-label">
+      Add Count
+    </div>
+    <div id="countValue" class="card-value">
+      0
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">
+      Total Sales
+    </div>
+    <div id="totalValue" class="card-value">
+      0
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">
+      Today Sales
+    </div>
+    <div id="todayValue" class="card-value">
+      0
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">
+      🕐 Last Sale
+    </div>
+    <div id="lastSaleValue" class="card-value">
+      —
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ACTIONS -->
+
+<div class="actions">
+
+  <button id="addBtn" class="btn add">
+    ＋ Add Sale
+  </button>
+
+  <button id="exportBtn" class="btn">
+    📤 Export CSV
+  </button>
+
+  <button id="reportBtn" class="btn">
+    📊 Reports
+  </button>
+
+  <button id="backupBtn" class="btn">
+    💾 Backup
+  </button>
+
+  <button id="restoreBtn" class="btn">
+    ♻️ Restore
+  </button>
+
+  <button id="resetBtn" class="btn danger">
+    🗑️ Reset All
+  </button>
+
+</div>
+
+
+<!-- SEARCH / FILTER -->
+
+<div class="filter-box">
+
+  <div class="filter-title">
+    🔍 Search & Date Filter
+  </div>
+
+  <div class="filter-grid">
+
+    <input
+      id="searchInput"
+      type="search"
+      placeholder="Search amount..."
+    >
+
+    <input
+      id="fromDate"
+      type="date"
+    >
+
+    <input
+      id="toDate"
+      type="date"
+    >
+
+    <button
+      id="clearFilter"
+      class="clear-filter"
+    >
+      Clear
     </button>
 
   </div>
 
+</div>
+
+
+<!-- REPORT -->
+
+<div id="reportBox" class="report hidden">
+
+  <h3>
+    📈 Sales Report
+  </h3>
+
+  <div class="report-grid">
+
+    <div class="report-item">
+      <small>Today</small>
+      <strong id="reportToday">0</strong>
+    </div>
+
+    <div class="report-item">
+      <small>Yesterday</small>
+      <strong id="reportYesterday">0</strong>
+    </div>
+
+    <div class="report-item">
+      <small>This Week</small>
+      <strong id="reportWeek">0</strong>
+    </div>
+
+    <div class="report-item">
+      <small>This Month</small>
+      <strong id="reportMonth">0</strong>
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- BACKUP -->
+
+<div id="backupBox" class="backup-box hidden">
+
+  <h3>
+    💾 Backup & Restore
+  </h3>
+
+  <div class="backup-actions">
+
+    <button id="downloadBackup" class="btn">
+      Download Backup
+    </button>
+
+    <button id="chooseRestore" class="btn">
+      Choose Backup
+    </button>
+
+    <input
+      id="restoreFile"
+      type="file"
+      accept=".json"
+      class="hidden"
+    >
+
+  </div>
+
+</div>
+
+
+<!-- SALES -->
+
+<div class="sales-box">
+
+  <div class="sales-header">
+
+    <div class="sales-title">
+      Sales History
+    </div>
+
+    <div
+      id="salesCountText"
+      class="sales-count"
+    >
+      0 entries
+    </div>
+
+  </div>
+
+  <div id="salesList">
+
+    <div class="empty">
+      No sales yet.<br>
+      Click "Add Sale" to begin.
+    </div>
+
+  </div>
+
+</div>
+
+</main>
+
+</section>
+
+
+<!-- MODAL -->
+
+<div id="overlay" class="overlay hidden">
+
+  <div class="modal">
+
+    <h3 id="modalTitle">
+      Confirm
+    </h3>
+
+    <p id="modalMessage">
+      Are you sure?
+    </p>
+
+    <input
+      id="modalInput"
+      class="hidden"
+      autocomplete="off"
+      placeholder="Type confirmation"
+    >
+
+    <div class="modal-actions">
+
+      <button id="modalCancel">
+        Cancel
+      </button>
+
+      <button id="modalConfirm" class="confirm">
+        Confirm
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- TOAST -->
+
+<div id="toast"></div>
+
+
+<!-- UNDO -->
+
+<div id="undoBar">
+
+  <span id="undoText">
+    Sale deleted
+  </span>
+
+  <button id="undoBtn">
+    Undo
+  </button>
+
+</div>
+
 
 <script>
+
 /* =========================================================
-   SUPABASE CONFIG
+   SUPABASE
 ========================================================= */
 
 const SUPABASE_URL =
-  "https://eavqyzgamuelwyplhqjf.supabase.co";
+"https://eavqyzgamuelwyplhqjf.supabase.co";
 
 const SUPABASE_KEY =
-  "sb_publishable_OSypObpmAQMHjMZrct7QNQ_AtrYXY8Z";
+"sb_publishable_OSypObpmAQMHjMZrct7QNQ_AtrYXY8Z";
 
 const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 
 /* =========================================================
@@ -702,13 +937,11 @@ let currentUser = null;
 
 let sales = [];
 
-let pendingDeletes = [];
-
 let undoData = null;
 
 let undoTimer = null;
 
-let modalAction = null;
+let modalResolve = null;
 
 const saveTimers = new Map();
 
@@ -718,139 +951,168 @@ const saveTimers = new Map();
 ========================================================= */
 
 const loginPage =
-  document.getElementById("loginPage");
+document.getElementById("loginPage");
 
 const appPage =
-  document.getElementById("appPage");
+document.getElementById("appPage");
 
 const loginForm =
-  document.getElementById("loginForm");
+document.getElementById("loginForm");
 
-const emailInput =
-  document.getElementById("email");
+const email =
+document.getElementById("email");
 
-const passwordInput =
-  document.getElementById("password");
-
-const addBtn =
-  document.getElementById("addBtn");
-
-const exportBtn =
-  document.getElementById("exportBtn");
-
-const resetBtn =
-  document.getElementById("resetBtn");
-
-const logoutBtn =
-  document.getElementById("logoutBtn");
+const password =
+document.getElementById("password");
 
 const salesList =
-  document.getElementById("salesList");
+document.getElementById("salesList");
+
+const addBtn =
+document.getElementById("addBtn");
+
+const exportBtn =
+document.getElementById("exportBtn");
+
+const resetBtn =
+document.getElementById("resetBtn");
+
+const reportBtn =
+document.getElementById("reportBtn");
+
+const backupBtn =
+document.getElementById("backupBtn");
+
+const restoreBtn =
+document.getElementById("restoreBtn");
+
+const backupBox =
+document.getElementById("backupBox");
+
+const reportBox =
+document.getElementById("reportBox");
+
+const restoreFile =
+document.getElementById("restoreFile");
+
+const searchInput =
+document.getElementById("searchInput");
+
+const fromDate =
+document.getElementById("fromDate");
+
+const toDate =
+document.getElementById("toDate");
+
+const clearFilter =
+document.getElementById("clearFilter");
 
 const countValue =
-  document.getElementById("countValue");
+document.getElementById("countValue");
 
 const totalValue =
-  document.getElementById("totalValue");
+document.getElementById("totalValue");
 
 const todayValue =
-  document.getElementById("todayValue");
+document.getElementById("todayValue");
 
 const lastSaleValue =
-  document.getElementById("lastSaleValue");
+document.getElementById("lastSaleValue");
 
 const salesCountText =
-  document.getElementById("salesCountText");
+document.getElementById("salesCountText");
 
-const connectionStatus =
-  document.getElementById("connectionStatus");
+const status =
+document.getElementById("status");
 
 const statusText =
-  document.getElementById("statusText");
+document.getElementById("statusText");
 
-const modalOverlay =
-  document.getElementById("modalOverlay");
+const logoutBtn =
+document.getElementById("logoutBtn");
+
+const overlay =
+document.getElementById("overlay");
 
 const modalTitle =
-  document.getElementById("modalTitle");
+document.getElementById("modalTitle");
 
 const modalMessage =
-  document.getElementById("modalMessage");
+document.getElementById("modalMessage");
+
+const modalInput =
+document.getElementById("modalInput");
 
 const modalCancel =
-  document.getElementById("modalCancel");
+document.getElementById("modalCancel");
 
 const modalConfirm =
-  document.getElementById("modalConfirm");
+document.getElementById("modalConfirm");
 
 const toast =
-  document.getElementById("toast");
+document.getElementById("toast");
 
 const undoBar =
-  document.getElementById("undoBar");
+document.getElementById("undoBar");
 
 const undoText =
-  document.getElementById("undoText");
+document.getElementById("undoText");
 
 const undoBtn =
-  document.getElementById("undoBtn");
+document.getElementById("undoBtn");
 
 
 /* =========================================================
    LOGIN
 ========================================================= */
 
-loginForm.addEventListener("submit", async (e) => {
+loginForm.addEventListener(
+"submit",
+async e => {
 
   e.preventDefault();
 
-  const email =
-    emailInput.value.trim();
-
-  const password =
-    passwordInput.value;
-
-  if (!email || !password) {
-    showToast("Enter email and password.");
-    return;
-  }
-
-  const button =
+  const btn =
     loginForm.querySelector("button");
 
-  button.disabled = true;
-  button.textContent = "Logging in...";
+  btn.disabled = true;
+  btn.textContent = "Logging in...";
 
   try {
 
-    const { data, error } =
-      await supabaseClient.auth.signInWithPassword({
-        email,
-        password
+    const {data,error} =
+      await supabaseClient.auth
+      .signInWithPassword({
+
+        email:
+          email.value.trim(),
+
+        password:
+          password.value
+
       });
 
-    if (error) {
+    if(error)
       throw error;
-    }
 
-    currentUser = data.user;
+    currentUser =
+      data.user;
 
     showApp();
 
     await loadSales();
 
-  } catch (error) {
-
-    console.error(error);
+  }catch(error){
 
     showToast(
-      error.message || "Login failed."
+      error.message ||
+      "Login failed."
     );
 
-  } finally {
+  }finally{
 
-    button.disabled = false;
-    button.textContent = "Login";
+    btn.disabled = false;
+    btn.textContent = "Login";
 
   }
 
@@ -858,18 +1120,20 @@ loginForm.addEventListener("submit", async (e) => {
 
 
 /* =========================================================
-   AUTH CHECK
+   AUTH
 ========================================================= */
 
-async function checkAuth() {
+async function checkAuth(){
 
   const {
-    data: {
+    data:{
       session
     }
-  } = await supabaseClient.auth.getSession();
+  } =
+    await supabaseClient.auth
+    .getSession();
 
-  if (session && session.user) {
+  if(session?.user){
 
     currentUser =
       session.user;
@@ -878,7 +1142,7 @@ async function checkAuth() {
 
     await loadSales();
 
-  } else {
+  }else{
 
     showLogin();
 
@@ -888,94 +1152,102 @@ async function checkAuth() {
 
 
 supabaseClient.auth.onAuthStateChange(
-  async (_event, session) => {
+(_event,session)=>{
 
-    if (session && session.user) {
+  if(session?.user){
 
-      currentUser =
-        session.user;
+    currentUser =
+      session.user;
 
-      showApp();
+    showApp();
 
-    } else {
+  }else{
 
-      currentUser = null;
+    currentUser = null;
+    sales = [];
 
-      sales = [];
-
-      showLogin();
-
-    }
+    showLogin();
 
   }
-);
+
+});
 
 
-/* =========================================================
-   PAGE SWITCH
-========================================================= */
+function showLogin(){
 
-function showLogin() {
-
-  loginPage.classList.remove("hidden");
-
-  appPage.classList.add("hidden");
-
-}
-
-
-function showApp() {
-
-  loginPage.classList.add("hidden");
-
-  appPage.classList.remove("hidden");
-
-}
-
-
-/* =========================================================
-   LOAD SALES
-========================================================= */
-
-async function loadSales() {
-
-  if (!currentUser) return;
-
-  setOnlineStatus(
-    navigator.onLine
+  loginPage.classList.remove(
+    "hidden"
   );
 
-  try {
+  appPage.classList.add(
+    "hidden"
+  );
+
+}
+
+
+function showApp(){
+
+  loginPage.classList.add(
+    "hidden"
+  );
+
+  appPage.classList.remove(
+    "hidden"
+  );
+
+}
+
+
+/* =========================================================
+   LOAD
+========================================================= */
+
+async function loadSales(){
+
+  if(!currentUser)
+    return;
+
+  try{
 
     const {
       data,
       error
-    } = await supabaseClient
+    } =
+      await supabaseClient
       .from("sales")
-      .select("id, amount, created_at, user_id")
-      .eq("user_id", currentUser.id)
-      .order("created_at", {
-        ascending: true
-      });
+      .select(
+        "id,amount,created_at,user_id"
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      )
+      .order(
+        "created_at",
+        {
+          ascending:true
+        }
+      );
 
-    if (error) {
+    if(error)
       throw error;
-    }
 
-    sales = data || [];
+    sales =
+      data || [];
 
-    renderSales();
+    render();
 
-    setOnlineStatus(true);
+    setStatus(true);
 
-  } catch (error) {
+  }catch(error){
 
     console.error(error);
 
-    setOnlineStatus(false);
+    setStatus(false);
 
     showToast(
-      "Could not load sales. Check your connection."
+      "Could not load sales."
     );
 
   }
@@ -984,27 +1256,22 @@ async function loadSales() {
 
 
 /* =========================================================
-   ADD SALE
+   ADD
 ========================================================= */
 
-addBtn.addEventListener("click", async () => {
-
-  if (!currentUser) return;
-
-  /*
-    Optimistic UI:
-    Row appears immediately without waiting
-    for Supabase.
-  */
+addBtn.addEventListener(
+"click",
+async()=>{
 
   const tempId =
-    "temp-" + Date.now() + "-" + Math.random();
+    "temp-" +
+    Date.now();
 
-  const newSale = {
+  const draft = {
 
-    id: tempId,
+    id:tempId,
 
-    amount: 0,
+    amount:0,
 
     created_at:
       new Date().toISOString(),
@@ -1012,102 +1279,94 @@ addBtn.addEventListener("click", async () => {
     user_id:
       currentUser.id,
 
-    pending: true
+    pending:true
 
   };
 
-  sales.push(newSale);
+  sales.push(draft);
 
-  renderSales();
+  render();
 
-  requestAnimationFrame(() => {
+  requestAnimationFrame(()=>{
 
     const input =
       document.querySelector(
         `[data-id="${tempId}"]`
       );
 
-    if (input) {
-
+    if(input)
       input.focus();
-
-      input.select();
-
-    }
 
   });
 
-  /*
-    Save empty sale in background.
-  */
 
-  try {
+  try{
 
     const {
       data,
       error
-    } = await supabaseClient
+    } =
+      await supabaseClient
       .from("sales")
       .insert({
-        amount: 0,
-        user_id: currentUser.id
+
+        amount:0,
+
+        user_id:
+          currentUser.id
+
       })
       .select()
       .single();
 
-    if (error) {
+    if(error)
       throw error;
-    }
 
     const index =
       sales.findIndex(
-        item => item.id === tempId
+        x => x.id === tempId
       );
 
-    if (index !== -1) {
+    if(index !== -1){
 
-      const currentAmount =
+      const amount =
         sales[index].amount;
 
       sales[index] = {
+
         ...data,
-        amount: currentAmount
+
+        amount,
+
+        pending:false
+
       };
 
-      sales[index].pending = false;
+      render();
 
-      renderSales();
+      if(Number(amount) !== 0){
 
-      /*
-        If user typed while insert was happening,
-        save that value.
-      */
-
-      if (Number(currentAmount) !== 0) {
-
-        await updateSale(
+        await saveAmount(
           data.id,
-          currentAmount
+          amount
         );
 
       }
 
     }
 
-    setOnlineStatus(true);
+    setStatus(true);
 
-  } catch (error) {
-
-    console.error(error);
+  }catch(error){
 
     sales =
       sales.filter(
-        item => item.id !== tempId
+        x => x.id !== tempId
       );
 
-    renderSales();
+    render();
 
-    setOnlineStatus(false);
+    setStatus(false);
 
     showToast(
       "Could not create sale."
@@ -1119,348 +1378,389 @@ addBtn.addEventListener("click", async () => {
 
 
 /* =========================================================
-   RENDER SALES
+   RENDER
 ========================================================= */
 
-function renderSales() {
+function render(){
 
-  if (!sales.length) {
+  const query =
+    searchInput.value
+      .trim()
+      .toLowerCase();
+
+  const from =
+    fromDate.value
+      ? new Date(
+          fromDate.value +
+          "T00:00:00"
+        )
+      : null;
+
+  const to =
+    toDate.value
+      ? new Date(
+          toDate.value +
+          "T23:59:59"
+        )
+      : null;
+
+  const filtered =
+    sales.filter(sale=>{
+
+      const amount =
+        String(
+          sale.amount ?? 0
+        );
+
+      const date =
+        new Date(
+          sale.created_at
+        );
+
+      if(
+        query &&
+        !amount.includes(query)
+      )
+        return false;
+
+      if(
+        from &&
+        date < from
+      )
+        return false;
+
+      if(
+        to &&
+        date > to
+      )
+        return false;
+
+      return true;
+
+    });
+
+
+  if(!filtered.length){
 
     salesList.innerHTML = `
       <div class="empty">
-        No sales yet.<br>
-        Click "Add Sale" to begin.
+        No matching sales found.
       </div>
     `;
 
-    updateDashboard();
+  }else{
 
-    return;
-  }
+    salesList.innerHTML =
+      filtered.map(
+        (sale,index)=>{
 
-  salesList.innerHTML =
-    sales.map((sale, index) => {
+          const date =
+            new Date(
+              sale.created_at
+            );
 
-      const amount =
-        Number(sale.amount || 0);
+          return `
 
-      return `
+          <div class="sale-row">
 
-        <div class="sale-row
-          ${sale.pending ? "pending" : ""}
-        ">
+            <div class="sale-number">
+              ${index+1}
+            </div>
 
-          <div class="sale-number">
-            ${index + 1}
+            <input
+              class="sale-input"
+              data-id="${sale.id}"
+              type="number"
+              inputmode="decimal"
+              min="0"
+              step="0.01"
+              value="${Number(
+                sale.amount || 0
+              )}"
+            >
+
+            <div class="sale-time">
+              ${formatTime(date)}
+            </div>
+
+            <button
+              class="delete-btn"
+              data-delete="${sale.id}"
+              title="Delete"
+            >
+              ×
+            </button>
+
           </div>
 
-          <input
-            class="sale-input"
-            data-id="${sale.id}"
-            type="number"
-            inputmode="decimal"
-            step="0.01"
-            min="0"
-            value="${amount}"
-            placeholder="Enter amount"
-          >
+          `;
 
-          <button
-            class="delete-btn"
-            data-delete="${sale.id}"
-            title="Delete"
-          >
-            ×
-          </button>
+        }
+      ).join("");
 
-        </div>
-
-      `;
-
-    }).join("");
+  }
 
   updateDashboard();
+
+  salesCountText.textContent =
+    `${filtered.length} ${
+      filtered.length === 1
+      ? "entry"
+      : "entries"
+    }`;
 
 }
 
 
 /* =========================================================
-   INPUT EVENTS
+   INPUT SAVE
 ========================================================= */
 
 salesList.addEventListener(
-  "input",
-  (e) => {
+"input",
+e=>{
 
-    if (
-      !e.target.classList.contains(
-        "sale-input"
-      )
-    ) return;
+  if(
+    !e.target.classList
+      .contains("sale-input")
+  )
+    return;
 
-    const id =
-      e.target.dataset.id;
+  const id =
+    e.target.dataset.id;
 
-    const value =
-      parseFloat(e.target.value);
-
-    const sale =
-      sales.find(
-        item => String(item.id) === String(id)
-      );
-
-    if (!sale) return;
-
-    sale.amount =
-      Number.isFinite(value)
-        ? value
-        : 0;
-
-    /*
-      Update dashboard instantly.
-    */
-
-    updateDashboard();
-
-    /*
-      Don't send a request on every keypress.
-      Wait 500ms.
-    */
-
-    clearTimeout(
-      saveTimers.get(id)
+  const sale =
+    sales.find(
+      x =>
+      String(x.id) ===
+      String(id)
     );
 
-    const timer =
-      setTimeout(() => {
+  if(!sale)
+    return;
 
-        saveSaleValue(
+  const value =
+    parseFloat(
+      e.target.value
+    );
+
+  sale.amount =
+    Number.isFinite(value)
+    ? value
+    : 0;
+
+  updateDashboard();
+
+  clearTimeout(
+    saveTimers.get(id)
+  );
+
+  saveTimers.set(
+    id,
+    setTimeout(
+      ()=>{
+        saveAmount(
           id,
           sale.amount
         );
+      },
+      500
+    )
+  );
 
-      }, 500);
+});
 
-    saveTimers.set(id, timer);
-
-  }
-);
-
-
-/* =========================================================
-   BLUR = SAVE IMMEDIATELY
-========================================================= */
 
 salesList.addEventListener(
-  "focusout",
-  (e) => {
+"blur",
+e=>{
 
-    if (
-      !e.target.classList.contains(
-        "sale-input"
-      )
-    ) return;
+  if(
+    !e.target.classList
+      .contains("sale-input")
+  )
+    return;
 
-    const id =
-      e.target.dataset.id;
+  const id =
+    e.target.dataset.id;
 
-    clearTimeout(
-      saveTimers.get(id)
+  clearTimeout(
+    saveTimers.get(id)
+  );
+
+  const sale =
+    sales.find(
+      x =>
+      String(x.id) ===
+      String(id)
     );
 
-    const sale =
-      sales.find(
-        item => String(item.id) === String(id)
-      );
-
-    if (!sale) return;
-
-    saveSaleValue(
+  if(sale)
+    saveAmount(
       id,
       sale.amount
     );
 
-  }
+},
+true
 );
 
 
 /* =========================================================
-   DELETE BUTTON
+   SAVE AMOUNT
+========================================================= */
+
+async function saveAmount(
+id,
+amount
+){
+
+  if(
+    String(id)
+      .startsWith("temp-")
+  )
+    return;
+
+  try{
+
+    const {
+      error
+    } =
+      await supabaseClient
+      .from("sales")
+      .update({
+
+        amount:
+          Number(amount) || 0
+
+      })
+      .eq(
+        "id",
+        id
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      );
+
+    if(error)
+      throw error;
+
+    setStatus(true);
+
+  }catch(error){
+
+    console.error(error);
+
+    setStatus(false);
+
+    showToast(
+      "Sync failed."
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   DELETE
 ========================================================= */
 
 salesList.addEventListener(
-  "click",
-  (e) => {
+"click",
+async e=>{
 
-    const button =
-      e.target.closest(
-        "[data-delete]"
-      );
-
-    if (!button) return;
-
-    const id =
-      button.dataset.delete;
-
-    openConfirm(
-      "Delete Sale",
-      "Are you sure you want to delete this sale?",
-      () => deleteSale(id)
+  const btn =
+    e.target.closest(
+      "[data-delete]"
     );
 
-  }
-);
-
-
-/* =========================================================
-   SAVE SALE
-========================================================= */
-
-async function saveSaleValue(
-  id,
-  amount
-) {
-
-  /*
-    Temporary ID = not inserted yet.
-    Add handler already handles it.
-  */
-
-  if (String(id).startsWith("temp-")) {
+  if(!btn)
     return;
-  }
 
-  try {
+  const id =
+    btn.dataset.delete;
 
-    const {
-      error
-    } = await supabaseClient
-      .from("sales")
-      .update({
-        amount:
-          Number(amount) || 0
-      })
-      .eq("id", id)
-      .eq("user_id", currentUser.id);
-
-    if (error) {
-      throw error;
-    }
-
-    setOnlineStatus(true);
-
-  } catch (error) {
-
-    console.error(error);
-
-    setOnlineStatus(false);
-
-    showToast(
-      "Sync failed. Please check your connection."
+  const ok =
+    await secureConfirm(
+      "Delete Sale",
+      "To delete this sale, type DELETE below.",
+      "DELETE"
     );
 
-  }
+  if(ok)
+    deleteSale(id);
 
-}
-
-
-/* =========================================================
-   UPDATE SALE
-========================================================= */
-
-async function updateSale(
-  id,
-  amount
-) {
-
-  try {
-
-    const {
-      error
-    } = await supabaseClient
-      .from("sales")
-      .update({
-        amount:
-          Number(amount) || 0
-      })
-      .eq("id", id)
-      .eq("user_id", currentUser.id);
-
-    if (error) {
-      throw error;
-    }
-
-  } catch (error) {
-
-    console.error(error);
-
-  }
-
-}
+});
 
 
-/* =========================================================
-   DELETE SALE
-========================================================= */
-
-async function deleteSale(id) {
+async function deleteSale(id){
 
   const index =
     sales.findIndex(
-      item => String(item.id) === String(id)
+      x =>
+      String(x.id) ===
+      String(id)
     );
 
-  if (index === -1) return;
+  if(index === -1)
+    return;
 
   const deleted =
     sales[index];
 
-  /*
-    Remove instantly from UI.
-  */
+  sales.splice(
+    index,
+    1
+  );
 
-  sales.splice(index, 1);
+  render();
 
-  renderSales();
 
-  /*
-    If this is still a temporary sale,
-    nothing exists in database yet.
-  */
+  if(
+    String(id)
+      .startsWith("temp-")
+  ){
 
-  if (String(id).startsWith("temp-")) {
-
-    showUndo(deleted, false);
+    showUndo(
+      deleted,
+      false
+    );
 
     return;
 
   }
 
-  try {
+
+  try{
 
     const {
       error
-    } = await supabaseClient
+    } =
+      await supabaseClient
       .from("sales")
       .delete()
-      .eq("id", id)
-      .eq("user_id", currentUser.id);
+      .eq(
+        "id",
+        id
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      );
 
-    if (error) {
+    if(error)
       throw error;
-    }
 
-    setOnlineStatus(true);
+    setStatus(true);
 
-    showUndo(deleted, true);
+    showUndo(
+      deleted,
+      true
+    );
 
-  } catch (error) {
-
-    console.error(error);
-
-    /*
-      Restore if delete failed.
-    */
+  }catch(error){
 
     sales.splice(
       index,
@@ -1468,9 +1768,9 @@ async function deleteSale(id) {
       deleted
     );
 
-    renderSales();
+    render();
 
-    setOnlineStatus(false);
+    setStatus(false);
 
     showToast(
       "Delete failed."
@@ -1486,127 +1786,129 @@ async function deleteSale(id) {
 ========================================================= */
 
 function showUndo(
-  deletedSale,
-  wasInDatabase
-) {
+sale,
+serverDeleted
+){
 
-  clearTimeout(undoTimer);
+  clearTimeout(
+    undoTimer
+  );
 
   undoData = {
-    sale: deletedSale,
-    wasInDatabase
+    sale,
+    serverDeleted
   };
 
   undoText.textContent =
-    `Deleted ${formatNumber(deletedSale.amount)}`;
+    "Sale deleted";
 
-  undoBar.classList.add("show");
+  undoBar.classList.add(
+    "show"
+  );
 
   undoTimer =
-    setTimeout(() => {
+    setTimeout(
+      ()=>{
+        undoData = null;
 
-      undoData = null;
+        undoBar.classList.remove(
+          "show"
+        );
 
-      undoBar.classList.remove(
-        "show"
-      );
-
-    }, 7000);
+      },
+      7000
+    );
 
 }
 
 
 undoBtn.addEventListener(
-  "click",
-  async () => {
+"click",
+async()=>{
 
-    if (!undoData) return;
+  if(!undoData)
+    return;
 
-    clearTimeout(undoTimer);
+  clearTimeout(
+    undoTimer
+  );
 
-    const data =
-      undoData;
+  const data =
+    undoData;
 
-    undoData = null;
+  undoData = null;
 
-    undoBar.classList.remove(
-      "show"
-    );
+  undoBar.classList.remove(
+    "show"
+  );
 
-    const sale =
-      data.sale;
+  const sale =
+    data.sale;
 
-    /*
-      Temporary sale:
-      just restore locally.
-    */
+  if(!data.serverDeleted){
 
-    if (!data.wasInDatabase) {
+    sales.push(sale);
 
-      sales.push(sale);
+    render();
 
-      renderSales();
-
-      showToast(
-        "Sale restored."
-      );
-
-      return;
-
-    }
-
-    /*
-      Restore database record.
-    */
-
-    try {
-
-      const {
-        data: restored,
-        error
-      } = await supabaseClient
-        .from("sales")
-        .insert({
-          id: sale.id,
-          amount: sale.amount,
-          created_at: sale.created_at,
-          user_id: currentUser.id
-        })
-        .select()
-        .single();
-
-      if (error) {
-        throw error;
-      }
-
-      sales.push(restored);
-
-      sales.sort(
-        (a, b) =>
-          new Date(a.created_at) -
-          new Date(b.created_at)
-      );
-
-      renderSales();
-
-      setOnlineStatus(true);
-
-      showToast(
-        "Sale restored."
-      );
-
-    } catch (error) {
-
-      console.error(error);
-
-      showToast(
-        "Could not restore sale."
-      );
-
-    }
+    return;
 
   }
-);
+
+  try{
+
+    const {
+      data:restored,
+      error
+    } =
+      await supabaseClient
+      .from("sales")
+      .insert({
+
+        id:
+          sale.id,
+
+        amount:
+          sale.amount,
+
+        created_at:
+          sale.created_at,
+
+        user_id:
+          currentUser.id
+
+      })
+      .select()
+      .single();
+
+    if(error)
+      throw error;
+
+    sales.push(restored);
+
+    sales.sort(
+      (a,b)=>
+        new Date(a.created_at) -
+        new Date(b.created_at)
+    );
+
+    render();
+
+    setStatus(true);
+
+    showToast(
+      "Sale restored."
+    );
+
+  }catch(error){
+
+    showToast(
+      "Restore failed."
+    );
+
+  }
+
+});
 
 
 /* =========================================================
@@ -1614,168 +1916,149 @@ undoBtn.addEventListener(
 ========================================================= */
 
 resetBtn.addEventListener(
-  "click",
-  () => {
+"click",
+async()=>{
 
-    if (!sales.length) {
+  if(!sales.length){
 
-      showToast(
-        "There are no sales to reset."
-      );
-
-      return;
-
-    }
-
-    /*
-      FIRST confirmation
-    */
-
-    openConfirm(
-      "Reset All Sales",
-      "This will delete ALL your sales. Continue?",
-      () => {
-
-        /*
-          SECOND confirmation
-        */
-
-        openConfirm(
-          "Final Confirmation",
-          "This action cannot be easily undone. Delete ALL sales?",
-          () => resetAllSales()
-        );
-
-      }
+    showToast(
+      "No sales to reset."
     );
 
+    return;
+
   }
-);
 
+  const first =
+    await secureConfirm(
+      "Reset All Sales",
+      "This will delete ALL sales. Type RESET ALL to continue.",
+      "RESET ALL"
+    );
 
-/* =========================================================
-   RESET DATABASE
-========================================================= */
+  if(!first)
+    return;
 
-async function resetAllSales() {
+  const second =
+    await simpleConfirm(
+      "Final Confirmation",
+      "Are you absolutely sure you want to permanently delete all sales?"
+    );
+
+  if(!second)
+    return;
 
   const oldSales =
     [...sales];
 
   sales = [];
 
-  renderSales();
+  render();
 
-  try {
+  try{
 
     const {
       error
-    } = await supabaseClient
+    } =
+      await supabaseClient
       .from("sales")
       .delete()
-      .eq("user_id", currentUser.id);
+      .eq(
+        "user_id",
+        currentUser.id
+      );
 
-    if (error) {
+    if(error)
       throw error;
-    }
-
-    setOnlineStatus(true);
 
     showToast(
-      "All sales have been deleted."
+      "All sales deleted."
     );
 
-  } catch (error) {
-
-    console.error(error);
+  }catch(error){
 
     sales =
       oldSales;
 
-    renderSales();
-
-    setOnlineStatus(false);
+    render();
 
     showToast(
-      "Reset failed. Your sales were restored."
+      "Reset failed."
     );
 
   }
 
-}
+});
 
 
 /* =========================================================
    DASHBOARD
 ========================================================= */
 
-function updateDashboard() {
-
-  const count =
-    sales.length;
+function updateDashboard(){
 
   const total =
     sales.reduce(
-      (sum, sale) =>
-        sum + Number(sale.amount || 0),
+      (sum,sale)=>
+        sum +
+        Number(
+          sale.amount || 0
+        ),
       0
     );
 
-  const todayTotal =
-    sales.reduce(
-      (sum, sale) => {
-
-        if (
-          isToday(
-            sale.created_at
-          )
-        ) {
-
-          return sum +
-            Number(sale.amount || 0);
-
-        }
-
-        return sum;
-
-      },
-      0
-    );
+  const today =
+    sales
+      .filter(
+        x =>
+        isToday(
+          x.created_at
+        )
+      )
+      .reduce(
+        (sum,x)=>
+          sum +
+          Number(
+            x.amount || 0
+          ),
+        0
+      );
 
   countValue.textContent =
-    count;
+    sales.length;
 
   totalValue.textContent =
     formatNumber(total);
 
   todayValue.textContent =
-    formatNumber(todayTotal);
-
-  salesCountText.textContent =
-    `${count} ${count === 1 ? "entry" : "entries"}`;
+    formatNumber(today);
 
 
-  /*
-    Last Sale
-  */
-
-  if (!sales.length) {
+  if(!sales.length){
 
     lastSaleValue.textContent =
       "—";
 
-  } else {
+  }else{
 
     const last =
-      [...sales]
-        .sort(
-          (a, b) =>
-            new Date(b.created_at) -
-            new Date(a.created_at)
-        )[0];
+      [...sales].sort(
+        (a,b)=>
+          new Date(b.created_at) -
+          new Date(a.created_at)
+      )[0];
+
+    /*
+      Last Sale = TIME,
+      not sale amount.
+    */
 
     lastSaleValue.textContent =
-      formatNumber(last.amount);
+      formatTime(
+        new Date(
+          last.created_at
+        )
+      );
 
   }
 
@@ -1783,97 +2066,240 @@ function updateDashboard() {
 
 
 /* =========================================================
-   TODAY CHECK
+   REPORTS
 ========================================================= */
 
-function isToday(dateValue) {
+reportBtn.addEventListener(
+"click",
+()=>{
 
-  const date =
-    new Date(dateValue);
-
-  const now =
-    new Date();
-
-  return (
-    date.getFullYear() ===
-      now.getFullYear() &&
-
-    date.getMonth() ===
-      now.getMonth() &&
-
-    date.getDate() ===
-      now.getDate()
+  reportBox.classList.toggle(
+    "hidden"
   );
 
-}
+  updateReports();
+
+});
 
 
-/* =========================================================
-   NUMBER FORMAT
-========================================================= */
+function updateReports(){
 
-function formatNumber(value) {
+  document.getElementById(
+    "reportToday"
+  ).textContent =
+    formatNumber(
+      periodTotal("today")
+    );
 
-  return Number(value || 0)
-    .toLocaleString(
-      undefined,
-      {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2
-      }
+  document.getElementById(
+    "reportYesterday"
+  ).textContent =
+    formatNumber(
+      periodTotal("yesterday")
+    );
+
+  document.getElementById(
+    "reportWeek"
+  ).textContent =
+    formatNumber(
+      periodTotal("week")
+    );
+
+  document.getElementById(
+    "reportMonth"
+  ).textContent =
+    formatNumber(
+      periodTotal("month")
     );
 
 }
 
 
+function periodTotal(type){
+
+  return sales.reduce(
+    (sum,sale)=>{
+
+      const date =
+        new Date(
+          sale.created_at
+        );
+
+      let valid = false;
+
+      if(type === "today"){
+
+        valid =
+          isToday(date);
+
+      }
+
+      if(type === "yesterday"){
+
+        const d =
+          new Date();
+
+        d.setDate(
+          d.getDate()-1
+        );
+
+        valid =
+          sameDate(
+            date,
+            d
+          );
+
+      }
+
+      if(type === "week"){
+
+        const start =
+          getWeekStart();
+
+        valid =
+          date >= start;
+
+      }
+
+      if(type === "month"){
+
+        const now =
+          new Date();
+
+        valid =
+          date.getFullYear() ===
+          now.getFullYear() &&
+          date.getMonth() ===
+          now.getMonth();
+
+      }
+
+      return valid
+        ? sum +
+          Number(
+            sale.amount || 0
+          )
+        : sum;
+
+    },
+    0
+  );
+
+}
+
+
+function getWeekStart(){
+
+  const d =
+    new Date();
+
+  const day =
+    d.getDay();
+
+  const diff =
+    day === 0
+      ? 6
+      : day - 1;
+
+  d.setDate(
+    d.getDate() - diff
+  );
+
+  d.setHours(
+    0,0,0,0
+  );
+
+  return d;
+
+}
+
+
 /* =========================================================
-   EXPORT CSV
+   SEARCH
+========================================================= */
+
+searchInput.addEventListener(
+"input",
+render
+);
+
+fromDate.addEventListener(
+"change",
+render
+);
+
+toDate.addEventListener(
+"change",
+render
+);
+
+clearFilter.addEventListener(
+"click",
+()=>{
+
+  searchInput.value = "";
+  fromDate.value = "";
+  toDate.value = "";
+
+  render();
+
+});
+
+
+/* =========================================================
+   CSV
 ========================================================= */
 
 exportBtn.addEventListener(
-  "click",
-  () => {
+"click",
+()=>{
 
-    if (!sales.length) {
+  if(!sales.length){
 
-      showToast(
-        "No sales to export."
-      );
+    showToast(
+      "No sales to export."
+    );
 
-      return;
+    return;
 
-    }
+  }
 
-    const headers = [
+  const rows = [
+
+    [
       "No",
       "Amount",
       "Date",
       "Time"
-    ];
+    ],
 
-    const rows =
-      sales.map(
-        (sale, index) => {
+    ...sales.map(
+      (sale,index)=>{
 
-          const date =
-            new Date(
-              sale.created_at
-            );
+        const date =
+          new Date(
+            sale.created_at
+          );
 
-          return [
-            index + 1,
-            Number(sale.amount || 0),
-            date.toLocaleDateString(),
-            date.toLocaleTimeString()
-          ];
+        return [
 
-        }
-      );
+          index+1,
 
-    const csv = [
-      headers,
-      ...rows
-    ]
+          sale.amount,
+
+          date.toLocaleDateString(),
+
+          date.toLocaleTimeString()
+
+        ];
+
+      }
+    )
+
+  ];
+
+  const csv =
+    rows
       .map(
         row =>
           row
@@ -1882,66 +2308,415 @@ exportBtn.addEventListener(
       )
       .join("\n");
 
-    const blob =
-      new Blob(
-        [csv],
-        {
-          type:
-            "text/csv;charset=utf-8;"
-        }
-      );
+  downloadFile(
+    csv,
+    `saletrack-${todayFile()}.csv`,
+    "text/csv"
+  );
 
-    const url =
-      URL.createObjectURL(blob);
+  showToast(
+    "CSV exported."
+  );
 
-    const link =
-      document.createElement("a");
+});
 
-    const date =
-      new Date()
-        .toISOString()
-        .slice(0, 10);
 
-    link.href = url;
+function csvEscape(value){
 
-    link.download =
-      `saletrack-sales-${date}.csv`;
-
-    document.body.appendChild(link);
-
-    link.click();
-
-    link.remove();
-
-    URL.revokeObjectURL(url);
-
-    showToast(
-      "CSV exported successfully."
+  const str =
+    String(
+      value ?? ""
     );
 
-  }
-);
+  if(
+    str.includes(",") ||
+    str.includes('"') ||
+    str.includes("\n")
+  ){
 
-
-function csvEscape(value) {
-
-  const string =
-    String(value ?? "");
-
-  if (
-    string.includes(",") ||
-    string.includes('"') ||
-    string.includes("\n")
-  ) {
-
-    return `"${string.replace(
+    return `"${str.replace(
       /"/g,
       '""'
     )}"`;
 
   }
 
-  return string;
+  return str;
+
+}
+
+
+/* =========================================================
+   BACKUP
+========================================================= */
+
+backupBtn.addEventListener(
+"click",
+()=>{
+
+  backupBox.classList.toggle(
+    "hidden"
+  );
+
+});
+
+
+document.getElementById(
+"downloadBackup"
+).addEventListener(
+"click",
+()=>{
+
+  const backup = {
+
+    app:"SaleTrack",
+
+    version:1,
+
+    exported_at:
+      new Date().toISOString(),
+
+    sales:
+      sales.map(
+        sale=>({
+
+          id:sale.id,
+
+          amount:
+            Number(
+              sale.amount || 0
+            ),
+
+          created_at:
+            sale.created_at
+
+        })
+      )
+
+  };
+
+  const json =
+    JSON.stringify(
+      backup,
+      null,
+      2
+    );
+
+  downloadFile(
+    json,
+    `saletrack-backup-${todayFile()}.json`,
+    "application/json"
+  );
+
+  showToast(
+    "Backup downloaded."
+  );
+
+});
+
+
+restoreBtn.addEventListener(
+"click",
+()=>{
+
+  backupBox.classList.remove(
+    "hidden"
+  );
+
+  restoreFile.click();
+
+});
+
+
+document.getElementById(
+"chooseRestore"
+).addEventListener(
+"click",
+()=>{
+
+  restoreFile.click();
+
+});
+
+
+restoreFile.addEventListener(
+"change",
+async()=>{
+
+  const file =
+    restoreFile.files[0];
+
+  if(!file)
+    return;
+
+  const confirmed =
+    await simpleConfirm(
+      "Restore Backup",
+      "Restore this backup? Existing sales will remain."
+    );
+
+  if(!confirmed){
+
+    restoreFile.value = "";
+
+    return;
+
+  }
+
+  try{
+
+    const text =
+      await file.text();
+
+    const backup =
+      JSON.parse(text);
+
+    if(
+      !backup.sales ||
+      !Array.isArray(
+        backup.sales
+      )
+    ){
+
+      throw new Error(
+        "Invalid backup"
+      );
+
+    }
+
+    let added = 0;
+
+    for(
+      const sale
+      of backup.sales
+    ){
+
+      /*
+        Create new records instead of
+        forcing old IDs.
+      */
+
+      const {
+        error
+      } =
+        await supabaseClient
+        .from("sales")
+        .insert({
+
+          amount:
+            Number(
+              sale.amount || 0
+            ),
+
+          created_at:
+            sale.created_at,
+
+          user_id:
+            currentUser.id
+
+        });
+
+      if(!error)
+        added++;
+
+    }
+
+    await loadSales();
+
+    showToast(
+      `${added} sales restored.`
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    showToast(
+      "Invalid backup file."
+    );
+
+  }
+
+  restoreFile.value = "";
+
+});
+
+
+/* =========================================================
+   DOWNLOAD
+========================================================= */
+
+function downloadFile(
+content,
+filename,
+type
+){
+
+  const blob =
+    new Blob(
+      [content],
+      {type}
+    );
+
+  const url =
+    URL.createObjectURL(
+      blob
+    );
+
+  const a =
+    document.createElement("a");
+
+  a.href = url;
+
+  a.download =
+    filename;
+
+  document.body.appendChild(a);
+
+  a.click();
+
+  a.remove();
+
+  URL.revokeObjectURL(
+    url
+  );
+
+}
+
+
+/* =========================================================
+   CONFIRM SYSTEM
+========================================================= */
+
+function secureConfirm(
+title,
+message,
+word
+){
+
+  return new Promise(
+    resolve=>{
+
+      modalTitle.textContent =
+        title;
+
+      modalMessage.textContent =
+        message;
+
+      modalInput.classList.remove(
+        "hidden"
+      );
+
+      modalInput.value = "";
+
+      modalInput.placeholder =
+        `Type ${word}`;
+
+      overlay.classList.remove(
+        "hidden"
+      );
+
+      modalResolve =
+        value=>{
+
+          modalResolve = null;
+
+          overlay.classList.add(
+            "hidden"
+          );
+
+          modalInput.classList.add(
+            "hidden"
+          );
+
+          resolve(value);
+
+        };
+
+      modalConfirm.onclick =
+        ()=>{
+
+          const value =
+            modalInput.value
+              .trim();
+
+          if(value !== word){
+
+            showToast(
+              `Type exactly: ${word}`
+            );
+
+            return;
+
+          }
+
+          modalResolve(true);
+
+        };
+
+      modalCancel.onclick =
+        ()=>{
+
+          modalResolve(false);
+
+        };
+
+      setTimeout(
+        ()=>{
+          modalInput.focus();
+        },
+        50
+      );
+
+    }
+  );
+
+}
+
+
+function simpleConfirm(
+title,
+message
+){
+
+  return new Promise(
+    resolve=>{
+
+      modalTitle.textContent =
+        title;
+
+      modalMessage.textContent =
+        message;
+
+      modalInput.classList.add(
+        "hidden"
+      );
+
+      overlay.classList.remove(
+        "hidden"
+      );
+
+      modalResolve =
+        value=>{
+
+          modalResolve = null;
+
+          overlay.classList.add(
+            "hidden"
+          );
+
+          resolve(value);
+
+        };
+
+      modalConfirm.onclick =
+        ()=>modalResolve(true);
+
+      modalCancel.onclick =
+        ()=>modalResolve(false);
+
+    }
+  );
 
 }
 
@@ -1951,183 +2726,41 @@ function csvEscape(value) {
 ========================================================= */
 
 logoutBtn.addEventListener(
-  "click",
-  async () => {
+"click",
+async()=>{
 
-    const confirmed =
-      await askConfirmation(
-        "Logout",
-        "Are you sure you want to logout?"
-      );
+  const ok =
+    await simpleConfirm(
+      "Logout",
+      "Are you sure you want to logout?"
+    );
 
-    if (!confirmed) return;
+  if(!ok)
+    return;
 
-    await supabaseClient.auth.signOut();
+  await supabaseClient.auth.signOut();
 
-    sales = [];
-
-    currentUser = null;
-
-    showLogin();
-
-  }
-);
+});
 
 
 /* =========================================================
-   CONFIRM MODAL
+   ONLINE STATUS
 ========================================================= */
 
-function openConfirm(
-  title,
-  message,
-  action
-) {
+function setStatus(online){
 
-  modalTitle.textContent =
-    title;
+  if(online){
 
-  modalMessage.textContent =
-    message;
-
-  modalAction =
-    action;
-
-  modalOverlay.classList.remove(
-    "hidden"
-  );
-
-}
-
-
-modalCancel.addEventListener(
-  "click",
-  () => {
-
-    closeModal();
-
-  }
-);
-
-
-modalConfirm.addEventListener(
-  "click",
-  () => {
-
-    const action =
-      modalAction;
-
-    closeModal();
-
-    if (typeof action === "function") {
-      action();
-    }
-
-  }
-);
-
-
-function closeModal() {
-
-  modalOverlay.classList.add(
-    "hidden"
-  );
-
-  modalAction = null;
-
-}
-
-
-/*
-  Promise confirmation for logout.
-*/
-
-function askConfirmation(
-  title,
-  message
-) {
-
-  return new Promise(
-    resolve => {
-
-      modalTitle.textContent =
-        title;
-
-      modalMessage.textContent =
-        message;
-
-      modalOverlay.classList.remove(
-        "hidden"
-      );
-
-      const yesHandler = () => {
-
-        cleanup();
-
-        resolve(true);
-
-      };
-
-      const noHandler = () => {
-
-        cleanup();
-
-        resolve(false);
-
-      };
-
-      function cleanup() {
-
-        modalOverlay.classList.add(
-          "hidden"
-        );
-
-        modalConfirm.removeEventListener(
-          "click",
-          yesHandler
-        );
-
-        modalCancel.removeEventListener(
-          "click",
-          noHandler
-        );
-
-      }
-
-      modalConfirm.addEventListener(
-        "click",
-        yesHandler
-      );
-
-      modalCancel.addEventListener(
-        "click",
-        noHandler
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   ONLINE / OFFLINE
-========================================================= */
-
-function setOnlineStatus(online) {
-
-  if (online) {
-
-    connectionStatus.classList.remove(
+    status.classList.remove(
       "offline"
     );
 
     statusText.textContent =
       "Online";
 
-  } else {
+  }else{
 
-    connectionStatus.classList.add(
+    status.classList.add(
       "offline"
     );
 
@@ -2140,43 +2773,106 @@ function setOnlineStatus(online) {
 
 
 window.addEventListener(
-  "online",
-  () => {
+"online",
+()=>{
 
-    setOnlineStatus(true);
+  setStatus(true);
 
-    /*
-      Automatically refresh when
-      internet comes back.
-    */
+  if(currentUser)
+    loadSales();
 
-    if (currentUser) {
-      loadSales();
-    }
-
-  }
-);
+});
 
 
 window.addEventListener(
-  "offline",
-  () => {
+"offline",
+()=>{
 
-    setOnlineStatus(false);
+  setStatus(false);
 
-  }
-);
+});
 
 
 /* =========================================================
-   TOAST
+   HELPERS
 ========================================================= */
 
-let toastTimer = null;
+function isToday(value){
 
-function showToast(message) {
+  const d =
+    new Date(value);
 
-  clearTimeout(toastTimer);
+  const n =
+    new Date();
+
+  return sameDate(
+    d,
+    n
+  );
+
+}
+
+
+function sameDate(a,b){
+
+  return (
+    a.getFullYear() ===
+      b.getFullYear() &&
+
+    a.getMonth() ===
+      b.getMonth() &&
+
+    a.getDate() ===
+      b.getDate()
+  );
+
+}
+
+
+function formatNumber(value){
+
+  return Number(
+    value || 0
+  ).toLocaleString(
+    undefined,
+    {
+      minimumFractionDigits:0,
+      maximumFractionDigits:2
+    }
+  );
+
+}
+
+
+function formatTime(date){
+
+  return date.toLocaleTimeString(
+    undefined,
+    {
+      hour:"2-digit",
+      minute:"2-digit"
+    }
+  );
+
+}
+
+
+function todayFile(){
+
+  return new Date()
+    .toISOString()
+    .slice(0,10);
+
+}
+
+
+let toastTimer;
+
+function showToast(message){
+
+  clearTimeout(
+    toastTimer
+  );
 
   toast.textContent =
     message;
@@ -2186,22 +2882,23 @@ function showToast(message) {
   );
 
   toastTimer =
-    setTimeout(() => {
-
-      toast.classList.remove(
-        "show"
-      );
-
-    }, 2500);
+    setTimeout(
+      ()=>{
+        toast.classList.remove(
+          "show"
+        );
+      },
+      2500
+    );
 
 }
 
 
 /* =========================================================
-   INITIALIZE
+   START
 ========================================================= */
 
-setOnlineStatus(
+setStatus(
   navigator.onLine
 );
 
