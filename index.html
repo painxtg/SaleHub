@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>SaleTrack</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 18px;
+            background: #0d0f13;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        .app {
+            width: 100%;
+            max-width: 480px;
+            margin: auto;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Login */
+
+        .login-box {
+            max-width: 400px;
+            margin: 50px auto;
+            background: #171a20;
+            border: 1px solid #292e38;
+            border-radius: 20px;
+            padding: 22px;
+        }
+
+        .logo {
+            font-size: 30px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #858b98;
+            font-size: 14px;
+            margin-bottom: 22px;
+        }
+
+        .login-box input {
+            width: 100%;
+            height: 48px;
+            margin-bottom: 11px;
+            padding: 0 14px;
+            border-radius: 12px;
+            border: 1px solid #292e38;
+            background: #0f1115;
+            color: white;
+            outline: none;
+        }
+
+        .login-box input:focus {
+            border-color: #777;
+        }
+
+        .login-btn {
+            width: 100%;
+            height: 48px;
+            border: 0;
+            border-radius: 12px;
+            background: white;
+            color: #111;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .message {
+            margin-top: 12px;
+            color: #ff7777;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        /* Header */
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 27px;
+        }
+
+        .header p {
+            margin: 5px 0 0;
+            color: #858b98;
+            font-size: 13px;
+        }
+
+        .logout {
+            border: 1px solid #292e38;
+            background: #171a20;
+            color: #ff7777;
+            border-radius: 10px;
+            padding: 9px 12px;
+            cursor: pointer;
+        }
+
+        /* Stats */
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .card {
+            background: #171a20;
+            border: 1px solid #292e38;
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .card small {
+            color: #858b98;
+        }
+
+        .card h2 {
+            margin: 8px 0 0;
+            font-size: 25px;
+            word-break: break-word;
+        }
+
+        /* Add */
+
+        .add-btn {
+            width: 100%;
+            height: 50px;
+            border: 0;
+            border-radius: 14px;
+            background: white;
+            color: #111;
+            font-weight: bold;
+            font-size: 17px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .add-btn:active {
+            transform: scale(.98);
+        }
+
+        /* Sales */
+
+        .list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .amount {
+            flex: 1;
+            min-width: 0;
+            height: 48px;
+            padding: 0 14px;
+            border-radius: 12px;
+            border: 1px solid #292e38;
+            background: #171a20;
+            color: white;
+            outline: none;
+            font-size: 18px;
+        }
+
+        .amount:focus {
+            border-color: #777;
+        }
+
+        .delete {
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+            border-radius: 12px;
+            border: 1px solid #292e38;
+            background: #171a20;
+            color: #ff6666;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 25px 10px;
+            color: #777e8b;
+            border: 1px dashed #292e38;
+            border-radius: 14px;
+        }
+
+        /* Reset */
+
+        .reset-box {
+            margin-top: 18px;
+        }
+
+        .reset-btn {
+            width: 100%;
+            height: 46px;
+            border-radius: 12px;
+            border: 1px solid #3a3030;
+            background: transparent;
+            color: #ff7777;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Modal */
+
+        .modal-bg {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .75);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        .modal-bg.show {
+            display: flex;
+        }
+
+        .modal {
+            width: 100%;
+            max-width: 360px;
+            background: #181b21;
+            border: 1px solid #303641;
+            border-radius: 20px;
+            padding: 22px;
+        }
+
+        .modal-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .modal h3 {
+            margin: 0 0 8px;
+        }
+
+        .modal p {
+            margin: 0;
+            color: #9298a4;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            height: 45px;
+            border-radius: 11px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .no-btn {
+            border: 1px solid #343944;
+            background: #22262e;
+            color: white;
+        }
+
+        .yes-btn {
+            border: 0;
+            background: white;
+            color: #111;
+        }
+
+        .danger-btn {
+            border: 0;
+            background: #d64545;
+            color: white;
+        }
+
+        @media (max-width: 360px) {
+            body {
+                padding: 14px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .card h2 {
+                font-size: 21px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<div id="loginPage" class="login-box">
+
+    <div class="logo">SaleTrack</div>
+
+    <div class="subtitle">
+        Sign in to manage your sales
+    </div>
+
+    <input
+        id="email"
+        type="email"
+        placeholder="Email"
+        autocomplete="email">
+
+    <input
+        id="password"
+        type="password"
+        placeholder="Password"
+        autocomplete="current-password">
+
+    <button
+        id="loginBtn"
+        class="login-btn"
+        type="button">
+        Login
+    </button>
+
+    <div
+        id="loginMessage"
+        class="message">
+    </div>
+
+</div>
+
+
+<!-- APP -->
+
+<div id="app" class="app hidden">
+
+    <div class="header">
+
+        <div>
+            <h1>SaleTrack</h1>
+
+            <p id="userEmail">
+                Sales Manager
+            </p>
+        </div>
+
+        <button
+            id="logoutBtn"
+            class="logout"
+            type="button">
+            Logout
+        </button>
+
+    </div>
+
+
+    <!-- STATS -->
+
+    <div class="stats">
+
+        <div class="card">
+            <small>Add Count</small>
+            <h2 id="count">0</h2>
+        </div>
+
+        <div class="card">
+            <small>Total Sales</small>
+            <h2 id="total">0</h2>
+        </div>
+
+    </div>
+
+
+    <!-- ADD -->
+
+    <button
+        id="addBtn"
+        class="add-btn"
+        type="button">
+        ＋ Add
+    </button>
+
+
+    <!-- SALES -->
+
+    <div
+        id="list"
+        class="list">
+    </div>
+
+
+    <!-- RESET -->
+
+    <div class="reset-box">
+
+        <button
+            id="resetBtn"
+            class="reset-btn"
+            type="button">
+            Reset All
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- MODAL -->
+
+<div
+    id="modalBg"
+    class="modal-bg">
+
+    <div class="modal">
+
+        <div
+            id="modalIcon"
+            class="modal-icon">
+            ⚠️
+        </div>
+
+        <h3 id="modalTitle">
+            Confirm
+        </h3>
+
+        <p id="modalMessage">
+            Are you sure?
+        </p>
+
+        <div class="modal-actions">
+
+            <button
+                id="modalNo"
+                class="no-btn"
+                type="button">
+                No
+            </button>
+
+            <button
+                id="modalYes"
+                class="yes-btn"
+                type="button">
+                Yes
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================
+   SUPABASE CONFIG
+========================================= */
+
+const SUPABASE_URL =
+    "https://eavqyzgamuelwyplhqjf.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_OSypObpmAQMHjMZrct7QNQ_AtrYXY8Z";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const loginPage =
+    document.getElementById("loginPage");
+
+const app =
+    document.getElementById("app");
+
+const emailInput =
+    document.getElementById("email");
+
+const passwordInput =
+    document.getElementById("password");
+
+const loginBtn =
+    document.getElementById("loginBtn");
+
+const loginMessage =
+    document.getElementById("loginMessage");
+
+const logoutBtn =
+    document.getElementById("logoutBtn");
+
+const userEmail =
+    document.getElementById("userEmail");
+
+const list =
+    document.getElementById("list");
+
+const count =
+    document.getElementById("count");
+
+const total =
+    document.getElementById("total");
+
+const addBtn =
+    document.getElementById("addBtn");
+
+const resetBtn =
+    document.getElementById("resetBtn");
+
+
+/* Modal */
+
+const modalBg =
+    document.getElementById("modalBg");
+
+const modalIcon =
+    document.getElementById("modalIcon");
+
+const modalTitle =
+    document.getElementById("modalTitle");
+
+const modalMessage =
+    document.getElementById("modalMessage");
+
+const modalNo =
+    document.getElementById("modalNo");
+
+const modalYes =
+    document.getElementById("modalYes");
+
+
+/* =========================================
+   STATE
+========================================= */
+
+let sales = [];
+
+let currentUser = null;
+
+
+/* =========================================
+   LOGIN
+========================================= */
+
+async function login() {
+
+    const email =
+        emailInput.value.trim();
+
+    const password =
+        passwordInput.value;
+
+
+    if (!email || !password) {
+
+        loginMessage.textContent =
+            "Please enter your email and password.";
+
+        return;
+    }
+
+
+    loginBtn.disabled = true;
+
+    loginBtn.textContent =
+        "Logging in...";
+
+    loginMessage.textContent = "";
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+
+
+    loginBtn.disabled = false;
+
+    loginBtn.textContent =
+        "Login";
+
+
+    if (error) {
+
+        loginMessage.textContent =
+            error.message;
+
+        return;
+    }
+
+
+    currentUser =
+        data.user;
+
+    showApp();
+
+}
+
+
+/* =========================================
+   SHOW APP
+========================================= */
+
+async function showApp() {
+
+    loginPage.classList.add("hidden");
+
+    app.classList.remove("hidden");
+
+
+    if (currentUser) {
+
+        userEmail.textContent =
+            currentUser.email || "Sales Manager";
+
+    }
+
+
+    await loadSales();
+
+}
+
+
+/* =========================================
+   LOAD SALES
+========================================= */
+
+async function loadSales() {
+
+    list.innerHTML =
+        '<div class="empty">Loading...</div>';
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("sales")
+            .select("*")
+            .order("created_at", {
+                ascending: true
+            });
+
+
+    if (error) {
+
+        list.innerHTML =
+            '<div class="empty">Failed to load sales.</div>';
+
+        console.error(error);
+
+        return;
+    }
+
+
+    sales =
+        data || [];
+
+    render();
+
+}
+
+
+/* =========================================
+   FORMAT NUMBER
+========================================= */
+
+function formatNumber(value) {
+
+    const number =
+        Number(value);
+
+    if (!Number.isFinite(number)) {
+        return "0";
+    }
+
+
+    return number.toLocaleString(
+        "en-US",
+        {
+            maximumFractionDigits: 2
+        }
+    );
+
+}
+
+
+/* =========================================
+   UPDATE STATS
+========================================= */
+
+function updateStats() {
+
+    count.textContent =
+        sales.length;
+
+
+    let sum = 0;
+
+
+    for (const item of sales) {
+
+        const value =
+            Number(item.amount);
+
+        if (Number.isFinite(value)) {
+            sum += value;
+        }
+
+    }
+
+
+    total.textContent =
+        formatNumber(sum);
+
+}
+
+
+/* =========================================
+   RENDER
+========================================= */
+
+function render() {
+
+    list.innerHTML = "";
+
+
+    if (sales.length === 0) {
+
+        const empty =
+            document.createElement("div");
+
+        empty.className =
+            "empty";
+
+        empty.textContent =
+            "No sales added yet.";
+
+        list.appendChild(empty);
+
+    } else {
+
+        sales.forEach(
+            (item, index) => {
+
+                const row =
+                    document.createElement("div");
+
+                row.className =
+                    "row";
+
+
+                const input =
+                    document.createElement("input");
+
+                input.className =
+                    "amount";
+
+                input.type =
+                    "number";
+
+                input.inputMode =
+                    "decimal";
+
+                input.placeholder =
+                    "Enter amount";
+
+                input.value =
+                    item.amount;
+
+
+                input.addEventListener(
+                    "change",
+                    () => updateSale(
+                        item.id,
+                        input.value,
+                        index
+                    )
+                );
+
+
+                const deleteBtn =
+                    document.createElement("button");
+
+                deleteBtn.className =
+                    "delete";
+
+                deleteBtn.type =
+                    "button";
+
+                deleteBtn.textContent =
+                    "×";
+
+                deleteBtn.title =
+                    "Delete";
+
+
+                deleteBtn.addEventListener(
+                    "click",
+                    () => confirmDelete(
+                        item.id
+                    )
+                );
+
+
+                row.appendChild(input);
+
+                row.appendChild(deleteBtn);
+
+                list.appendChild(row);
+
+            }
+        );
+
+    }
+
+
+    updateStats();
+
+}
+
+
+/* =========================================
+   ADD SALE
+========================================= */
+
+async function addSale() {
+
+    addBtn.disabled = true;
+
+    addBtn.textContent =
+        "Adding...";
+
+
+    const {
+        data: {
+            user
+        }
+    } =
+        await supabaseClient.auth.getUser();
+
+
+    if (!user) {
+
+        addBtn.disabled = false;
+
+        addBtn.textContent =
+            "＋ Add";
+
+        return;
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("sales")
+            .insert({
+                amount: 0,
+                user_id: user.id
+            })
+            .select()
+            .single();
+
+
+    addBtn.disabled = false;
+
+    addBtn.textContent =
+        "＋ Add";
+
+
+    if (error) {
+
+        alert(
+            "Could not add sale: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    sales.push(data);
+
+    render();
+
+
+    const inputs =
+        list.querySelectorAll(
+            ".amount"
+        );
+
+
+    if (inputs.length) {
+
+        inputs[
+            inputs.length - 1
+        ].focus();
+
+    }
+
+}
+
+
+/* =========================================
+   UPDATE SALE
+========================================= */
+
+async function updateSale(
+    id,
+    value,
+    index
+) {
+
+    const number =
+        Number(value);
+
+
+    if (
+        value !== "" &&
+        !Number.isFinite(number)
+    ) {
+
+        alert(
+            "Please enter a valid amount."
+        );
+
+        render();
+
+        return;
+    }
+
+
+    const amount =
+        value === ""
+            ? 0
+            : number;
+
+
+    const {
+        error
+    } =
+        await supabaseClient
+            .from("sales")
+            .update({
+                amount: amount
+            })
+            .eq("id", id);
+
+
+    if (error) {
+
+        alert(
+            "Update failed: " +
+            error.message
+        );
+
+        await loadSales();
+
+        return;
+    }
+
+
+    if (sales[index]) {
+
+        sales[index].amount =
+            amount;
+
+    }
+
+
+    updateStats();
+
+}
+
+
+/* =========================================
+   MODAL CLOSE
+========================================= */
+
+function closeModal() {
+
+    modalBg.classList.remove(
+        "show"
+    );
+
+}
+
+
+/* =========================================
+   DELETE CONFIRMATION
+========================================= */
+
+function confirmDelete(id) {
+
+    modalIcon.textContent =
+        "🗑️";
+
+    modalTitle.textContent =
+        "Delete this sale?";
+
+    modalMessage.textContent =
+        "This sales entry will be permanently deleted.";
+
+    modalNo.textContent =
+        "No";
+
+    modalYes.textContent =
+        "Yes";
+
+    modalYes.className =
+        "yes-btn";
+
+
+    modalBg.classList.add(
+        "show"
+    );
+
+
+    modalNo.onclick =
+        () => closeModal();
+
+
+    modalYes.onclick =
+        async () => {
+
+            await deleteSale(id);
+
+            closeModal();
+
+        };
+
+}
+
+
+/* =========================================
+   DELETE SALE
+========================================= */
+
+async function deleteSale(id) {
+
+    const {
+        error
+    } =
+        await supabaseClient
+            .from("sales")
+            .delete()
+            .eq("id", id);
+
+
+    if (error) {
+
+        alert(
+            "Delete failed: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    sales =
+        sales.filter(
+            item => item.id !== id
+        );
+
+
+    render();
+
+}
+
+
+/* =========================================
+   RESET STEP 1
+========================================= */
+
+function resetStepOne() {
+
+    modalIcon.textContent =
+        "⚠️";
+
+    modalTitle.textContent =
+        "Reset All?";
+
+    modalMessage.textContent =
+        "All of your sales records will be deleted. Continue?";
+
+    modalNo.textContent =
+        "No";
+
+    modalYes.textContent =
+        "Yes";
+
+    modalYes.className =
+        "yes-btn";
+
+
+    modalBg.classList.add(
+        "show"
+    );
+
+
+    modalNo.onclick =
+        () => closeModal();
+
+
+    modalYes.onclick =
+        () => {
+
+            closeModal();
+
+            setTimeout(
+                resetStepTwo,
+                150
+            );
+
+        };
+
+}
+
+
+/* =========================================
+   RESET STEP 2
+========================================= */
+
+function resetStepTwo() {
+
+    modalIcon.textContent =
+        "🚨";
+
+    modalTitle.textContent =
+        "Final Confirmation";
+
+    modalMessage.textContent =
+        "This will permanently delete ALL your sales. This action cannot be undone.";
+
+    modalNo.textContent =
+        "Cancel";
+
+    modalYes.textContent =
+        "Reset Everything";
+
+    modalYes.className =
+        "danger-btn";
+
+
+    modalBg.classList.add(
+        "show"
+    );
+
+
+    modalNo.onclick =
+        () => closeModal();
+
+
+    modalYes.onclick =
+        async () => {
+
+            await resetAll();
+
+            closeModal();
+
+        };
+
+}
+
+
+/* =========================================
+   RESET ALL
+========================================= */
+
+async function resetAll() {
+
+    const {
+        data: {
+            user
+        }
+    } =
+        await supabaseClient.auth.getUser();
+
+
+    if (!user) {
+        return;
+    }
+
+
+    const {
+        error
+    } =
+        await supabaseClient
+            .from("sales")
+            .delete()
+            .eq(
+                "user_id",
+                user.id
+            );
+
+
+    if (error) {
+
+        alert(
+            "Reset failed: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    sales = [];
+
+    render();
+
+}
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+async function logout() {
+
+    await supabaseClient.auth.signOut();
+
+    currentUser = null;
+
+    sales = [];
+
+    app.classList.add(
+        "hidden"
+    );
+
+    loginPage.classList.remove(
+        "hidden"
+    );
+
+    passwordInput.value = "";
+
+}
+
+
+/* =========================================
+   AUTH STATE
+========================================= */
+
+supabaseClient.auth.onAuthStateChange(
+    async (event, session) => {
+
+        if (session && session.user) {
+
+            currentUser =
+                session.user;
+
+            showApp();
+
+        } else {
+
+            currentUser = null;
+
+            app.classList.add(
+                "hidden"
+            );
+
+            loginPage.classList.remove(
+                "hidden"
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   EVENTS
+========================================= */
+
+loginBtn.addEventListener(
+    "click",
+    login
+);
+
+passwordInput.addEventListener(
+    "keydown",
+    event => {
+
+        if (event.key === "Enter") {
+            login();
+        }
+
+    }
+);
+
+
+addBtn.addEventListener(
+    "click",
+    addSale
+);
+
+
+resetBtn.addEventListener(
+    "click",
+    () => {
+
+        if (sales.length === 0) {
+
+            alert(
+                "There are no sales to reset."
+            );
+
+            return;
+        }
+
+        resetStepOne();
+
+    }
+);
+
+
+logoutBtn.addEventListener(
+    "click",
+    logout
+);
+
+</script>
+
+</body>
+  </html>
