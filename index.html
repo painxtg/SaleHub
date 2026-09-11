@@ -1,3534 +1,513 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-  >
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
 
-  <title>SaleTrack</title>
+    <title>SaleHub</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    /* =====================================================
-       RESET
-    ===================================================== */
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      width: 100%;
-      min-height: 100%;
-    }
-
-    body {
-      margin: 0;
-      overflow-x: hidden;
-
-      font-family:
-        Inter,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        Arial,
-        sans-serif;
-
-      color: #f8fafc;
-
-      background:
-        radial-gradient(
-          circle at 15% 0%,
-          rgba(99, 102, 241, 0.14),
-          transparent 32%
-        ),
-        radial-gradient(
-          circle at 90% 10%,
-          rgba(139, 92, 246, 0.10),
-          transparent 30%
-        ),
-        #050608;
-    }
-
-    button,
-    input {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-
-    /* =====================================================
-       LOGIN
-    ===================================================== */
-
-    #loginScreen {
-      width: 100%;
-      min-height: 100vh;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      padding: 20px;
-
-      background:
-        radial-gradient(
-          circle at 50% -10%,
-          rgba(99, 102, 241, 0.20),
-          transparent 40%
-        ),
-        #050608;
-    }
-
-    .login-card {
-      width: min(420px, 100%);
-
-      padding: 32px 25px;
-
-      border: 1px solid #252a34;
-      border-radius: 24px;
-
-      background:
-        linear-gradient(
-          145deg,
-          rgba(22, 25, 32, 0.98),
-          rgba(10, 12, 16, 0.98)
-        );
-
-      box-shadow:
-        0 30px 80px rgba(0, 0, 0, 0.55),
-        inset 0 1px 0 rgba(255,255,255,0.025);
-    }
-
-    .brand {
-      text-align: center;
-      margin-bottom: 28px;
-    }
-
-    .brand-logo {
-      width: 62px;
-      height: 62px;
-
-      margin: 0 auto 15px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      border-radius: 18px;
-
-      background:
-        linear-gradient(
-          135deg,
-          #6366f1,
-          #8b5cf6
-        );
-
-      color: white;
-
-      font-size: 26px;
-      font-weight: 900;
-
-      box-shadow:
-        0 12px 35px rgba(99,102,241,0.28);
-    }
-
-    .brand h1 {
-      margin: 0;
-
-      color: #ffffff;
-
-      font-size: 29px;
-      font-weight: 900;
-      letter-spacing: -0.8px;
-    }
-
-    .brand p {
-      margin: 7px 0 0;
-
-      color: #7f8998;
-
-      font-size: 13px;
-    }
-
-
-    /* =====================================================
-       INPUTS
-    ===================================================== */
-
-    .field {
-      margin-bottom: 16px;
-    }
-
-    .field label {
-      display: block;
-
-      margin-bottom: 7px;
-
-      color: #aeb7c4;
-
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .field input,
-    .sale-form input,
-    .modal input {
-      width: 100%;
-      min-height: 49px;
-
-      padding: 0 14px;
-
-      outline: none;
-
-      border: 1px solid #2a303a;
-      border-radius: 12px;
-
-      background: #0c0f14;
-      color: #f8fafc;
-
-      transition:
-        border-color .2s,
-        background .2s,
-        box-shadow .2s;
-    }
-
-    .field input::placeholder,
-    .sale-form input::placeholder,
-    .modal input::placeholder {
-      color: #606a78;
-    }
-
-    .field input:focus,
-    .sale-form input:focus,
-    .modal input:focus {
-      background: #10141a;
-
-      border-color: #6366f1;
-
-      box-shadow:
-        0 0 0 3px rgba(99,102,241,0.13);
-    }
-
-
-    /* =====================================================
-       BUTTONS
-    ===================================================== */
-
-    .primary-btn,
-    .add-btn {
-      min-height: 49px;
-
-      border: 0;
-      border-radius: 12px;
-
-      background:
-        linear-gradient(
-          135deg,
-          #6366f1,
-          #7c3aed
-        );
-
-      color: white;
-
-      font-weight: 800;
-
-      box-shadow:
-        0 10px 28px rgba(99,102,241,0.18);
-
-      transition:
-        transform .15s,
-        filter .2s,
-        box-shadow .2s;
-    }
-
-    .primary-btn {
-      width: 100%;
-    }
-
-    .primary-btn:hover,
-    .add-btn:hover {
-      filter: brightness(1.08);
-
-      box-shadow:
-        0 14px 32px rgba(99,102,241,0.25);
-    }
-
-    .primary-btn:active,
-    .add-btn:active {
-      transform: scale(.985);
-    }
-
-    .primary-btn:disabled,
-    .add-btn:disabled {
-      opacity: .6;
-      cursor: not-allowed;
-    }
-
-    .login-error {
-      margin-top: 14px;
-
-      color: #fb7185;
-
-      font-size: 13px;
-      line-height: 1.5;
-
-      text-align: center;
-    }
-
-
-    /* =====================================================
-       APP TOPBAR
-    ===================================================== */
-
-    #app {
-      min-height: 100vh;
-    }
-
-    .topbar {
-      width: 100%;
-
-      position: sticky;
-      top: 0;
-      z-index: 50;
-
-      background:
-        rgba(6, 8, 11, 0.88);
-
-      border-bottom: 1px solid #1e232c;
-
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-    }
-
-    .topbar-inner {
-      width: min(1080px, 100%);
-
-      min-height: 70px;
-
-      margin: auto;
-      padding: 12px 20px;
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      gap: 15px;
-    }
-
-    .top-brand {
-      min-width: 0;
-    }
-
-    .top-brand h2 {
-      margin: 0;
-
-      color: white;
-
-      font-size: 21px;
-      font-weight: 900;
-
-      letter-spacing: -0.5px;
-    }
-
-    .top-brand small {
-      display: block;
-
-      margin-top: 3px;
-
-      color: #697383;
-
-      font-size: 11px;
-    }
-
-    .top-right {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-
-      gap: 8px;
-
-      flex-wrap: wrap;
-    }
-
-
-    /* =====================================================
-       STATUS
-    ===================================================== */
-
-    .status {
-      min-height: 33px;
-
-      padding: 6px 10px;
-
-      display: inline-flex;
-      align-items: center;
-
-      gap: 7px;
-
-      border: 1px solid #252b35;
-      border-radius: 999px;
-
-      background: #0c1015;
-
-      color: #aab3c0;
-
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .status-dot {
-      width: 7px;
-      height: 7px;
-
-      flex: 0 0 7px;
-
-      border-radius: 50%;
-
-      background: #22c55e;
-
-      box-shadow:
-        0 0 10px rgba(34,197,94,.65);
-    }
-
-    .logout-btn {
-      min-height: 34px;
-
-      padding: 7px 12px;
-
-      border: 1px solid #292f39;
-      border-radius: 9px;
-
-      background: #0c1015;
-      color: #aeb7c4;
-
-      font-size: 12px;
-      font-weight: 700;
-
-      transition: .2s;
-    }
-
-    .logout-btn:hover {
-      background: #161a21;
-      color: white;
-    }
-
-
-    /* =====================================================
-       MAIN CONTAINER
-    ===================================================== */
-
-    .container {
-      width: min(1080px, 100%);
-
-      margin: auto;
-
-      padding: 26px 20px 40px;
-    }
-
-
-    /* =====================================================
-       STATS
-    ===================================================== */
-
-    .stats {
-      width: 100%;
-
-      display: grid;
-
-      grid-template-columns:
-        repeat(4, minmax(0, 1fr));
-
-      gap: 13px;
-
-      margin-bottom: 20px;
-    }
-
-    .stat-card {
-      min-width: 0;
-
-      padding: 18px;
-
-      border: 1px solid #222832;
-      border-radius: 17px;
-
-      background:
-        linear-gradient(
-          145deg,
-          #11151b,
-          #0a0c10
-        );
-
-      box-shadow:
-        0 12px 35px rgba(0,0,0,.22),
-        inset 0 1px 0 rgba(255,255,255,.02);
-
-      transition:
-        transform .2s,
-        border-color .2s;
-    }
-
-    .stat-card:hover {
-      transform: translateY(-2px);
-      border-color: #343b48;
-    }
-
-    .stat-label {
-      margin-bottom: 8px;
-
-      color: #7d8796;
-
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .stat-value {
-      min-width: 0;
-
-      color: #f8fafc;
-
-      font-size: 23px;
-      line-height: 1.3;
-      font-weight: 900;
-
-      /*
-        IMPORTANT:
-        No ellipsis.
-        No hidden values.
-        Full numbers remain visible.
-      */
-
-      white-space: normal;
-      overflow: visible;
-      text-overflow: clip;
-
-      overflow-wrap: anywhere;
-      word-break: break-word;
-    }
-
-
-    /* =====================================================
-       SECTION
-    ===================================================== */
-
-    .section {
-      width: 100%;
-
-      margin-bottom: 17px;
-      padding: 20px;
-
-      border: 1px solid #222832;
-      border-radius: 19px;
-
-      background:
-        linear-gradient(
-          145deg,
-          rgba(17,20,26,.98),
-          rgba(9,11,15,.98)
-        );
-
-      box-shadow:
-        0 12px 35px rgba(0,0,0,.20),
-        inset 0 1px 0 rgba(255,255,255,.02);
-    }
-
-    .section-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-
-      gap: 15px;
-
-      margin-bottom: 16px;
-    }
-
-    .section-title {
-      margin: 0;
-
-      color: #f7f8fa;
-
-      font-size: 17px;
-      font-weight: 850;
-
-      letter-spacing: -.2px;
-    }
-
-    .section-subtitle {
-      margin: 5px 0 0;
-
-      color: #717b8a;
-
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-
-    /* =====================================================
-       ADD SALE FORM
-    ===================================================== */
-
-    .sale-form {
-      width: 100%;
-
-      display: flex;
-
-      gap: 10px;
-    }
-
-    .sale-form input {
-      flex: 1 1 auto;
-      min-width: 0;
-
-      font-size: 16px;
-    }
-
-    .add-btn {
-      flex: 0 0 auto;
-
-      padding: 0 23px;
-    }
-
-
-    /* =====================================================
-       QUICK ACTIONS
-    ===================================================== */
-
-    .actions {
-      width: 100%;
-
-      display: flex;
-
-      flex-wrap: wrap;
-
-      gap: 10px;
-    }
-
-    .action-btn {
-      min-height: 43px;
-
-      padding: 9px 15px;
-
-      border: 1px solid #2a303a;
-      border-radius: 11px;
-
-      background: #0c1015;
-      color: #b5becb;
-
-      font-size: 13px;
-      font-weight: 750;
-
-      transition:
-        background .2s,
-        border-color .2s,
-        color .2s,
-        transform .15s;
-    }
-
-    .action-btn:hover {
-      background: #161a21;
-      border-color: #3a424f;
-      color: white;
-    }
-
-    .action-btn:active {
-      transform: scale(.98);
-    }
-
-    .action-btn.success {
-      color: #4ade80;
-      border-color: rgba(34,197,94,.25);
-    }
-
-    .action-btn.success:hover {
-      background: rgba(34,197,94,.08);
-    }
-
-    .action-btn.danger {
-      color: #fb7185;
-      border-color: rgba(244,63,94,.25);
-    }
-
-    .action-btn.danger:hover {
-      background: rgba(244,63,94,.08);
-    }
-
-
-    /* =====================================================
-       HISTORY
-    ===================================================== */
-
-    .history-list {
-      width: 100%;
-
-      display: flex;
-      flex-direction: column;
-
-      gap: 9px;
-    }
-
-    .history-item {
-      width: 100%;
-      min-width: 0;
-
-      display: grid;
-
-      grid-template-columns:
-        minmax(0, 1fr)
-        auto
-        auto;
-
-      align-items: center;
-
-      gap: 13px;
-
-      padding: 13px 14px;
-
-      border: 1px solid #20252e;
-      border-radius: 13px;
-
-      background:
-        linear-gradient(
-          145deg,
-          #101319,
-          #0b0d11
-        );
-
-      transition:
-        background .2s,
-        border-color .2s;
-    }
-
-    .history-item:hover {
-      background: #141820;
-      border-color: #303742;
-    }
-
-    .history-main {
-      min-width: 0;
-    }
-
-    .history-amount {
-      min-width: 0;
-
-      color: #f5f7fa;
-
-      font-size: 16px;
-      line-height: 1.35;
-      font-weight: 850;
-
-      white-space: normal;
-      overflow: visible;
-      text-overflow: clip;
-
-      overflow-wrap: anywhere;
-      word-break: break-word;
-    }
-
-    .history-date {
-      margin-top: 3px;
-
-      color: #737d8c;
-
-      font-size: 11px;
-      line-height: 1.4;
-
-      overflow-wrap: anywhere;
-    }
-
-    .history-time {
-      color: #8a94a3;
-
-      font-size: 12px;
-      font-weight: 700;
-
-      text-align: right;
-
-      white-space: normal;
-    }
-
-    .history-buttons {
-      display: flex;
-
-      gap: 7px;
-    }
-
-    .edit-btn,
-    .delete-btn {
-      min-height: 34px;
-
-      padding: 6px 10px;
-
-      border-radius: 9px;
-
-      background: #0c1015;
-
-      font-size: 11px;
-      font-weight: 800;
-    }
-
-    .edit-btn {
-      border: 1px solid rgba(59,130,246,.25);
-      color: #60a5fa;
-    }
-
-    .edit-btn:hover {
-      background: rgba(59,130,246,.08);
-    }
-
-    .delete-btn {
-      border: 1px solid rgba(244,63,94,.25);
-      color: #fb7185;
-    }
-
-    .delete-btn:hover {
-      background: rgba(244,63,94,.08);
-    }
-
-    .empty {
-      padding: 30px 15px;
-
-      color: #697383;
-
-      font-size: 13px;
-
-      text-align: center;
-    }
-
-
-    /* =====================================================
-       BACKUP
-    ===================================================== */
-
-    details {
-      width: 100%;
-
-      margin-top: 18px;
-
-      overflow: hidden;
-
-      border: 1px solid #222832;
-      border-radius: 15px;
-
-      background: #0c1015;
-    }
-
-    summary {
-      padding: 15px 17px;
-
-      cursor: pointer;
-
-      color: #b8c0cc;
-
-      font-size: 13px;
-      font-weight: 800;
-
-      user-select: none;
-    }
-
-    summary:hover {
-      color: white;
-    }
-
-    .backup-content {
-      padding: 0 17px 17px;
-
-      border-top: 1px solid #20252e;
-    }
-
-    .backup-content p {
-      margin: 14px 0;
-
-      color: #727c8b;
-
-      font-size: 12px;
-      line-height: 1.55;
-    }
-
-    .backup-actions {
-      display: flex;
-
-      flex-wrap: wrap;
-
-      gap: 10px;
-    }
-
-    .backup-actions button {
-      min-height: 40px;
-
-      padding: 8px 13px;
-
-      border: 1px solid #2a303a;
-      border-radius: 10px;
-
-      background: #10141a;
-      color: #aeb7c4;
-
-      font-size: 12px;
-      font-weight: 750;
-    }
-
-    .backup-actions button:hover {
-      background: #181c23;
-      color: white;
-    }
-
-
-    /* =====================================================
-       FOOTER
-    ===================================================== */
-
-    .footer {
-      padding: 11px 0 5px;
-
-      color: #505967;
-
-      font-size: 11px;
-
-      text-align: center;
-    }
-
-
-    /* =====================================================
-       MODAL
-    ===================================================== */
-
-    .modal-bg {
-      position: fixed;
-      inset: 0;
-
-      z-index: 100;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      padding: 18px;
-
-      background: rgba(0,0,0,.72);
-
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
-
-      opacity: 0;
-      visibility: hidden;
-
-      transition: .18s;
-    }
-
-    .modal-bg.show {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .modal {
-      width: min(430px, 100%);
-      max-height: calc(100vh - 36px);
-
-      overflow-y: auto;
-
-      padding: 22px;
-
-      border: 1px solid #292f39;
-      border-radius: 20px;
-
-      background:
-        linear-gradient(
-          145deg,
-          #171a21,
-          #0c1015
-        );
-
-      box-shadow:
-        0 30px 90px rgba(0,0,0,.65);
-    }
-
-    .modal h3 {
-      margin: 0;
-
-      color: white;
-
-      font-size: 19px;
-    }
-
-    .modal p {
-      margin: 9px 0 17px;
-
-      color: #8a94a3;
-
-      font-size: 13px;
-      line-height: 1.6;
-
-      overflow-wrap: anywhere;
-    }
-
-    .modal input {
-      margin-bottom: 15px;
-    }
-
-    .modal-actions {
-      display: flex;
-      justify-content: flex-end;
-
-      gap: 9px;
-
-      flex-wrap: wrap;
-    }
-
-    .modal-actions button {
-      min-height: 40px;
-
-      padding: 8px 14px;
-
-      border-radius: 10px;
-
-      font-size: 12px;
-      font-weight: 750;
-    }
-
-    .cancel-btn {
-      border: 1px solid #2a303a;
-
-      background: #10141a;
-      color: #aeb7c4;
-    }
-
-    .cancel-btn:hover {
-      background: #181c23;
-      color: white;
-    }
-
-    .confirm-btn {
-      border: 0;
-
-      background:
-        linear-gradient(
-          135deg,
-          #6366f1,
-          #7c3aed
-        );
-
-      color: white;
-    }
-
-    .confirm-btn.danger {
-      background:
-        linear-gradient(
-          135deg,
-          #dc2626,
-          #be123c
-        );
-    }
-
-
-    /* =====================================================
-       TOAST
-    ===================================================== */
-
-    #toast {
-      position: fixed;
-
-      z-index: 200;
-
-      left: 50%;
-      bottom: 22px;
-
-      max-width: calc(100vw - 30px);
-
-      padding: 11px 15px;
-
-      border: 1px solid #303641;
-      border-radius: 11px;
-
-      background:
-        linear-gradient(
-          135deg,
-          #191d25,
-          #0e1116
-        );
-
-      color: white;
-
-      font-size: 12px;
-      font-weight: 700;
-
-      text-align: center;
-
-      box-shadow:
-        0 12px 35px rgba(0,0,0,.4);
-
-      opacity: 0;
-
-      pointer-events: none;
-
-      transform:
-        translate(-50%, 20px);
-
-      transition: .2s;
-    }
-
-    #toast.show {
-      opacity: 1;
-
-      transform:
-        translate(-50%, 0);
-    }
-
-
-    /* =====================================================
-       TABLET
-    ===================================================== */
-
-    @media (max-width: 850px) {
-
-      .stats {
-        grid-template-columns:
-          repeat(2, minmax(0, 1fr));
-      }
-
-    }
-
-
-    /* =====================================================
-       MOBILE
-    ===================================================== */
-
-    @media (max-width: 600px) {
-
-      #loginScreen {
-        padding: 15px;
-      }
-
-      .login-card {
-        padding: 27px 20px;
-        border-radius: 21px;
-      }
-
-      .brand-logo {
-        width: 58px;
-        height: 58px;
-      }
-
-      .brand h1 {
-        font-size: 26px;
-      }
-
-      .topbar-inner {
-        min-height: auto;
-
-        padding: 12px 14px;
-
-        align-items: flex-start;
-      }
-
-      .top-brand h2 {
-        font-size: 19px;
-      }
-
-      .top-right {
-        gap: 6px;
-      }
-
-      .status {
-        min-height: 31px;
-        padding: 5px 8px;
-        font-size: 11px;
-      }
-
-      .logout-btn {
-        min-height: 31px;
-        padding: 6px 9px;
-        font-size: 11px;
-      }
-
-      .container {
-        padding: 16px 12px 30px;
-      }
-
-
-      /* 2 x 2 stats */
-
-      .stats {
-        grid-template-columns:
-          repeat(2, minmax(0, 1fr));
-
-        gap: 9px;
-
-        margin-bottom: 14px;
-      }
-
-      .stat-card {
-        padding: 15px 13px;
-
-        border-radius: 14px;
-      }
-
-      .stat-label {
-        font-size: 11px;
-      }
-
-      .stat-value {
-        font-size: 19px;
-        line-height: 1.3;
-      }
-
-
-      /* Sections */
-
-      .section {
-        padding: 16px 14px;
-        margin-bottom: 13px;
-
-        border-radius: 16px;
-      }
-
-      .section-title {
-        font-size: 16px;
-      }
-
-
-      /* Add sale */
-
-      .sale-form {
-        flex-direction: column;
-      }
-
-      .sale-form input,
-      .add-btn {
-        width: 100%;
-        flex: none;
-      }
-
-      .add-btn {
-        padding: 0 15px;
-      }
-
-
-      /* Actions */
-
-      .actions {
-        display: grid;
-
-        grid-template-columns:
-          repeat(2, minmax(0, 1fr));
-
-        gap: 8px;
-      }
-
-      .action-btn {
-        width: 100%;
-        min-height: 44px;
-
-        padding-left: 8px;
-        padding-right: 8px;
-      }
-
-
-      /* History */
-
-      .history-item {
-        grid-template-columns:
-          minmax(0, 1fr)
-          auto;
-
-        gap: 9px 12px;
-
-        padding: 12px;
-      }
-
-      .history-main {
-        grid-column: 1;
-      }
-
-      .history-time {
-        grid-column: 2;
-        grid-row: 1;
-
-        text-align: right;
-      }
-
-      .history-buttons {
-        grid-column: 1 / -1;
-
-        width: 100%;
-
-        display: flex;
-
-        gap: 8px;
-      }
-
-      .edit-btn,
-      .delete-btn {
-        flex: 1;
-      }
-
-
-      /* Backup */
-
-      .backup-actions button {
-        flex: 1 1 130px;
-      }
-
-    }
-
-
-    /* =====================================================
-       VERY SMALL PHONE
-    ===================================================== */
-
-    @media (max-width: 360px) {
-
-      .topbar-inner {
-        flex-direction: column;
-      }
-
-      .top-right {
-        width: 100%;
-
-        justify-content: space-between;
-      }
-
-      .stats {
-        gap: 7px;
-      }
-
-      .stat-card {
-        padding: 13px 10px;
-      }
-
-      .stat-value {
-        font-size: 18px;
-      }
-
-      .stat-label {
-        font-size: 10px;
-      }
-
-      .actions {
-        grid-template-columns: 1fr;
-      }
-
-    }
-  </style>
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
-
 
 <body>
 
-  <!-- =====================================================
-       LOGIN SCREEN
-  ===================================================== -->
+    <!-- =====================================================
+         LOGIN SCREEN
+    ====================================================== -->
 
-  <section id="loginScreen">
+    <section id="loginScreen">
 
-    <div class="login-card">
+        <div class="login-card">
 
-      <div class="brand">
+            <div class="brand">
 
-        <div class="brand-logo">
-          S
-        </div>
+                <div class="brand-logo">
+                    S
+                </div>
 
-        <h1>
-          SaleTrack
-        </h1>
+                <h1>
+                    SaleHub
+                </h1>
 
-        <p>
-          Simple sales tracking dashboard
-        </p>
+                <p>
+                    Simple sales management dashboard
+                </p>
 
-      </div>
-
-
-      <form id="loginForm">
-
-        <div class="field">
-
-          <label for="email">
-            Email
-          </label>
-
-          <input
-            id="email"
-            type="email"
-            autocomplete="email"
-            placeholder="Enter your email"
-            required
-          >
-
-        </div>
+            </div>
 
 
-        <div class="field">
+            <form id="loginForm">
 
-          <label for="password">
-            Password
-          </label>
+                <div class="field">
 
-          <input
-            id="password"
-            type="password"
-            autocomplete="current-password"
-            placeholder="Enter your password"
-            required
-          >
+                    <label for="email">
+                        Email
+                    </label>
 
-        </div>
+                    <input
+                        id="email"
+                        type="email"
+                        autocomplete="email"
+                        placeholder="Enter your email"
+                        required
+                    >
 
-
-        <button
-          class="primary-btn"
-          type="submit"
-        >
-          Sign In
-        </button>
-
-      </form>
+                </div>
 
 
-      <div
-        id="loginError"
-        class="login-error"
-      ></div>
+                <div class="field">
 
-    </div>
+                    <label for="password">
+                        Password
+                    </label>
 
-  </section>
+                    <input
+                        id="password"
+                        type="password"
+                        autocomplete="current-password"
+                        placeholder="Enter your password"
+                        required
+                    >
+
+                </div>
 
 
-  <!-- =====================================================
-       APP
-  ===================================================== -->
+                <button
+                    class="primary-btn"
+                    type="submit"
+                >
+                    Sign In
+                </button>
 
-  <main
-    id="app"
-    class="hidden"
-  >
+            </form>
 
-    <!-- TOPBAR -->
 
-    <header class="topbar">
-
-      <div class="topbar-inner">
-
-        <div class="top-brand">
-
-          <h2>
-            SaleTrack
-          </h2>
-
-          <small>
-            Powered by mehedi1only
-          </small>
+            <div
+                id="loginError"
+                class="login-error"
+            ></div>
 
         </div>
 
-
-        <div class="top-right">
-
-          <div class="status">
-
-            <span
-              id="statusDot"
-              class="status-dot"
-            ></span>
-
-            <span id="onlineText">
-              Online
-            </span>
-
-          </div>
+    </section>
 
 
-          <button
-            id="logoutBtn"
-            class="logout-btn"
-            type="button"
-          >
-            Logout
-          </button>
+    <!-- =====================================================
+         MAIN APP
+    ====================================================== -->
+
+    <main
+        id="app"
+        class="hidden"
+    >
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <div class="topbar-inner">
+
+                <div class="top-brand">
+
+                    <h2>
+                        SaleHub
+                    </h2>
+
+                    <small>
+                        Powered by mehedi1only
+                    </small>
+
+                </div>
+
+
+                <div class="top-right">
+
+                    <div class="status">
+
+                        <span
+                            id="statusDot"
+                            class="status-dot"
+                        ></span>
+
+                        <span id="onlineText">
+                            Online
+                        </span>
+
+                    </div>
+
+
+                    <button
+                        id="logoutBtn"
+                        class="logout-btn"
+                        type="button"
+                    >
+                        Logout
+                    </button>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- MAIN CONTAINER -->
+
+        <div class="container">
+
+
+            <!-- =================================================
+                 STATS
+            ================================================== -->
+
+            <section class="stats">
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        Add Count
+                    </div>
+
+                    <div
+                        id="countValue"
+                        class="stat-value"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        Total Sales
+                    </div>
+
+                    <div
+                        id="totalValue"
+                        class="stat-value"
+                    >
+                        0.00
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        Today Sales
+                    </div>
+
+                    <div
+                        id="todayValue"
+                        class="stat-value"
+                    >
+                        0.00
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        Last Sale
+                    </div>
+
+                    <div
+                        id="lastSaleValue"
+                        class="stat-value"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 ADD SALE
+            ================================================== -->
+
+            <section class="section">
+
+                <div class="section-head">
+
+                    <div>
+
+                        <h3 class="section-title">
+                            Add Sale
+                        </h3>
+
+                        <p class="section-subtitle">
+                            Enter the amount and add a new sale.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form
+                    id="saleForm"
+                    class="sale-form"
+                >
+
+                    <input
+                        id="amountInput"
+                        type="number"
+                        inputmode="decimal"
+                        step="0.01"
+                        min="0"
+                        placeholder="Enter sale amount"
+                        required
+                    >
+
+
+                    <button
+                        class="add-btn"
+                        type="submit"
+                    >
+                        Add Sale
+                    </button>
+
+                </form>
+
+            </section>
+
+
+            <!-- =================================================
+                 QUICK ACTIONS
+            ================================================== -->
+
+            <section class="section">
+
+                <div class="section-head">
+
+                    <div>
+
+                        <h3 class="section-title">
+                            Quick Actions
+                        </h3>
+
+                        <p class="section-subtitle">
+                            Manage your sales data.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="actions">
+
+                    <button
+                        id="exportBtn"
+                        class="action-btn"
+                        type="button"
+                    >
+                        Export CSV
+                    </button>
+
+
+                    <button
+                        id="undoBtn"
+                        class="action-btn success"
+                        type="button"
+                    >
+                        Undo Delete
+                    </button>
+
+
+                    <button
+                        id="resetBtn"
+                        class="action-btn danger"
+                        type="button"
+                    >
+                        Reset All
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 SALES HISTORY
+            ================================================== -->
+
+            <section class="section">
+
+                <div class="section-head">
+
+                    <div>
+
+                        <h3 class="section-title">
+                            Sales History
+                        </h3>
+
+                        <p class="section-subtitle">
+                            Your latest sales are shown below.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="historyList"
+                    class="history-list"
+                >
+
+                    <div class="empty">
+                        Loading sales...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 BACKUP & RESTORE
+            ================================================== -->
+
+            <details>
+
+                <summary>
+                    Backup &amp; Restore
+                </summary>
+
+
+                <div class="backup-content">
+
+                    <p>
+                        Create a local backup of your sales data
+                        or restore a previously exported SaleHub backup.
+                    </p>
+
+
+                    <div class="backup-actions">
+
+                        <button
+                            id="backupBtn"
+                            type="button"
+                        >
+                            Backup JSON
+                        </button>
+
+
+                        <button
+                            id="restoreBtn"
+                            type="button"
+                        >
+                            Restore JSON
+                        </button>
+
+
+                        <input
+                            id="restoreInput"
+                            type="file"
+                            accept=".json,application/json"
+                            class="hidden"
+                        >
+
+                    </div>
+
+                </div>
+
+            </details>
+
+
+            <!-- FOOTER -->
+
+            <div class="footer">
+                SaleHub • Powered by mehedi1only
+            </div>
 
         </div>
 
-      </div>
+    </main>
 
-    </header>
 
+    <!-- =====================================================
+         MODAL
+    ====================================================== -->
 
-    <!-- MAIN -->
+    <div
+        id="modalBg"
+        class="modal-bg"
+    >
 
-    <div class="container">
+        <div class="modal">
 
+            <h3 id="modalTitle"></h3>
 
-      <!-- =================================================
-           STATS
-      ================================================= -->
-
-      <section class="stats">
-
-        <div class="stat-card">
-
-          <div class="stat-label">
-            Add Count
-          </div>
-
-          <div
-            id="countValue"
-            class="stat-value"
-          >
-            0
-          </div>
-
-        </div>
-
-
-        <div class="stat-card">
-
-          <div class="stat-label">
-            Total Sales
-          </div>
-
-          <div
-            id="totalValue"
-            class="stat-value"
-          >
-            0.00
-          </div>
-
-        </div>
-
-
-        <div class="stat-card">
-
-          <div class="stat-label">
-            Today Sales
-          </div>
-
-          <div
-            id="todayValue"
-            class="stat-value"
-          >
-            0.00
-          </div>
-
-        </div>
-
-
-        <div class="stat-card">
-
-          <div class="stat-label">
-            Last Sale
-          </div>
-
-          <div
-            id="lastSaleValue"
-            class="stat-value"
-          >
-            —
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- =================================================
-           ADD SALE
-      ================================================= -->
-
-      <section class="section">
-
-        <div class="section-head">
-
-          <div>
-
-            <h3 class="section-title">
-              Add Sale
-            </h3>
-
-            <p class="section-subtitle">
-              Enter the amount and add a new sale.
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <form
-          id="saleForm"
-          class="sale-form"
-        >
-
-          <input
-            id="amountInput"
-            type="number"
-            inputmode="decimal"
-            step="0.01"
-            min="0"
-            placeholder="Enter sale amount"
-            required
-          >
-
-
-          <button
-            class="add-btn"
-            type="submit"
-          >
-            Add Sale
-          </button>
-
-        </form>
-
-      </section>
-
-
-      <!-- =================================================
-           QUICK ACTIONS
-      ================================================= -->
-
-      <section class="section">
-
-        <div class="section-head">
-
-          <div>
-
-            <h3 class="section-title">
-              Quick Actions
-            </h3>
-
-            <p class="section-subtitle">
-              Manage your sales data.
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <div class="actions">
-
-          <button
-            id="exportBtn"
-            class="action-btn"
-            type="button"
-          >
-            Export CSV
-          </button>
-
-
-          <button
-            id="undoBtn"
-            class="action-btn success"
-            type="button"
-          >
-            Undo Delete
-          </button>
-
-
-          <button
-            id="resetBtn"
-            class="action-btn danger"
-            type="button"
-          >
-            Reset All
-          </button>
-
-        </div>
-
-      </section>
-
-
-      <!-- =================================================
-           SALES HISTORY
-      ================================================= -->
-
-      <section class="section">
-
-        <div class="section-head">
-
-          <div>
-
-            <h3 class="section-title">
-              Sales History
-            </h3>
-
-            <p class="section-subtitle">
-              Your latest sales are shown below.
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <div
-          id="historyList"
-          class="history-list"
-        >
-
-          <div class="empty">
-            Loading sales...
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- =================================================
-           BACKUP & RESTORE
-      ================================================= -->
-
-      <details>
-
-        <summary>
-          Backup &amp; Restore
-        </summary>
-
-
-        <div class="backup-content">
-
-          <p>
-            Create a local backup of your sales data
-            or restore a previously exported SaleTrack backup.
-          </p>
-
-
-          <div class="backup-actions">
-
-            <button
-              id="backupBtn"
-              type="button"
-            >
-              Backup JSON
-            </button>
-
-
-            <button
-              id="restoreBtn"
-              type="button"
-            >
-              Restore JSON
-            </button>
+            <p id="modalMessage"></p>
 
 
             <input
-              id="restoreInput"
-              type="file"
-              accept=".json,application/json"
-              class="hidden"
+                id="modalInput"
+                class="hidden"
+                type="text"
+                autocomplete="off"
             >
 
-          </div>
+
+            <div class="modal-actions">
+
+                <button
+                    id="modalCancel"
+                    class="cancel-btn"
+                    type="button"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    id="modalConfirm"
+                    class="confirm-btn"
+                    type="button"
+                >
+                    Confirm
+                </button>
+
+            </div>
 
         </div>
 
-      </details>
-
-
-      <!-- FOOTER -->
-
-      <div class="footer">
-        SaleTrack • Powered by mehedi1only
-      </div>
-
     </div>
 
-  </main>
 
+    <!-- =====================================================
+         TOAST
+    ====================================================== -->
 
-  <!-- =====================================================
-       MODAL
-  ===================================================== -->
+    <div id="toast"></div>
 
-  <div
-    id="modalBg"
-    class="modal-bg"
-  >
 
-    <div class="modal">
+    <!-- =====================================================
+         SUPABASE
+    ====================================================== -->
 
-      <h3 id="modalTitle"></h3>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-      <p id="modalMessage"></p>
 
+    <!-- =====================================================
+         YOUR JAVASCRIPT
+    ====================================================== -->
 
-      <input
-        id="modalInput"
-        class="hidden"
-        type="text"
-        autocomplete="off"
-      >
-
-
-      <div class="modal-actions">
-
-        <button
-          id="modalCancel"
-          class="cancel-btn"
-          type="button"
-        >
-          Cancel
-        </button>
-
-
-        <button
-          id="modalConfirm"
-          class="confirm-btn"
-          type="button"
-        >
-          Confirm
-        </button>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- TOAST -->
-
-  <div id="toast"></div>
-
-
-  <!-- =====================================================
-       JAVASCRIPT
-  ===================================================== -->
-
-  <script>
-
-    /* =====================================================
-       SUPABASE
-    ===================================================== */
-
-    const SUPABASE_URL =
-      "https://eavqyzgamuelwyplhqjf.supabase.co";
-
-    const SUPABASE_KEY =
-      "sb_publishable_OSypObpmAQMHjMZrct7QNQ_AtrYXY8Z";
-
-
-    const supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-      );
-
-
-    /* =====================================================
-       ELEMENTS
-    ===================================================== */
-
-    const loginScreen =
-      document.getElementById("loginScreen");
-
-    const app =
-      document.getElementById("app");
-
-    const loginForm =
-      document.getElementById("loginForm");
-
-    const emailInput =
-      document.getElementById("email");
-
-    const passwordInput =
-      document.getElementById("password");
-
-    const loginError =
-      document.getElementById("loginError");
-
-    const logoutBtn =
-      document.getElementById("logoutBtn");
-
-    const saleForm =
-      document.getElementById("saleForm");
-
-    const amountInput =
-      document.getElementById("amountInput");
-
-    const countValue =
-      document.getElementById("countValue");
-
-    const totalValue =
-      document.getElementById("totalValue");
-
-    const todayValue =
-      document.getElementById("todayValue");
-
-    const lastSaleValue =
-      document.getElementById("lastSaleValue");
-
-    const historyList =
-      document.getElementById("historyList");
-
-    const exportBtn =
-      document.getElementById("exportBtn");
-
-    const undoBtn =
-      document.getElementById("undoBtn");
-
-    const resetBtn =
-      document.getElementById("resetBtn");
-
-    const backupBtn =
-      document.getElementById("backupBtn");
-
-    const restoreBtn =
-      document.getElementById("restoreBtn");
-
-    const restoreInput =
-      document.getElementById("restoreInput");
-
-    const onlineText =
-      document.getElementById("onlineText");
-
-    const statusDot =
-      document.getElementById("statusDot");
-
-    const toast =
-      document.getElementById("toast");
-
-
-    /* =====================================================
-       STATE
-    ===================================================== */
-
-    let currentUser = null;
-
-    let sales = [];
-
-    let deletedSale = null;
-
-
-    /* =====================================================
-       TOAST
-    ===================================================== */
-
-    let toastTimer;
-
-    function showToast(message) {
-
-      toast.textContent = message;
-
-      toast.classList.add("show");
-
-      clearTimeout(toastTimer);
-
-      toastTimer =
-        setTimeout(() => {
-
-          toast.classList.remove("show");
-
-        }, 2400);
-
-    }
-
-
-    /* =====================================================
-       MODAL
-    ===================================================== */
-
-    function openModal(options) {
-
-      return new Promise(resolve => {
-
-        const bg =
-          document.getElementById("modalBg");
-
-        const titleEl =
-          document.getElementById("modalTitle");
-
-        const messageEl =
-          document.getElementById("modalMessage");
-
-        const inputEl =
-          document.getElementById("modalInput");
-
-        const cancel =
-          document.getElementById("modalCancel");
-
-        const confirm =
-          document.getElementById("modalConfirm");
-
-
-        let finished = false;
-
-
-        titleEl.textContent =
-          options.title || "";
-
-        messageEl.textContent =
-          options.message || "";
-
-
-        const hasInput =
-          options.input === true;
-
-
-        inputEl.classList.toggle(
-          "hidden",
-          !hasInput
-        );
-
-
-        inputEl.value =
-          options.inputValue || "";
-
-
-        confirm.textContent =
-          options.confirmText || "Confirm";
-
-
-        confirm.classList.toggle(
-          "danger",
-          options.danger === true
-        );
-
-
-        bg.classList.add("show");
-
-
-        function finish(value) {
-
-          if (finished) {
-            return;
-          }
-
-          finished = true;
-
-          bg.classList.remove("show");
-
-          cancel.onclick = null;
-          confirm.onclick = null;
-          bg.onclick = null;
-
-          resolve(value);
-
-        }
-
-
-        cancel.onclick = () => {
-          finish(null);
-        };
-
-
-        confirm.onclick = () => {
-
-          if (hasInput) {
-            finish(inputEl.value);
-          } else {
-            finish(true);
-          }
-
-        };
-
-
-        bg.onclick = event => {
-
-          if (event.target === bg) {
-            finish(null);
-          }
-
-        };
-
-
-        if (hasInput) {
-
-          setTimeout(() => {
-
-            inputEl.focus();
-            inputEl.select();
-
-          }, 50);
-
-        }
-
-      });
-
-    }
-
-
-    /* =====================================================
-       FORMAT
-    ===================================================== */
-
-    function formatAmount(value) {
-
-      const number =
-        Number(value);
-
-      if (!Number.isFinite(number)) {
-        return "0.00";
-      }
-
-      return number.toFixed(2);
-
-    }
-
-
-    function formatTime(dateString) {
-
-      const date =
-        new Date(dateString);
-
-      if (
-        Number.isNaN(
-          date.getTime()
-        )
-      ) {
-        return "—";
-      }
-
-      return date.toLocaleTimeString(
-        [],
-        {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true
-        }
-      );
-
-    }
-
-
-    function formatDate(dateString) {
-
-      const date =
-        new Date(dateString);
-
-      if (
-        Number.isNaN(
-          date.getTime()
-        )
-      ) {
-        return "Unknown date";
-      }
-
-      return date.toLocaleDateString(
-        [],
-        {
-          year: "numeric",
-          month: "short",
-          day: "numeric"
-        }
-      );
-
-    }
-
-
-    /* =====================================================
-       LOGIN / SESSION
-    ===================================================== */
-
-    async function checkSession() {
-
-      const {
-        data,
-        error
-      } =
-        await supabaseClient.auth.getSession();
-
-
-      if (error) {
-
-        console.error(error);
-
-        showLogin();
-
-        return;
-
-      }
-
-
-      if (data.session?.user) {
-
-        currentUser =
-          data.session.user;
-
-        showApp();
-
-        await loadSales();
-
-      } else {
-
-        showLogin();
-
-      }
-
-    }
-
-
-    function showLogin() {
-
-      currentUser = null;
-
-      loginScreen.classList.remove(
-        "hidden"
-      );
-
-      app.classList.add(
-        "hidden"
-      );
-
-    }
-
-
-    function showApp() {
-
-      loginScreen.classList.add(
-        "hidden"
-      );
-
-      app.classList.remove(
-        "hidden"
-      );
-
-    }
-
-
-    /* =====================================================
-       SIGN IN
-    ===================================================== */
-
-    loginForm.addEventListener(
-      "submit",
-      async event => {
-
-        event.preventDefault();
-
-        loginError.textContent = "";
-
-
-        const email =
-          emailInput.value.trim();
-
-        const password =
-          passwordInput.value;
-
-
-        const button =
-          loginForm.querySelector(
-            "button"
-          );
-
-
-        button.disabled = true;
-
-        button.textContent =
-          "Signing in...";
-
-
-        const {
-          data,
-          error
-        } =
-          await supabaseClient.auth
-            .signInWithPassword({
-              email,
-              password
-            });
-
-
-        button.disabled = false;
-
-        button.textContent =
-          "Sign In";
-
-
-        if (error) {
-
-          loginError.textContent =
-            error.message;
-
-          return;
-
-        }
-
-
-        currentUser =
-          data.user;
-
-
-        showApp();
-
-        await loadSales();
-
-      }
-    );
-
-
-    /* =====================================================
-       LOGOUT
-    ===================================================== */
-
-    logoutBtn.addEventListener(
-      "click",
-      async () => {
-
-        await supabaseClient.auth.signOut();
-
-        sales = [];
-
-        currentUser = null;
-
-        showLogin();
-
-      }
-    );
-
-
-    /* =====================================================
-       AUTH STATE
-    ===================================================== */
-
-    supabaseClient.auth.onAuthStateChange(
-      async (event, session) => {
-
-        if (session?.user) {
-
-          currentUser =
-            session.user;
-
-          showApp();
-
-        } else {
-
-          currentUser = null;
-
-          showLogin();
-
-        }
-
-      }
-    );
-
-
-    /* =====================================================
-       LOAD SALES
-    ===================================================== */
-
-    async function loadSales() {
-
-      if (!currentUser) {
-        return;
-      }
-
-
-      historyList.innerHTML =
-        '<div class="empty">Loading sales...</div>';
-
-
-      const {
-        data,
-        error
-      } =
-        await supabaseClient
-          .from("sales")
-          .select("*")
-          .eq(
-            "user_id",
-            currentUser.id
-          )
-          .order(
-            "created_at",
-            {
-              ascending: false
-            }
-          );
-
-
-      if (error) {
-
-        console.error(error);
-
-        historyList.innerHTML =
-          '<div class="empty">Unable to load sales.</div>';
-
-        showToast(error.message);
-
-        return;
-
-      }
-
-
-      sales =
-        data || [];
-
-
-      renderSales();
-
-    }
-
-
-    /* =====================================================
-       RENDER SALES
-    ===================================================== */
-
-    function renderSales() {
-
-      updateStats();
-
-
-      historyList.innerHTML = "";
-
-
-      if (!sales.length) {
-
-        historyList.innerHTML =
-          '<div class="empty">No sales yet.</div>';
-
-        return;
-
-      }
-
-
-      sales.forEach(sale => {
-
-        const item =
-          document.createElement("div");
-
-        item.className =
-          "history-item";
-
-
-        const main =
-          document.createElement("div");
-
-        main.className =
-          "history-main";
-
-
-        const amount =
-          document.createElement("div");
-
-        amount.className =
-          "history-amount";
-
-        amount.textContent =
-          formatAmount(
-            sale.amount
-          );
-
-
-        const date =
-          document.createElement("div");
-
-        date.className =
-          "history-date";
-
-        date.textContent =
-          formatDate(
-            sale.created_at
-          );
-
-
-        main.appendChild(amount);
-        main.appendChild(date);
-
-
-        const time =
-          document.createElement("div");
-
-        time.className =
-          "history-time";
-
-        time.textContent =
-          formatTime(
-            sale.created_at
-          );
-
-
-        const buttons =
-          document.createElement("div");
-
-        buttons.className =
-          "history-buttons";
-
-
-        const edit =
-          document.createElement("button");
-
-        edit.type =
-          "button";
-
-        edit.className =
-          "edit-btn";
-
-        edit.textContent =
-          "Edit";
-
-
-        edit.addEventListener(
-          "click",
-          () => editSale(sale)
-        );
-
-
-        const del =
-          document.createElement("button");
-
-        del.type =
-          "button";
-
-        del.className =
-          "delete-btn";
-
-        del.textContent =
-          "Delete";
-
-
-        del.addEventListener(
-          "click",
-          () => deleteSale(sale)
-        );
-
-
-        buttons.appendChild(edit);
-        buttons.appendChild(del);
-
-
-        item.appendChild(main);
-        item.appendChild(time);
-        item.appendChild(buttons);
-
-
-        historyList.appendChild(item);
-
-      });
-
-    }
-
-
-    /* =====================================================
-       UPDATE STATS
-    ===================================================== */
-
-    function updateStats() {
-
-      const total =
-        sales.reduce(
-          (sum, sale) => {
-
-            return (
-              sum +
-              Number(
-                sale.amount || 0
-              )
-            );
-
-          },
-          0
-        );
-
-
-      const now =
-        new Date();
-
-
-      const todayStart =
-        new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate()
-        );
-
-
-      const todayTotal =
-        sales.reduce(
-          (sum, sale) => {
-
-            const date =
-              new Date(
-                sale.created_at
-              );
-
-
-            if (date >= todayStart) {
-
-              return (
-                sum +
-                Number(
-                  sale.amount || 0
-                )
-              );
-
-            }
-
-
-            return sum;
-
-          },
-          0
-        );
-
-
-      countValue.textContent =
-        sales.length;
-
-
-      totalValue.textContent =
-        formatAmount(total);
-
-
-      todayValue.textContent =
-        formatAmount(todayTotal);
-
-
-      lastSaleValue.textContent =
-        sales.length
-          ? formatTime(
-              sales[0].created_at
-            )
-          : "—";
-
-    }
-
-
-    /* =====================================================
-       ADD SALE
-    ===================================================== */
-
-    saleForm.addEventListener(
-      "submit",
-      async event => {
-
-        event.preventDefault();
-
-
-        if (!currentUser) {
-          return;
-        }
-
-
-        const amount =
-          Number(
-            amountInput.value
-          );
-
-
-        if (
-          !Number.isFinite(amount) ||
-          amount < 0
-        ) {
-
-          showToast(
-            "Please enter a valid amount."
-          );
-
-          return;
-
-        }
-
-
-        const button =
-          saleForm.querySelector(
-            "button"
-          );
-
-
-        button.disabled = true;
-
-        button.textContent =
-          "Adding...";
-
-
-        const {
-          data,
-          error
-        } =
-          await supabaseClient
-            .from("sales")
-            .insert({
-              amount: amount,
-              user_id:
-                currentUser.id
-            })
-            .select()
-            .single();
-
-
-        button.disabled = false;
-
-        button.textContent =
-          "Add Sale";
-
-
-        if (error) {
-
-          console.error(error);
-
-          showToast(
-            error.message
-          );
-
-          return;
-
-        }
-
-
-        sales.unshift(data);
-
-
-        amountInput.value = "";
-
-
-        renderSales();
-
-
-        showToast(
-          "Sale added successfully."
-        );
-
-
-        amountInput.focus();
-
-      }
-    );
-
-
-    /* =====================================================
-       EDIT SALE
-    ===================================================== */
-
-    async function editSale(sale) {
-
-      const result =
-        await openModal({
-
-          title:
-            "Edit Sale",
-
-          message:
-            "Enter the new sale amount.",
-
-          input:
-            true,
-
-          inputValue:
-            formatAmount(
-              sale.amount
-            ),
-
-          confirmText:
-            "Save"
-
-        });
-
-
-      if (result === null) {
-        return;
-      }
-
-
-      const newAmount =
-        Number(result);
-
-
-      if (
-        !Number.isFinite(newAmount) ||
-        newAmount < 0
-      ) {
-
-        showToast(
-          "Please enter a valid amount."
-        );
-
-        return;
-
-      }
-
-
-      const {
-        data,
-        error
-      } =
-        await supabaseClient
-          .from("sales")
-          .update({
-            amount:
-              newAmount
-          })
-          .eq(
-            "id",
-            sale.id
-          )
-          .eq(
-            "user_id",
-            currentUser.id
-          )
-          .select()
-          .single();
-
-
-      if (error) {
-
-        console.error(error);
-
-        showToast(
-          error.message
-        );
-
-        return;
-
-      }
-
-
-      const index =
-        sales.findIndex(
-          item =>
-            item.id === sale.id
-        );
-
-
-      if (index !== -1) {
-        sales[index] = data;
-      }
-
-
-      sales.sort(
-        (a, b) =>
-          new Date(
-            b.created_at
-          ) -
-          new Date(
-            a.created_at
-          )
-      );
-
-
-      renderSales();
-
-
-      showToast(
-        "Sale updated."
-      );
-
-    }
-
-
-    /* =====================================================
-       DELETE SALE
-    ===================================================== */
-
-    async function deleteSale(sale) {
-
-      const result =
-        await openModal({
-
-          title:
-            "Delete Sale",
-
-          message:
-            `Delete ${formatAmount(
-              sale.amount
-            )} from your sales history?`,
-
-          confirmText:
-            "Delete",
-
-          danger:
-            true
-
-        });
-
-
-      if (!result) {
-        return;
-      }
-
-
-      const {
-        error
-      } =
-        await supabaseClient
-          .from("sales")
-          .delete()
-          .eq(
-            "id",
-            sale.id
-          )
-          .eq(
-            "user_id",
-            currentUser.id
-          );
-
-
-      if (error) {
-
-        console.error(error);
-
-        showToast(
-          error.message
-        );
-
-        return;
-
-      }
-
-
-      deletedSale = {
-
-        amount:
-          Number(
-            sale.amount
-          ),
-
-        created_at:
-          sale.created_at
-
-      };
-
-
-      sales =
-        sales.filter(
-          item =>
-            item.id !== sale.id
-        );
-
-
-      renderSales();
-
-
-      showToast(
-        "Sale deleted. You can undo it."
-      );
-
-    }
-
-
-    /* =====================================================
-       UNDO DELETE
-    ===================================================== */
-
-    undoBtn.addEventListener(
-      "click",
-      async () => {
-
-        if (!deletedSale) {
-
-          showToast(
-            "Nothing to undo."
-          );
-
-          return;
-
-        }
-
-
-        const {
-          data,
-          error
-        } =
-          await supabaseClient
-            .from("sales")
-            .insert({
-
-              amount:
-                Number(
-                  deletedSale.amount
-                ),
-
-              created_at:
-                deletedSale.created_at,
-
-              user_id:
-                currentUser.id
-
-            })
-            .select()
-            .single();
-
-
-        if (error) {
-
-          console.error(error);
-
-          showToast(
-            error.message
-          );
-
-          return;
-
-        }
-
-
-        sales.unshift(data);
-
-
-        deletedSale =
-          null;
-
-
-        sales.sort(
-          (a, b) =>
-            new Date(
-              b.created_at
-            ) -
-            new Date(
-              a.created_at
-            )
-        );
-
-
-        renderSales();
-
-
-        showToast(
-          "Sale restored."
-        );
-
-      }
-    );
-
-
-    /* =====================================================
-       RESET ALL
-    ===================================================== */
-
-    resetBtn.addEventListener(
-      "click",
-      async () => {
-
-        const first =
-          await openModal({
-
-            title:
-              "Reset All Sales",
-
-            message:
-              "This will permanently delete all sales from your account. Type RESET ALL to continue.",
-
-            input:
-              true,
-
-            confirmText:
-              "Continue",
-
-            danger:
-              true
-
-          });
-
-
-        if (first !== "RESET ALL") {
-
-          if (first !== null) {
-
-            showToast(
-              "Reset cancelled. Confirmation text did not match."
-            );
-
-          }
-
-          return;
-
-        }
-
-
-        const second =
-          await openModal({
-
-            title:
-              "Final Confirmation",
-
-            message:
-              "Are you absolutely sure? All sales will be permanently deleted.",
-
-            confirmText:
-              "Reset Everything",
-
-            danger:
-              true
-
-          });
-
-
-        if (!second) {
-          return;
-        }
-
-
-        const {
-          error
-        } =
-          await supabaseClient
-            .from("sales")
-            .delete()
-            .eq(
-              "user_id",
-              currentUser.id
-            );
-
-
-        if (error) {
-
-          console.error(error);
-
-          showToast(
-            error.message
-          );
-
-          return;
-
-        }
-
-
-        deletedSale =
-          null;
-
-        sales = [];
-
-
-        renderSales();
-
-
-        showToast(
-          "All sales have been reset."
-        );
-
-      }
-    );
-
-
-    /* =====================================================
-       EXPORT CSV
-    ===================================================== */
-
-    exportBtn.addEventListener(
-      "click",
-      () => {
-
-        if (!sales.length) {
-
-          showToast(
-            "There are no sales to export."
-          );
-
-          return;
-
-        }
-
-
-        const rows = [
-          [
-            "ID",
-            "Amount",
-            "Created At"
-          ]
-        ];
-
-
-        sales.forEach(sale => {
-
-          rows.push([
-            sale.id,
-            formatAmount(
-              sale.amount
-            ),
-            sale.created_at
-          ]);
-
-        });
-
-
-        const csv =
-          rows
-            .map(row =>
-              row
-                .map(value =>
-                  `"${String(value)
-                    .replace(
-                      /"/g,
-                      '""'
-                    )}"`
-                )
-                .join(",")
-            )
-            .join("\n");
-
-
-        const blob =
-          new Blob(
-            [csv],
-            {
-              type:
-                "text/csv;charset=utf-8;"
-            }
-          );
-
-
-        const url =
-          URL.createObjectURL(blob);
-
-
-        const link =
-          document.createElement(
-            "a"
-          );
-
-
-        link.href = url;
-
-
-        link.download =
-          `saletrack-${new Date()
-            .toISOString()
-            .slice(0,10)}.csv`;
-
-
-        document.body.appendChild(
-          link
-        );
-
-
-        link.click();
-
-
-        link.remove();
-
-
-        URL.revokeObjectURL(
-          url
-        );
-
-
-        showToast(
-          "CSV exported."
-        );
-
-      }
-    );
-
-
-    /* =====================================================
-       BACKUP JSON
-    ===================================================== */
-
-    backupBtn.addEventListener(
-      "click",
-      () => {
-
-        if (!sales.length) {
-
-          showToast(
-            "There are no sales to backup."
-          );
-
-          return;
-
-        }
-
-
-        const backup = {
-
-          app:
-            "SaleTrack",
-
-          version:
-            1,
-
-          exported_at:
-            new Date()
-              .toISOString(),
-
-          sales:
-            sales.map(
-              sale => ({
-
-                amount:
-                  Number(
-                    sale.amount
-                  ),
-
-                created_at:
-                  sale.created_at
-
-              })
-            )
-
-        };
-
-
-        const blob =
-          new Blob(
-            [
-              JSON.stringify(
-                backup,
-                null,
-                2
-              )
-            ],
-            {
-              type:
-                "application/json"
-            }
-          );
-
-
-        const url =
-          URL.createObjectURL(
-            blob
-          );
-
-
-        const link =
-          document.createElement(
-            "a"
-          );
-
-
-        link.href = url;
-
-
-        link.download =
-          `saletrack-backup-${new Date()
-            .toISOString()
-            .slice(0,10)}.json`;
-
-
-        document.body.appendChild(
-          link
-        );
-
-
-        link.click();
-
-
-        link.remove();
-
-
-        URL.revokeObjectURL(
-          url
-        );
-
-
-        showToast(
-          "Backup created."
-        );
-
-      }
-    );
-
-
-    /* =====================================================
-       RESTORE
-    ===================================================== */
-
-    restoreBtn.addEventListener(
-      "click",
-      () => {
-
-        restoreInput.click();
-
-      }
-    );
-
-
-    restoreInput.addEventListener(
-      "change",
-      async event => {
-
-        const file =
-          event.target.files?.[0];
-
-
-        if (!file) {
-          return;
-        }
-
-
-        try {
-
-          const text =
-            await file.text();
-
-
-          const backup =
-            JSON.parse(text);
-
-
-          if (
-            !backup ||
-            !Array.isArray(
-              backup.sales
-            )
-          ) {
-
-            throw new Error(
-              "Invalid backup."
-            );
-
-          }
-
-
-          const validSales =
-            backup.sales
-              .filter(item =>
-                Number.isFinite(
-                  Number(
-                    item.amount
-                  )
-                )
-              )
-              .map(item => ({
-
-                amount:
-                  Number(
-                    item.amount
-                  ),
-
-                created_at:
-                  item.created_at ||
-                  new Date()
-                    .toISOString(),
-
-                user_id:
-                  currentUser.id
-
-              }));
-
-
-          if (!validSales.length) {
-
-            showToast(
-              "No valid sales found in backup."
-            );
-
-            return;
-
-          }
-
-
-          const confirm =
-            await openModal({
-
-              title:
-                "Restore Backup",
-
-              message:
-                `${validSales.length} sales will be added to your current history. Existing sales will not be deleted.`,
-
-              confirmText:
-                "Restore"
-
-            });
-
-
-          if (!confirm) {
-            return;
-          }
-
-
-          const {
-            error
-          } =
-            await supabaseClient
-              .from("sales")
-              .insert(
-                validSales
-              );
-
-
-          if (error) {
-
-            console.error(error);
-
-            showToast(
-              error.message
-            );
-
-            return;
-
-          }
-
-
-          await loadSales();
-
-
-          showToast(
-            `${validSales.length} sales restored.`
-          );
-
-
-        } catch (error) {
-
-          console.error(error);
-
-          showToast(
-            "Could not read this backup file."
-          );
-
-        } finally {
-
-          restoreInput.value =
-            "";
-
-        }
-
-      }
-    );
-
-
-    /* =====================================================
-       ONLINE / OFFLINE
-    ===================================================== */
-
-    function updateOnlineStatus() {
-
-      const online =
-        navigator.onLine;
-
-
-      onlineText.textContent =
-        online
-          ? "Online"
-          : "Offline";
-
-
-      statusDot.style.background =
-        online
-          ? "#22c55e"
-          : "#ef4444";
-
-    }
-
-
-    window.addEventListener(
-      "online",
-      updateOnlineStatus
-    );
-
-
-    window.addEventListener(
-      "offline",
-      updateOnlineStatus
-    );
-
-
-    /* =====================================================
-       START APP
-    ===================================================== */
-
-    updateOnlineStatus();
-
-    checkSession();
-
-  </script>
+    <script src="script.js"></script>
 
 </body>
 </html>
