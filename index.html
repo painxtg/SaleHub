@@ -1,1246 +1,931 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#080b10">
-<title>SaleTrack</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<style>
-:root{
-  --bg:#080b10;
-  --panel:#10151c;
-  --panel2:#151b23;
-  --border:#232c37;
-  --border2:#303b48;
-  --text:#f4f7fa;
-  --muted:#8995a3;
-  --green:#20c879;
-  --red:#ff5266;
-  --blue:#62a8ff;
-  --shadow:0 12px 35px rgba(0,0,0,.25);
-}
-
-*{
-  box-sizing:border-box;
-}
-
-html,
-body{
-  margin:0;
-  padding:0;
-  width:100%;
-  min-height:100%;
-}
-
-body{
-  background:
-    radial-gradient(
-      circle at top right,
-      rgba(32,200,121,.07),
-      transparent 30%
-    ),
-    var(--bg);
-  color:var(--text);
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Arial,
-    sans-serif;
-}
-
-button,
-input{
-  font:inherit;
-}
-
-button{
-  cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
-}
-
-button:disabled{
-  opacity:.55;
-  cursor:not-allowed;
-}
-
-/* =========================
-   LOGIN
-========================= */
-
-.login-screen{
-  min-height:100svh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
-}
-
-.login-card{
-  width:100%;
-  max-width:370px;
-  padding:27px;
-  border-radius:21px;
-  background:rgba(16,21,28,.97);
-  border:1px solid var(--border);
-  box-shadow:var(--shadow);
-}
-
-.login-logo{
-  width:54px;
-  height:54px;
-  border-radius:16px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:rgba(32,200,121,.11);
-  border:1px solid rgba(32,200,121,.2);
-  font-size:25px;
-  margin-bottom:17px;
-}
-
-.login-title{
-  font-size:25px;
-  font-weight:850;
-}
-
-.login-subtitle{
-  margin-top:5px;
-  margin-bottom:23px;
-  color:var(--muted);
-  font-size:12px;
-}
-
-.login-error{
-  display:none;
-  margin-bottom:12px;
-  padding:10px;
-  border-radius:9px;
-  background:rgba(255,82,102,.08);
-  border:1px solid rgba(255,82,102,.2);
-  color:#ff8491;
-  font-size:11px;
-}
-
-.label{
-  display:block;
-  color:#aeb8c4;
-  font-size:11px;
-  font-weight:650;
-  margin-bottom:6px;
-}
-
-.input{
-  width:100%;
-  outline:none;
-  border:1px solid var(--border2);
-  background:#0a0f15;
-  color:var(--text);
-  border-radius:10px;
-  padding:11px 12px;
-  margin-bottom:13px;
-}
-
-.input:focus{
-  border-color:var(--green);
-  box-shadow:0 0 0 3px rgba(32,200,121,.07);
-}
-
-.primary-btn{
-  width:100%;
-  border:0;
-  border-radius:10px;
-  padding:11px;
-  background:var(--green);
-  color:#031109;
-  font-weight:800;
-}
-
-/* =========================
-   APP
-========================= */
-
-.app{
-  display:none;
-  min-height:100svh;
-}
-
-/* =========================
-   HEADER
-========================= */
-
-.header{
-  height:62px;
-  position:sticky;
-  top:0;
-  z-index:50;
-  background:rgba(8,11,16,.9);
-  backdrop-filter:blur(15px);
-  border-bottom:1px solid rgba(255,255,255,.05);
-}
-
-.header-inner{
-  height:100%;
-  width:min(1050px,calc(100% - 20px));
-  margin:auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.brand{
-  display:flex;
-  align-items:center;
-  gap:9px;
-}
-
-.brand-icon{
-  width:35px;
-  height:35px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:10px;
-  background:rgba(32,200,121,.1);
-  border:1px solid rgba(32,200,121,.18);
-  font-size:17px;
-}
-
-.brand-name{
-  font-size:15px;
-  font-weight:850;
-}
-
-.brand-powered{
-  color:#687481;
-  font-size:8px;
-  margin-top:1px;
-}
-
-.header-actions{
-  display:flex;
-  align-items:center;
-  gap:7px;
-}
-
-.status{
-  display:flex;
-  align-items:center;
-  gap:5px;
-  color:#82909d;
-  font-size:9px;
-  padding:6px 8px;
-  border:1px solid var(--border);
-  border-radius:8px;
-}
-
-.status-dot{
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:var(--green);
-}
-
-.status.offline .status-dot{
-  background:var(--red);
-}
-
-.logout{
-  border:1px solid var(--border2);
-  background:var(--panel);
-  color:#aeb7c2;
-  border-radius:8px;
-  padding:6px 9px;
-  font-size:9px;
-}
-
-/* =========================
-   MAIN
-========================= */
-
-.main{
-  width:min(1050px,calc(100% - 20px));
-  margin:auto;
-  padding:18px 0 20px;
-}
-
-.heading{
-  margin-bottom:13px;
-}
-
-.heading h1{
-  margin:0;
-  font-size:22px;
-  letter-spacing:-.5px;
-}
-
-.heading p{
-  margin:4px 0 0;
-  color:var(--muted);
-  font-size:10px;
-}
-
-/* =========================
-   STATS
-========================= */
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:7px;
-  margin-bottom:10px;
-}
-
-.stat{
-  min-width:0;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:11px;
-}
-
-.stat-label{
-  color:var(--muted);
-  font-size:8px;
-  margin-bottom:5px;
-}
-
-.stat-value{
-  font-size:16px;
-  font-weight:850;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.stat-value.green{
-  color:var(--green);
-}
-
-.stat-value.blue{
-  color:var(--blue);
-}
-
-/* =========================
-   CARD
-========================= */
-
-.card{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:13px;
-  overflow:hidden;
-  margin-bottom:9px;
-}
-
-.card-header{
-  min-height:42px;
-  padding:9px 11px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  border-bottom:1px solid var(--border);
-}
-
-.card-title{
-  font-size:11px;
-  font-weight:800;
-}
-
-.card-subtitle{
-  color:#727e8b;
-  font-size:8px;
-  margin-top:2px;
-}
-
-/* =========================
-   ADD SALE
-========================= */
-
-.add-content{
-  padding:9px;
-}
-
-.add-row{
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:6px;
-}
-
-.amount-input{
-  width:100%;
-  min-width:0;
-  border:1px solid var(--border2);
-  background:#0a0f15;
-  color:white;
-  border-radius:9px;
-  padding:9px 10px;
-  outline:none;
-  font-size:11px;
-}
-
-.amount-input:focus{
-  border-color:var(--green);
-}
-
-.add-btn{
-  border:0;
-  background:var(--green);
-  color:#031109;
-  border-radius:9px;
-  padding:0 13px;
-  font-size:10px;
-  font-weight:850;
-}
-
-/* =========================
-   MANAGEMENT BUTTONS
-========================= */
-
-.manage-actions{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:6px;
-  margin-top:6px;
-}
-
-.action-btn{
-  border:1px solid var(--border2);
-  background:var(--panel2);
-  color:#b9c2cc;
-  border-radius:8px;
-  padding:8px 5px;
-  font-size:9px;
-}
-
-.action-btn:hover{
-  background:#19212a;
-}
-
-.action-btn.danger{
-  color:#ff7785;
-}
-
-/* =========================
-   HISTORY
-========================= */
-
-.history-count{
-  color:#727e8b;
-  font-size:8px;
-}
-
-.history-list{
-  padding:3px 10px;
-  max-height:245px;
-  overflow-y:auto;
-  overscroll-behavior:contain;
-  scrollbar-width:thin;
-}
-
-.history-list::-webkit-scrollbar{
-  width:3px;
-}
-
-.history-list::-webkit-scrollbar-thumb{
-  background:#303945;
-  border-radius:10px;
-}
-
-.sale-row{
-  min-height:48px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:7px;
-  border-bottom:1px solid rgba(255,255,255,.045);
-}
-
-.sale-row:last-child{
-  border-bottom:0;
-}
-
-.sale-info{
-  min-width:0;
-}
-
-.sale-id{
-  color:#687481;
-  font-size:7px;
-  margin-bottom:2px;
-}
-
-.sale-amount{
-  font-size:12px;
-  font-weight:800;
-}
-
-.sale-time{
-  color:#687481;
-  font-size:7px;
-  margin-top:2px;
-}
-
-.sale-actions{
-  display:flex;
-  gap:4px;
-  flex-shrink:0;
-}
-
-.edit-btn,
-.delete-btn{
-  border-radius:7px;
-  padding:6px 7px;
-  font-size:8px;
-  border:1px solid var(--border2);
-  background:var(--panel2);
-}
-
-.edit-btn{
-  color:#8dbfff;
-}
-
-.delete-btn{
-  color:#ff7180;
-}
-
-.empty{
-  text-align:center;
-  padding:22px 8px;
-  color:#697581;
-  font-size:9px;
-}
-
-/* =========================
-   BACKUP
-========================= */
-
-.backup-content{
-  padding:8px;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:6px;
-}
-
-.backup-btn,
-.restore-label{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  min-height:34px;
-  border:1px solid var(--border2);
-  background:var(--panel2);
-  color:#aeb8c2;
-  border-radius:8px;
-  font-size:9px;
-  cursor:pointer;
-}
-
-/* =========================
-   FOOTER
-========================= */
-
-.footer{
-  text-align:center;
-  padding:3px 0 12px;
-  color:#596470;
-  font-size:7px;
-}
-
-.footer strong{
-  color:#7b8793;
-}
-
-/* =========================
-   MODAL
-========================= */
-
-.modal-bg{
-  position:fixed;
-  inset:0;
-  z-index:9999;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:15px;
-  background:rgba(0,0,0,.72);
-  backdrop-filter:blur(6px);
-}
-
-.modal-bg.show{
-  display:flex;
-}
-
-.modal{
-  width:100%;
-  max-width:350px;
-  padding:18px;
-  border-radius:15px;
-  background:#11171f;
-  border:1px solid var(--border2);
-  box-shadow:var(--shadow);
-}
-
-.modal-title{
-  font-size:14px;
-  font-weight:850;
-}
-
-.modal-text{
-  margin-top:6px;
-  margin-bottom:12px;
-  color:#8995a3;
-  font-size:10px;
-  line-height:1.45;
-}
-
-.modal-input{
-  width:100%;
-  border:1px solid var(--border2);
-  background:#090e14;
-  color:white;
-  outline:none;
-  border-radius:9px;
-  padding:9px;
-  font-size:11px;
-  margin-bottom:10px;
-}
-
-.modal-actions{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:6px;
-}
-
-.modal-actions button{
-  border-radius:9px;
-  padding:9px;
-  font-size:10px;
-  font-weight:750;
-}
-
-.cancel-btn{
-  border:1px solid var(--border2);
-  background:var(--panel2);
-  color:#aeb8c2;
-}
-
-.confirm-btn{
-  border:0;
-  background:var(--green);
-  color:#031109;
-}
-
-.confirm-btn.danger{
-  background:var(--red);
-  color:white;
-}
-
-/* =========================
-   TOAST
-========================= */
-
-.toast{
-  position:fixed;
-  left:50%;
-  bottom:15px;
-  z-index:10000;
-  transform:translate(-50%,15px);
-  opacity:0;
-  pointer-events:none;
-  white-space:nowrap;
-  max-width:90vw;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  padding:9px 12px;
-  border-radius:9px;
-  background:#171e27;
-  border:1px solid var(--border2);
-  color:#edf1f5;
-  font-size:9px;
-  box-shadow:var(--shadow);
-  transition:.22s;
-}
-
-.toast.show{
-  opacity:1;
-  transform:translate(-50%,0);
-}
-
-/* =========================
-   DESKTOP
-========================= */
-
-@media(min-width:761px){
-
-  .main{
-    padding-top:25px;
-  }
-
-  .heading h1{
-    font-size:27px;
-  }
-
-  .heading p{
-    font-size:11px;
-  }
-
-  .stat{
-    padding:14px;
-  }
-
-  .stat-label{
-    font-size:9px;
-  }
-
-  .stat-value{
-    font-size:20px;
-  }
-
-  .card-title{
-    font-size:12px;
-  }
-
-  .card-subtitle{
-    font-size:9px;
-  }
-
-  .amount-input{
-    padding:11px;
-  }
-
-  .add-btn{
-    padding:0 18px;
-  }
-
-  .history-list{
-    max-height:310px;
-  }
-
-}
-
-/* =========================
-   MOBILE
-========================= */
-
-@media(max-width:600px){
-
-  .status{
-    display:none;
-  }
-
-  .main{
-    padding-top:14px;
-  }
-
-}
-
-/* =========================
-   SMALL PHONES
-========================= */
-
-@media(max-width:390px){
-
-  .header{
-    height:56px;
-  }
-
-  .brand-icon{
-    width:32px;
-    height:32px;
-  }
-
-  .brand-name{
-    font-size:14px;
-  }
-
-  .logout{
-    font-size:8px;
-  }
-
-  .main{
-    width:calc(100% - 14px);
-    padding-top:11px;
-  }
-
-  .heading{
-    margin-bottom:9px;
-  }
-
-  .heading h1{
-    font-size:19px;
-  }
-
-  .heading p{
-    font-size:8px;
-  }
-
-  .stats{
-    gap:5px;
-    margin-bottom:7px;
-  }
-
-  .stat{
-    padding:9px;
-    border-radius:10px;
-  }
-
-  .stat-label{
-    font-size:7px;
-  }
-
-  .stat-value{
-    font-size:14px;
-  }
-
-  .card{
-    border-radius:11px;
-    margin-bottom:7px;
-  }
-
-  .card-header{
-    min-height:37px;
-    padding:8px 9px;
-  }
-
-  .card-title{
-    font-size:10px;
-  }
-
-  .card-subtitle{
-    font-size:7px;
-  }
-
-  .add-content{
-    padding:7px;
-  }
-
-  .amount-input{
-    padding:8px;
-    font-size:10px;
-  }
-
-  .add-btn{
-    font-size:9px;
-    padding:0 10px;
-  }
-
-  .manage-actions{
-    gap:4px;
-  }
-
-  .action-btn{
-    padding:7px 3px;
-    font-size:8px;
-  }
-
-  .history-list{
-    max-height:205px;
-    padding-left:8px;
-    padding-right:8px;
-  }
-
-  .sale-row{
-    min-height:43px;
-  }
-
-  .sale-amount{
-    font-size:11px;
-  }
-
-  .edit-btn,
-  .delete-btn{
-    padding:5px 6px;
-    font-size:7px;
-  }
-
-  .backup-content{
-    padding:6px;
-  }
-
-  .backup-btn,
-  .restore-label{
-    min-height:30px;
-    font-size:8px;
-  }
-
-  .footer{
-    font-size:6px;
-    padding-bottom:8px;
-  }
-
-}
-
-/* =========================
-   VERY SMALL HEIGHT
-========================= */
-
-@media(max-height:700px) and (max-width:600px){
-
-  .main{
-    padding-top:9px;
-  }
-
-  .heading{
-    margin-bottom:7px;
-  }
-
-  .heading h1{
-    font-size:18px;
-  }
-
-  .stats{
-    margin-bottom:6px;
-  }
-
-  .stat{
-    padding:7px;
-  }
-
-  .stat-value{
-    font-size:13px;
-  }
-
-  .card{
-    margin-bottom:5px;
-  }
-
-  .history-list{
-    max-height:160px;
-  }
-
-  .footer{
-    display:none;
-  }
-
-}
-
-/* =========================
-   EXTRA SMALL HEIGHT
-========================= */
-
-@media(max-height:620px) and (max-width:600px){
-
-  .header{
-    height:50px;
-  }
-
-  .brand-icon{
-    width:29px;
-    height:29px;
-    font-size:14px;
-  }
-
-  .brand-name{
-    font-size:12px;
-  }
-
-  .main{
-    padding-top:6px;
-  }
-
-  .heading{
-    margin-bottom:5px;
-  }
-
-  .heading h1{
-    font-size:16px;
-  }
-
-  .heading p{
-    display:none;
-  }
-
-  .stats{
-    margin-bottom:5px;
-  }
-
-  .stat{
-    padding:6px;
-  }
-
-  .stat-label{
-    font-size:6px;
-    margin-bottom:3px;
-  }
-
-  .stat-value{
-    font-size:12px;
-  }
-
-  .card-header{
-    min-height:32px;
-    padding:6px 8px;
-  }
-
-  .add-content{
-    padding:5px;
-  }
-
-  .amount-input{
-    padding:7px;
-  }
-
-  .history-list{
-    max-height:125px;
-  }
-
-  .sale-row{
-    min-height:37px;
-  }
-
-  .manage-actions{
-    margin-top:4px;
-  }
-
-  .action-btn{
-    padding:6px 2px;
-  }
-
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
+  <title>SaleTrack</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      margin: 0;
+      width: 100%;
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-family:
+        Inter, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background: #f5f7fb;
+      color: #172033;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* =========================
+       LOGIN
+    ========================= */
+
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 420px;
+      background: #ffffff;
+      border: 1px solid #e7eaf0;
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 18px 50px rgba(20, 30, 50, 0.08);
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .brand-icon {
+      width: 58px;
+      height: 58px;
+      margin: 0 auto 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 17px;
+      background: #111827;
+      color: white;
+      font-size: 25px;
+      font-weight: 800;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: -0.7px;
+    }
+
+    .brand p {
+      margin: 7px 0 0;
+      color: #7a8496;
+      font-size: 14px;
+    }
+
+    .field {
+      margin-bottom: 17px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #3b4658;
+    }
+
+    .field input {
+      width: 100%;
+      height: 48px;
+      border: 1px solid #dfe4ec;
+      border-radius: 12px;
+      padding: 0 14px;
+      outline: none;
+      background: #fbfcfe;
+      color: #172033;
+    }
+
+    .field input:focus {
+      border-color: #111827;
+      background: #fff;
+    }
+
+    .primary-btn {
+      width: 100%;
+      height: 48px;
+      border: 0;
+      border-radius: 12px;
+      background: #111827;
+      color: white;
+      font-weight: 750;
+    }
+
+    .primary-btn:hover {
+      background: #1f2937;
+    }
+
+    .error {
+      margin-top: 13px;
+      padding: 11px 12px;
+      border-radius: 10px;
+      background: #fff0f0;
+      color: #c62828;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* =========================
+       APP
+    ========================= */
+
+    .app {
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      width: 100%;
+      background: #ffffff;
+      border-bottom: 1px solid #e8ebf1;
+    }
+
+    .topbar-inner {
+      width: min(1180px, calc(100% - 32px));
+      margin: auto;
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .logo-area {
+      min-width: 0;
+    }
+
+    .logo-area h1 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-area p {
+      margin: 3px 0 0;
+      color: #8992a3;
+      font-size: 12px;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #f2f4f7;
+      color: #566174;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22a06b;
+      flex: 0 0 auto;
+    }
+
+    .logout-btn {
+      border: 1px solid #e1e5ec;
+      background: white;
+      color: #3e4858;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* =========================
+       MAIN
+    ========================= */
+
+    .container {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 30px 0 50px;
+    }
+
+    .welcome {
+      margin-bottom: 22px;
+    }
+
+    .welcome h2 {
+      margin: 0;
+      font-size: 25px;
+      letter-spacing: -0.5px;
+    }
+
+    .welcome p {
+      margin: 6px 0 0;
+      color: #7b8597;
+      font-size: 14px;
+    }
+
+    /* =========================
+       STATS
+    ========================= */
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .stat-card {
+      min-width: 0;
+      background: white;
+      border: 1px solid #e7eaf0;
+      border-radius: 17px;
+      padding: 19px;
+    }
+
+    .stat-label {
+      color: #7c8698;
+      font-size: 13px;
+      font-weight: 650;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      display: block;
+      width: 100%;
+      font-size: 22px;
+      line-height: 1.25;
+      font-weight: 850;
+      color: #172033;
+
+      /* IMPORTANT:
+         No nowrap
+         No overflow hidden
+         No ellipsis
+      */
+      white-space: normal;
+      overflow: visible;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    /* =========================
+       GRID
+    ========================= */
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(300px, 390px) minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #e7eaf0;
+      border-radius: 18px;
+      padding: 20px;
+      min-width: 0;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 18px;
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .card-subtitle {
+      margin: 4px 0 0;
+      color: #8992a3;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    /* =========================
+       ADD SALE
+    ========================= */
+
+    .amount-input {
+      width: 100%;
+      height: 58px;
+      border: 1px solid #dce2eb;
+      border-radius: 13px;
+      padding: 0 16px;
+      font-size: 21px;
+      font-weight: 700;
+      outline: none;
+      background: #fbfcfe;
+    }
+
+    .amount-input:focus {
+      border-color: #111827;
+      background: white;
+    }
+
+    .add-btn {
+      width: 100%;
+      min-height: 50px;
+      margin-top: 12px;
+      border: 0;
+      border-radius: 12px;
+      background: #111827;
+      color: white;
+      font-weight: 800;
+    }
+
+    .add-btn:hover {
+      background: #1f2937;
+    }
+
+    /* =========================
+       QUICK ACTIONS
+    ========================= */
+
+    .quick-actions {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid #edf0f4;
+    }
+
+    .quick-title {
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #4a5567;
+    }
+
+    .action-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+
+    .action-btn {
+      flex: 1 1 130px;
+      min-height: 42px;
+      border: 1px solid #e0e4eb;
+      background: #ffffff;
+      color: #3d4758;
+      border-radius: 11px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .action-btn:hover {
+      background: #f7f8fa;
+    }
+
+    .action-btn.danger {
+      color: #c52f3d;
+      border-color: #f0d6da;
+    }
+
+    /* =========================
+       HISTORY
+    ========================= */
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .history-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 15px;
+      align-items: center;
+      padding: 14px 15px;
+      border: 1px solid #edf0f4;
+      border-radius: 13px;
+      background: #fcfdff;
+    }
+
+    .history-left {
+      min-width: 0;
+    }
+
+    .history-amount {
+      font-size: 16px;
+      line-height: 1.35;
+      font-weight: 800;
+      color: #172033;
+
+      /* Never hide amount */
+      white-space: normal;
+      overflow: visible;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .history-date {
+      margin-top: 4px;
+      color: #8a93a3;
+      font-size: 12px;
+      line-height: 1.5;
+
+      white-space: normal;
+      overflow: visible;
+      overflow-wrap: anywhere;
+    }
+
+    .history-right {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .edit-btn,
+    .delete-btn {
+      min-height: 36px;
+      padding: 7px 11px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 750;
+      background: white;
+    }
+
+    .edit-btn {
+      border: 1px solid #dfe4eb;
+      color: #465163;
+    }
+
+    .delete-btn {
+      border: 1px solid #f0d6da;
+      color: #c52f3d;
+    }
+
+    .empty {
+      padding: 35px 15px;
+      text-align: center;
+      color: #8a93a3;
+      font-size: 13px;
+    }
+
+    /* =========================
+       BACKUP
+    ========================= */
+
+    .backup {
+      margin-top: 18px;
+    }
+
+    .backup details {
+      border: 1px solid #e7eaf0;
+      border-radius: 15px;
+      background: white;
+      padding: 0 16px;
+    }
+
+    .backup summary {
+      cursor: pointer;
+      padding: 15px 0;
+      font-size: 14px;
+      font-weight: 800;
+      color: #414b5b;
+    }
+
+    .backup-content {
+      padding: 0 0 16px;
+    }
+
+    .backup-content p {
+      margin: 0 0 13px;
+      color: #858e9f;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .backup-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+
+    .backup-buttons button {
+      flex: 1 1 150px;
+      min-height: 42px;
+      border: 1px solid #dfe4eb;
+      background: white;
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 750;
+      color: #424d5d;
+    }
+
+    /* =========================
+       MODAL
+    ========================= */
+
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(10, 15, 25, 0.52);
+    }
+
+    .modal-bg.show {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 420px;
+      background: white;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.18);
+    }
+
+    .modal h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .modal p {
+      margin: 9px 0 18px;
+      color: #697386;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: normal;
+    }
+
+    .modal-input {
+      width: 100%;
+      height: 46px;
+      border: 1px solid #dce2eb;
+      border-radius: 10px;
+      padding: 0 12px;
+      outline: none;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 17px;
+    }
+
+    .modal-actions button {
+      flex: 1 1 120px;
+      min-height: 44px;
+      border-radius: 10px;
+      font-weight: 750;
+      border: 1px solid #dfe4eb;
+      background: white;
+    }
+
+    .modal-actions .confirm {
+      background: #111827;
+      border-color: #111827;
+      color: white;
+    }
+
+    .modal-actions .danger-confirm {
+      background: #c52f3d;
+      border-color: #c52f3d;
+      color: white;
+    }
+
+    /* =========================
+       TOAST
+    ========================= */
+
+    .toast {
+      position: fixed;
+      z-index: 10000;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%) translateY(15px);
+      width: max-content;
+      max-width: calc(100% - 30px);
+      padding: 11px 15px;
+      border-radius: 11px;
+      background: #172033;
+      color: white;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.22s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* =========================
+       TABLET
+    ========================= */
+
+    @media (max-width: 900px) {
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 600px) {
+      .topbar-inner,
+      .container {
+        width: min(100% - 24px, 1180px);
+      }
+
+      .topbar-inner {
+        min-height: 68px;
+      }
+
+      .logo-area h1 {
+        font-size: 20px;
+      }
+
+      .status {
+        padding: 6px 8px;
+      }
+
+      .status span:last-child {
+        display: none;
+      }
+
+      .logout-btn {
+        padding: 8px 10px;
+      }
+
+      .container {
+        padding: 22px 0 38px;
+      }
+
+      .welcome h2 {
+        font-size: 22px;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .stat-card {
+        padding: 16px;
+        border-radius: 15px;
+      }
+
+      .stat-label {
+        font-size: 12px;
+      }
+
+      .stat-value {
+        font-size: 19px;
+        line-height: 1.3;
+      }
+
+      .card {
+        padding: 16px;
+        border-radius: 16px;
+      }
+
+      .main-grid {
+        gap: 12px;
+      }
+
+      .history-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 13px;
+      }
+
+      .history-right {
+        justify-content: flex-start;
+      }
+
+      .edit-btn,
+      .delete-btn {
+        flex: 1 1 100px;
+      }
+
+      .action-btn {
+        flex: 1 1 140px;
+      }
+
+      .backup-buttons button {
+        flex: 1 1 100%;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .stats {
+        gap: 8px;
+      }
+
+      .stat-card {
+        padding: 13px;
+      }
+
+      .stat-value {
+        font-size: 18px;
+      }
+
+      .history-right {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+
+      .edit-btn,
+      .delete-btn {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- =====================================================
-     LOGIN
-===================================================== -->
+  <!-- =========================
+       LOGIN SCREEN
+  ========================= -->
 
-<div id="loginScreen" class="login-screen">
-
-  <div class="login-card">
-
-    <div class="login-logo">
-      💰
-    </div>
-
-    <div class="login-title">
-      SaleTrack
-    </div>
-
-    <div class="login-subtitle">
-      Sign in to manage your sales
-    </div>
-
-    <div id="loginError" class="login-error"></div>
-
-    <label class="label">
-      Email
-    </label>
-
-    <input
-      id="emailInput"
-      class="input"
-      type="email"
-      placeholder="Enter your email"
-      autocomplete="email"
-    >
-
-    <label class="label">
-      Password
-    </label>
-
-    <input
-      id="passwordInput"
-      class="input"
-      type="password"
-      placeholder="Enter your password"
-      autocomplete="current-password"
-    >
-
-    <button
-      id="loginBtn"
-      class="primary-btn"
-    >
-      Sign In
-    </button>
-
-  </div>
-
-</div>
-
-
-<!-- =====================================================
-     APP
-===================================================== -->
-
-<div id="app" class="app">
-
-  <!-- HEADER -->
-
-  <header class="header">
-
-    <div class="header-inner">
+  <section id="loginScreen" class="login-screen">
+    <div class="login-card">
 
       <div class="brand">
-
-        <div class="brand-icon">
-          💰
-        </div>
-
-        <div>
-
-          <div class="brand-name">
-            SaleTrack
-          </div>
-
-          <div class="brand-powered">
-            Powered by mehedi1only
-          </div>
-
-        </div>
-
+        <div class="brand-icon">S</div>
+        <h1>SaleTrack</h1>
+        <p>Simple sales tracking dashboard</p>
       </div>
 
+      <form id="loginForm">
 
-      <div class="header-actions">
-
-        <div
-          id="onlineStatus"
-          class="status"
-        >
-
-          <span class="status-dot"></span>
-
-          <span id="statusText">
-            Online
-          </span>
-
+        <div class="field">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            placeholder="Enter your email"
+            autocomplete="email"
+            required
+          />
         </div>
 
+        <div class="field">
+          <label for="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required
+          />
+        </div>
 
-        <button
-          id="logoutBtn"
-          class="logout"
-        >
-          Logout
+        <button class="primary-btn" type="submit">
+          Sign In
         </button>
 
-      </div>
+        <div id="loginError" class="error hidden"></div>
 
+      </form>
     </div>
-
-  </header>
-
-
-  <!-- MAIN -->
-
-  <main class="main">
-
-    <!-- HEADING -->
-
-    <div class="heading">
-
-      <h1>
-        Sales Dashboard
-      </h1>
-
-      <p>
-        Track and manage your sales
-      </p>
-
-    </div>
+  </section>
 
 
-    <!-- STATS -->
+  <!-- =========================
+       APP
+  ========================= -->
 
-    <section class="stats">
+  <section id="app" class="app hidden">
 
-      <div class="stat">
+    <header class="topbar">
+      <div class="topbar-inner">
 
-        <div class="stat-label">
-          Add Count
+        <div class="logo-area">
+          <h1>SaleTrack</h1>
+          <p>Powered by mehedi1only</p>
         </div>
 
-        <div
-          id="countValue"
-          class="stat-value"
-        >
-          0
-        </div>
+        <div class="topbar-right">
 
-      </div>
-
-
-      <div class="stat">
-
-        <div class="stat-label">
-          Total Sales
-        </div>
-
-        <div
-          id="totalValue"
-          class="stat-value green"
-        >
-          0.00
-        </div>
-
-      </div>
-
-
-      <div class="stat">
-
-        <div class="stat-label">
-          Today Sales
-        </div>
-
-        <div
-          id="todayValue"
-          class="stat-value blue"
-        >
-          0.00
-        </div>
-
-      </div>
-
-
-      <div class="stat">
-
-        <div class="stat-label">
-          Last Sale
-        </div>
-
-        <div
-          id="lastSaleValue"
-          class="stat-value"
-        >
-          —
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- QUICK ACTIONS -->
-
-    <section class="card">
-
-      <div class="card-header">
-
-        <div>
-
-          <div class="card-title">
-            Quick Actions
+          <div class="status">
+            <span class="status-dot"></span>
+            <span id="onlineText">Online</span>
           </div>
 
-          <div class="card-subtitle">
-            Add a new sale
-          </div>
+          <button id="logoutBtn" class="logout-btn">
+            Logout
+          </button>
 
         </div>
+      </div>
+    </header>
 
+
+    <main class="container">
+
+      <div class="welcome">
+        <h2>Sales Dashboard</h2>
+        <p>Track your sales quickly and easily.</p>
       </div>
 
 
-      <div class="add-content">
+      <!-- =========================
+           STATS
+      ========================= -->
 
-        <div class="add-row">
+      <section class="stats">
+
+        <div class="stat-card">
+          <div class="stat-label">Add Count</div>
+          <div id="countValue" class="stat-value">0</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Total Sales</div>
+          <div id="totalValue" class="stat-value">0.00</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Today Sales</div>
+          <div id="todayValue" class="stat-value">0.00</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Last Sale</div>
+          <div id="lastSaleValue" class="stat-value">—</div>
+        </div>
+
+      </section>
+
+
+      <!-- =========================
+           MAIN GRID
+      ========================= -->
+
+      <section class="main-grid">
+
+        <!-- ADD SALE -->
+
+        <div class="card">
+
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Add Sale</h3>
+              <p class="card-subtitle">
+                Enter the amount of your new sale.
+              </p>
+            </div>
+          </div>
 
           <input
             id="amountInput"
@@ -1249,1977 +934,132 @@ button:disabled{
             min="0"
             step="0.01"
             inputmode="decimal"
-            placeholder="Enter sale amount"
-          >
+            placeholder="0.00"
+          />
 
-          <button
-            id="addSaleBtn"
-            class="add-btn"
-          >
-            + Add Sale
+          <button id="addSaleBtn" class="add-btn">
+            Add Sale
           </button>
 
-        </div>
 
+          <!-- QUICK ACTIONS -->
 
-        <!-- MANAGEMENT BUTTONS BELOW -->
+          <div class="quick-actions">
 
-        <div class="manage-actions">
+            <div class="quick-title">
+              Quick Actions
+            </div>
 
-          <button
-            id="exportCsvBtn"
-            class="action-btn"
-          >
-            📤 Export CSV
-          </button>
+            <div class="action-list">
 
-          <button
-            id="undoBtn"
-            class="action-btn"
-          >
-            ↩️ Undo Delete
-          </button>
+              <button id="exportBtn" class="action-btn">
+                Export CSV
+              </button>
 
-          <button
-            id="resetBtn"
-            class="action-btn danger"
-          >
-            🗑️ Reset All
-          </button>
+              <button id="undoBtn" class="action-btn">
+                Undo Delete
+              </button>
 
-        </div>
+              <button id="resetBtn" class="action-btn danger">
+                Reset All
+              </button>
 
-      </div>
+            </div>
 
-    </section>
-
-
-    <!-- SALES HISTORY -->
-
-    <section class="card">
-
-      <div class="card-header">
-
-        <div>
-
-          <div class="card-title">
-            Sales History
-          </div>
-
-          <div class="card-subtitle">
-            Recent sales
           </div>
 
         </div>
 
 
-        <div
-          id="historyCount"
-          class="history-count"
-        >
-          0 sales
-        </div>
+        <!-- HISTORY -->
 
-      </div>
+        <div class="card">
 
-
-      <div
-        id="historyList"
-        class="history-list"
-      >
-
-        <div class="empty">
-          No sales yet.
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- BACKUP & RESTORE -->
-
-    <details class="card">
-
-      <summary class="card-header">
-
-        <div>
-
-          <div class="card-title">
-            💾 Backup & Restore
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Sales History</h3>
+              <p class="card-subtitle">
+                Your latest sales are shown below.
+              </p>
+            </div>
           </div>
 
-          <div class="card-subtitle">
-            Save or restore your sales data
+          <div id="historyList" class="history-list"></div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================
+           BACKUP & RESTORE
+      ========================= -->
+
+      <section class="backup">
+
+        <details>
+
+          <summary>
+            Backup & Restore
+          </summary>
+
+          <div class="backup-content">
+
+            <p>
+              Export your sales as a JSON backup or restore
+              a previously saved backup.
+            </p>
+
+            <div class="backup-buttons">
+
+              <button id="backupBtn">
+                Download Backup
+              </button>
+
+              <button id="restoreBtn">
+                Restore Backup
+              </button>
+
+              <input
+                id="restoreFile"
+                type="file"
+                accept=".json,application/json"
+                class="hidden"
+              />
+
+            </div>
+
           </div>
 
-        </div>
+        </details>
 
-      </summary>
+      </section>
 
+    </main>
 
-      <div class="backup-content">
+  </section>
 
-        <button
-          id="backupBtn"
-          class="backup-btn"
-        >
-          💾 Download Backup
-        </button>
 
+  <!-- =========================
+       MODAL
+  ========================= -->
 
-        <label class="restore-label">
+  <div id="modalBg" class="modal-bg">
+    <div class="modal">
 
-          ♻️ Restore Backup
+      <h3 id="modalTitle">Confirm</h3>
 
-          <input
-            id="restoreInput"
-            type="file"
-            accept=".json,application/json"
-            hidden
-          >
+      <p id="modalMessage"></p>
 
-        </label>
+      <input
+        id="modalInput"
+        class="modal-input hidden"
+        type="text"
+        autocomplete="off"
+      />
 
-      </div>
+      <div class="modal-actions">
 
-    </details>
-
-
-    <!-- FOOTER -->
-
-    <footer class="footer">
-
-      <strong>SaleTrack</strong>
-      · Powered by mehedi1only
-
-    </footer>
-
-  </main>
-
-</div>
-
-
-<!-- =====================================================
-     MODAL
-===================================================== -->
-
-<div
-  id="modalBg"
-  class="modal-bg"
->
-
-  <div class="modal">
-
-    <div
-      id="modalTitle"
-      class="modal-title"
-    >
-      Confirmation
-    </div>
-
-    <div
-      id="modalText"
-      class="modal-text"
-    ></div>
-
-    <input
-      id="modalInput"
-      class="modal-input"
-      style="display:none"
-      autocomplete="off"
-    >
-
-    <div class="modal-actions">
-
-      <button
-        id="modalCancel"
-        class="cancel-btn"
-      >
-        Cancel
-      </button>
-
-      <button
-        id="modalConfirm"
-        class="confirm-btn"
-      >
-        Confirm
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- TOAST -->
-
-<div
-  id="toast"
-  class="toast"
-></div>
-
-
-<script>
-/* =========================================================
-   SUPABASE CONFIG
-========================================================= */
-
-const SUPABASE_URL =
-  "https://eavqyzgamuelwyplhqjf.supabase.co";
-
-const SUPABASE_KEY =
-  "sb_publishable_OSypObpmAQMHjMZrct7QNQ_AtrYXY8Z";
-
-const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-
-
-/* =========================================================
-   STATE
-========================================================= */
-
-let sales = [];
-let deletedSale = null;
-let currentUser = null;
-
-
-/* =========================================================
-   ELEMENT HELPER
-========================================================= */
-
-const $ = id =>
-  document.getElementById(id);
-
-
-/* =========================================================
-   FORMAT
-========================================================= */
-
-function money(value){
-
-  return Number(value || 0)
-    .toLocaleString(
-      undefined,
-      {
-        minimumFractionDigits:2,
-        maximumFractionDigits:2
-      }
-    );
-
-}
-
-
-function formatTime(date){
-
-  return new Intl.DateTimeFormat(
-    undefined,
-    {
-      hour:"2-digit",
-      minute:"2-digit",
-      hour12:true
-    }
-  ).format(date);
-
-}
-
-
-function formatDate(date){
-
-  return new Intl.DateTimeFormat(
-    undefined,
-    {
-      year:"numeric",
-      month:"short",
-      day:"numeric",
-      hour:"2-digit",
-      minute:"2-digit",
-      hour12:true
-    }
-  ).format(date);
-
-}
-
-
-function dateKey(date){
-
-  const year =
-    date.getFullYear();
-
-  const month =
-    String(
-      date.getMonth()+1
-    ).padStart(2,"0");
-
-  const day =
-    String(
-      date.getDate()
-    ).padStart(2,"0");
-
-  return `${year}-${month}-${day}`;
-
-}
-
-
-function escapeHtml(value){
-
-  return String(value)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-
-}
-
-
-/* =========================================================
-   TOAST
-========================================================= */
-
-function showToast(message){
-
-  const toast =
-    $("toast");
-
-  toast.textContent =
-    message;
-
-  toast.classList.add(
-    "show"
-  );
-
-  clearTimeout(
-    showToast.timer
-  );
-
-  showToast.timer =
-    setTimeout(
-      () => {
-
-        toast.classList.remove(
-          "show"
-        );
-
-      },
-      2200
-    );
-
-}
-
-
-/* =========================================================
-   MODAL
-========================================================= */
-
-function openModal(options){
-
-  return new Promise(resolve => {
-
-    const bg =
-      $("modalBg");
-
-    const title =
-      $("modalTitle");
-
-    const text =
-      $("modalText");
-
-    const input =
-      $("modalInput");
-
-    const cancel =
-      $("modalCancel");
-
-    const confirm =
-      $("modalConfirm");
-
-
-    title.textContent =
-      options.title || "Confirmation";
-
-    text.textContent =
-      options.text || "";
-
-    confirm.textContent =
-      options.confirmText || "Confirm";
-
-
-    input.style.display =
-      options.input
-        ? "block"
-        : "none";
-
-    input.value =
-      "";
-
-    confirm.classList.toggle(
-      "danger",
-      !!options.danger
-    );
-
-
-    bg.classList.add(
-      "show"
-    );
-
-
-    if(options.input){
-
-      setTimeout(
-        () => input.focus(),
-        50
-      );
-
-    }
-
-
-    let finished = false;
-
-
-    function finish(value){
-
-      if(finished)
-        return;
-
-      finished = true;
-
-      bg.classList.remove(
-        "show"
-      );
-
-      cancel.onclick =
-        null;
-
-      confirm.onclick =
-        null;
-
-      bg.onclick =
-        null;
-
-      resolve(value);
-
-    }
-
-
-    cancel.onclick =
-      () => finish(null);
-
-
-    confirm.onclick =
-      () => {
-
-        if(options.input){
-
-          finish(
-            input.value.trim()
-          );
-
-        }else{
-
-          finish(true);
-
-        }
-
-      };
-
-
-    bg.onclick =
-      event => {
-
-        if(
-          event.target === bg
-        ){
-
-          finish(null);
-
-        }
-
-      };
-
-  });
-
-}
-
-
-/* =========================================================
-   LOGIN
-========================================================= */
-
-async function checkSession(){
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .auth
-      .getSession();
-
-
-  if(error){
-
-    console.error(error);
-
-    showLogin();
-
-    return;
-
-  }
-
-
-  if(data.session){
-
-    currentUser =
-      data.session.user;
-
-    showApp();
-
-    await loadSales();
-
-  }else{
-
-    showLogin();
-
-  }
-
-}
-
-
-function showLogin(){
-
-  $("loginScreen")
-    .style.display =
-      "flex";
-
-  $("app")
-    .style.display =
-      "none";
-
-}
-
-
-function showApp(){
-
-  $("loginScreen")
-    .style.display =
-      "none";
-
-  $("app")
-    .style.display =
-      "block";
-
-}
-
-
-async function login(){
-
-  const email =
-    $("emailInput")
-      .value
-      .trim();
-
-  const password =
-    $("passwordInput")
-      .value;
-
-
-  $("loginError")
-    .style.display =
-      "none";
-
-
-  if(!email || !password){
-
-    $("loginError")
-      .textContent =
-        "Please enter email and password.";
-
-    $("loginError")
-      .style.display =
-        "block";
-
-    return;
-
-  }
-
-
-  $("loginBtn").disabled =
-    true;
-
-  $("loginBtn").textContent =
-    "Signing in...";
-
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .auth
-      .signInWithPassword({
-        email,
-        password
-      });
-
-
-  $("loginBtn").disabled =
-    false;
-
-  $("loginBtn").textContent =
-    "Sign In";
-
-
-  if(error){
-
-    $("loginError")
-      .textContent =
-        error.message;
-
-    $("loginError")
-      .style.display =
-        "block";
-
-    return;
-
-  }
-
-
-  currentUser =
-    data.user;
-
-  showApp();
-
-  await loadSales();
-
-}
-
-
-$("loginBtn")
-  .addEventListener(
-    "click",
-    login
-  );
-
-
-$("passwordInput")
-  .addEventListener(
-    "keydown",
-    event => {
-
-      if(
-        event.key === "Enter"
-      ){
-
-        login();
-
-      }
-
-    }
-  );
-
-
-$("logoutBtn")
-  .addEventListener(
-    "click",
-    async () => {
-
-      await supabaseClient
-        .auth
-        .signOut();
-
-      currentUser =
-        null;
-
-      sales = [];
-
-      showLogin();
-
-    }
-  );
-
-
-/* =========================================================
-   LOAD SALES
-========================================================= */
-
-async function loadSales(){
-
-  if(!currentUser)
-    return;
-
-
-  $("historyList")
-    .innerHTML = `
-      <div class="empty">
-        Loading sales...
-      </div>
-    `;
-
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("sales")
-      .select("*")
-      .eq(
-        "user_id",
-        currentUser.id
-      )
-      .order(
-        "created_at",
-        {
-          ascending:false
-        }
-      );
-
-
-  if(error){
-
-    console.error(error);
-
-    $("historyList")
-      .innerHTML = `
-        <div class="empty">
-          Failed to load sales.
-        </div>
-      `;
-
-    showToast(
-      "Failed to load sales."
-    );
-
-    return;
-
-  }
-
-
-  sales =
-    data || [];
-
-  render();
-
-}
-
-
-/* =========================================================
-   ADD SALE
-========================================================= */
-
-async function addSale(){
-
-  const amount =
-    Number(
-      $("amountInput").value
-    );
-
-
-  if(
-    !Number.isFinite(amount) ||
-    amount <= 0
-  ){
-
-    showToast(
-      "Enter a valid amount."
-    );
-
-    $("amountInput").focus();
-
-    return;
-
-  }
-
-
-  if(!currentUser){
-
-    showToast(
-      "Please sign in again."
-    );
-
-    return;
-
-  }
-
-
-  $("addSaleBtn").disabled =
-    true;
-
-  $("addSaleBtn").textContent =
-    "Adding...";
-
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("sales")
-      .insert({
-        amount,
-        user_id:
-          currentUser.id
-      })
-      .select()
-      .single();
-
-
-  if(error){
-
-    console.error(error);
-
-    showToast(
-      "Could not save sale."
-    );
-
-  }else{
-
-    sales.unshift(
-      data
-    );
-
-    render();
-
-    showToast(
-      "Sale added successfully."
-    );
-
-  }
-
-
-  $("amountInput").value =
-    "";
-
-  $("addSaleBtn").disabled =
-    false;
-
-  $("addSaleBtn").textContent =
-    "+ Add Sale";
-
-}
-
-
-$("addSaleBtn")
-  .addEventListener(
-    "click",
-    addSale
-  );
-
-
-$("amountInput")
-  .addEventListener(
-    "keydown",
-    event => {
-
-      if(
-        event.key === "Enter"
-      ){
-
-        addSale();
-
-      }
-
-    }
-  );
-
-
-/* =========================================================
-   RENDER
-========================================================= */
-
-function render(){
-
-  renderStats();
-
-  renderHistory();
-
-}
-
-
-/* =========================================================
-   STATS
-========================================================= */
-
-function renderStats(){
-
-  const total =
-    sales.reduce(
-      (sum,sale) =>
-        sum +
-        Number(
-          sale.amount || 0
-        ),
-      0
-    );
-
-
-  const today =
-    dateKey(
-      new Date()
-    );
-
-
-  const todayTotal =
-    sales
-      .filter(
-        sale =>
-          dateKey(
-            new Date(
-              sale.created_at
-            )
-          ) === today
-      )
-      .reduce(
-        (sum,sale) =>
-          sum +
-          Number(
-            sale.amount || 0
-          ),
-        0
-      );
-
-
-  $("countValue")
-    .textContent =
-      sales.length;
-
-
-  $("totalValue")
-    .textContent =
-      money(total);
-
-
-  $("todayValue")
-    .textContent =
-      money(todayTotal);
-
-
-  $("lastSaleValue")
-    .textContent =
-      sales.length
-        ? formatTime(
-            new Date(
-              sales[0].created_at
-            )
-          )
-        : "—";
-
-}
-
-
-/* =========================================================
-   HISTORY
-========================================================= */
-
-function renderHistory(){
-
-  $("historyCount")
-    .textContent =
-      `${sales.length} ${
-        sales.length === 1
-          ? "sale"
-          : "sales"
-      }`;
-
-
-  if(!sales.length){
-
-    $("historyList")
-      .innerHTML = `
-        <div class="empty">
-          No sales yet. Add your first sale.
-        </div>
-      `;
-
-    return;
-
-  }
-
-
-  $("historyList")
-    .innerHTML =
-      sales
-        .map(
-          (sale,index) => {
-
-            const date =
-              new Date(
-                sale.created_at
-              );
-
-
-            return `
-
-              <div class="sale-row">
-
-                <div class="sale-info">
-
-                  <div class="sale-id">
-                    Sale #${index + 1}
-                  </div>
-
-                  <div class="sale-amount">
-                    ${money(sale.amount)}
-                  </div>
-
-                  <div class="sale-time">
-                    ${escapeHtml(
-                      formatDate(date)
-                    )}
-                  </div>
-
-                </div>
-
-
-                <div class="sale-actions">
-
-                  <button
-                    class="edit-btn"
-                    data-edit-id="${sale.id}"
-                  >
-                    Edit
-                  </button>
-
-                  <button
-                    class="delete-btn"
-                    data-delete-id="${sale.id}"
-                  >
-                    Delete
-                  </button>
-
-                </div>
-
-              </div>
-
-            `;
-
-          }
-        )
-        .join("");
-
-
-  document
-    .querySelectorAll(
-      "[data-edit-id]"
-    )
-    .forEach(
-      button => {
-
-        button.addEventListener(
-          "click",
-          () =>
-            editSale(
-              button.dataset.editId
-            )
-        );
-
-      }
-    );
-
-
-  document
-    .querySelectorAll(
-      "[data-delete-id]"
-    )
-    .forEach(
-      button => {
-
-        button.addEventListener(
-          "click",
-          () =>
-            deleteSale(
-              button.dataset.deleteId
-            )
-        );
-
-      }
-    );
-
-}
-
-
-/* =========================================================
-   EDIT
-========================================================= */
-
-async function editSale(id){
-
-  const sale =
-    sales.find(
-      item =>
-        String(item.id) ===
-        String(id)
-    );
-
-
-  if(!sale)
-    return;
-
-
-  const result =
-    await openModal({
-
-      title:
-        "Edit Sale",
-
-      text:
-        "Enter the new sale amount.",
-
-      input:
-        true,
-
-      confirmText:
-        "Save"
-
-    });
-
-
-  if(result === null)
-    return;
-
-
-  const amount =
-    Number(result);
-
-
-  if(
-    !Number.isFinite(amount) ||
-    amount <= 0
-  ){
-
-    showToast(
-      "Invalid amount."
-    );
-
-    return;
-
-  }
-
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("sales")
-      .update({
-        amount
-      })
-      .eq(
-        "id",
-        sale.id
-      )
-      .eq(
-        "user_id",
-        currentUser.id
-      )
-      .select()
-      .single();
-
-
-  if(error){
-
-    console.error(error);
-
-    showToast(
-      "Failed to update sale."
-    );
-
-    return;
-
-  }
-
-
-  const index =
-    sales.findIndex(
-      item =>
-        String(item.id) ===
-        String(id)
-    );
-
-
-  if(index !== -1){
-
-    sales[index] =
-      data;
-
-  }
-
-
-  sales.sort(
-    (a,b) =>
-      new Date(b.created_at) -
-      new Date(a.created_at)
-  );
-
-
-  render();
-
-  showToast(
-    "Sale updated."
-  );
-
-}
-
-
-/* =========================================================
-   DELETE
-========================================================= */
-
-async function deleteSale(id){
-
-  const sale =
-    sales.find(
-      item =>
-        String(item.id) ===
-        String(id)
-    );
-
-
-  if(!sale)
-    return;
-
-
-  const result =
-    await openModal({
-
-      title:
-        "Delete Sale",
-
-      text:
-        "Type DELETE to permanently remove this sale.",
-
-      input:
-        true,
-
-      confirmText:
-        "Delete",
-
-      danger:
-        true
-
-    });
-
-
-  if(result === null)
-    return;
-
-
-  if(result !== "DELETE"){
-
-    showToast(
-      "Please type DELETE exactly."
-    );
-
-    return;
-
-  }
-
-
-  const {
-    error
-  } =
-    await supabaseClient
-      .from("sales")
-      .delete()
-      .eq(
-        "id",
-        sale.id
-      )
-      .eq(
-        "user_id",
-        currentUser.id
-      );
-
-
-  if(error){
-
-    console.error(error);
-
-    showToast(
-      "Failed to delete sale."
-    );
-
-    return;
-
-  }
-
-
-  deletedSale =
-    {
-      ...sale
-    };
-
-
-  sales =
-    sales.filter(
-      item =>
-        String(item.id) !==
-        String(id)
-    );
-
-
-  render();
-
-  showToast(
-    "Sale deleted. Undo is available."
-  );
-
-}
-
-
-/* =========================================================
-   UNDO
-========================================================= */
-
-$("undoBtn")
-  .addEventListener(
-    "click",
-    undoDelete
-  );
-
-
-async function undoDelete(){
-
-  if(!deletedSale){
-
-    showToast(
-      "Nothing to undo."
-    );
-
-    return;
-
-  }
-
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("sales")
-      .insert({
-
-        amount:
-          Number(
-            deletedSale.amount
-          ),
-
-        created_at:
-          deletedSale.created_at,
-
-        user_id:
-          currentUser.id
-
-      })
-      .select()
-      .single();
-
-
-  if(error){
-
-    console.error(error);
-
-    showToast(
-      "Undo failed."
-    );
-
-    return;
-
-  }
-
-
-  sales.push(
-    data
-  );
-
-
-  sales.sort(
-    (a,b) =>
-      new Date(b.created_at) -
-      new Date(a.created_at)
-  );
-
-
-  deletedSale =
-    null;
-
-  render();
-
-  showToast(
-    "Sale restored."
-  );
-
-}
-
-
-/* =========================================================
-   RESET ALL
-========================================================= */
-
-$("resetBtn")
-  .addEventListener(
-    "click",
-    resetAll
-  );
-
-
-async function resetAll(){
-
-  if(!sales.length){
-
-    showToast(
-      "There are no sales."
-    );
-
-    return;
-
-  }
-
-
-  const first =
-    await openModal({
-
-      title:
-        "Reset All Sales",
-
-      text:
-        "This will delete ALL of your sales. Type RESET ALL to continue.",
-
-      input:
-        true,
-
-      confirmText:
-        "Continue",
-
-      danger:
-        true
-
-    });
-
-
-  if(first === null)
-    return;
-
-
-  if(first !== "RESET ALL"){
-
-    showToast(
-      "Please type RESET ALL exactly."
-    );
-
-    return;
-
-  }
-
-
-  const second =
-    await openModal({
-
-      title:
-        "Final Confirmation",
-
-      text:
-        "Are you absolutely sure? All your sales will be permanently deleted.",
-
-      confirmText:
-        "Delete All",
-
-      danger:
-        true
-
-    });
-
-
-  if(!second)
-    return;
-
-
-  const {
-    error
-  } =
-    await supabaseClient
-      .from("sales")
-      .delete()
-      .eq(
-        "user_id",
-        currentUser.id
-      );
-
-
-  if(error){
-
-    console.error(error);
-
-    showToast(
-      "Reset failed."
-    );
-
-    return;
-
-  }
-
-
-  sales = [];
-
-  deletedSale =
-    null;
-
-  render();
-
-  showToast(
-    "All sales deleted."
-  );
-
-}
-
-
-/* =========================================================
-   CSV
-========================================================= */
-
-$("exportCsvBtn")
-  .addEventListener(
-    "click",
-    exportCsv
-  );
-
-
-function exportCsv(){
-
-  if(!sales.length){
-
-    showToast(
-      "No sales to export."
-    );
-
-    return;
-
-  }
-
-
-  const rows = [
-
-    [
-      "ID",
-      "Amount",
-      "Created At"
-    ]
-
-  ];
-
-
-  sales.forEach(
-    sale => {
-
-      rows.push([
-        sale.id,
-        Number(
-          sale.amount
-        ).toFixed(2),
-        sale.created_at
-      ]);
-
-    }
-  );
-
-
-  const csv =
-    rows
-      .map(
-        row =>
-          row
-            .map(
-              value =>
-                `"${String(value)
-                  .replaceAll(
-                    '"',
-                    '""'
-                  )}"`
-            )
-            .join(",")
-      )
-      .join("\n");
-
-
-  const blob =
-    new Blob(
-      [csv],
-      {
-        type:
-          "text/csv;charset=utf-8;"
-      }
-    );
-
-
-  downloadBlob(
-    blob,
-    `saletrack-${dateKey(new Date())}.csv`
-  );
-
-
-  showToast(
-    "CSV exported."
-  );
-
-}
-
-
-/* =========================================================
-   BACKUP
-========================================================= */
-
-$("backupBtn")
-  .addEventListener(
-    "click",
-    backupData
-  );
-
-
-function backupData(){
-
-  if(!sales.length){
-
-    showToast(
-      "No sales to backup."
-    );
-
-    return;
-
-  }
-
-
-  const backup = {
-
-    app:
-      "SaleTrack",
-
-    version:
-      1,
-
-    exported_at:
-      new Date().toISOString(),
-
-    sales:
-      sales.map(
-        sale => ({
-
-          amount:
-            Number(
-              sale.amount
-            ),
-
-          created_at:
-            sale.created_at
-
-        })
-      )
-
-  };
-
-
-  const blob =
-    new Blob(
-      [
-        JSON.stringify(
-          backup,
-          null,
-          2
-        )
-      ],
-      {
-        type:
-          "application/json"
-      }
-    );
-
-
-  downloadBlob(
-    blob,
-    `saletrack-backup-${dateKey(new Date())}.json`
-  );
-
-
-  showToast(
-    "Backup downloaded."
-  );
-
-}
-
-
-/* =========================================================
-   RESTORE
-========================================================= */
-
-$("restoreInput")
-  .addEventListener(
-    "change",
-    restoreBackup
-  );
-
-
-async function restoreBackup(event){
-
-  const file =
-    event.target.files[0];
-
-
-  event.target.value =
-    "";
-
-
-  if(!file)
-    return;
-
-
-  try{
-
-    const text =
-      await file.text();
-
-    const backup =
-      JSON.parse(text);
-
-
-    if(
-      !backup ||
-      !Array.isArray(
-        backup.sales
-      )
-    ){
-
-      throw new Error(
-        "Invalid backup"
-      );
-
-    }
-
-
-    if(!backup.sales.length){
-
-      showToast(
-        "Backup is empty."
-      );
-
-      return;
-
-    }
-
-
-    const confirm =
-      await openModal({
-
-        title:
-          "Restore Backup",
-
-        text:
-          `This will add ${backup.sales.length} sales. Existing sales will stay safe.`,
-
-        confirmText:
-          "Restore"
-
-      });
-
-
-    if(!confirm)
-      return;
-
-
-    const rows =
-      backup.sales
-        .map(
-          sale => ({
-
-            amount:
-              Number(
-                sale.amount
-              ),
-
-            created_at:
-              sale.created_at ||
-              new Date()
-                .toISOString(),
-
-            user_id:
-              currentUser.id
-
-          })
-        )
-        .filter(
-          sale =>
-            Number.isFinite(
-              sale.amount
-            ) &&
-            sale.amount > 0
-        );
-
-
-    if(!rows.length){
-
-      showToast(
-        "No valid sales found."
-      );
-
-      return;
-
-    }
-
-
-    const {
-      error
-    } =
-    await supabaseClient
-      .from("sales")
-      .insert(rows);
-
-
-    if(error){
-
-      console.error(error);
-
-      showToast(
-        "Restore failed."
-      );
-
-      return;
-
-    }
-
-
-    await loadSales();
-
-    showToast(
-      `${rows.length} sales restored.`
-    );
-
-
-  }catch(error){
-
-    console.error(error);
-
-    showToast(
-      "Invalid backup file."
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   ONLINE STATUS
-========================================================= */
-
-function updateOnlineStatus(){
-
-  const online =
-    navigator.onLine;
-
-  const status =
-    $("onlineStatus");
-
-
-  $("statusText")
-    .textContent =
-      online
-        ? "Online"
-        : "Offline";
-
-
-  status.classList.toggle(
-    "offline",
-    !online
-  );
-
-}
-
-
-window.addEventListener(
-  "online",
-  () => {
-
-    updateOnlineStatus();
-
-    showToast(
-      "Connection restored."
-    );
-
-  }
-);
-
-
-window.addEventListener(
-  "offline",
-  () => {
-
-    updateOnlineStatus();
-
-    showToast(
-      "You are offline."
-    );
-
-  }
-);
-
-
-updateOnlineStatus();
-
-
-/* =========================================================
-   AUTH STATE
-========================================================= */
-
-supabaseClient
-  .auth
-  .onAuthStateChange(
-    async (
-      event,
-      session
-    ) => {
-
-      if(session){
-
-        currentUser =
-          session.user;
-
-        showApp();
-
-        if(
-          event ===
-          "SIGNED_IN"
-        ){
-
-          await loadSales();
-
-        }
-
-      }else{
-
-        currentUser =
-          null;
-
-        sales = [];
-
-        showLogin();
-
-      }
-
-    }
-  );
-
-
-/* =========================================================
-   START
-========================================================= */
-
-checkSession();
-
-</script>
-
-</body>
-</html>
+        <button id="modalCancel">
+          Cancel
+        </
