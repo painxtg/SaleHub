@@ -155,33 +155,35 @@ function formatMoney(value) {
 
 
 function formatDateTime(dateString) {
-  const date = new Date(dateString);
+    const date = new Date(dateString);
 
-  if (Number.isNaN(date.getTime())) {
-    return "Unknown time";
-  }
+    if (Number.isNaN(date.getTime())) {
+        return "Unknown time";
+    }
 
-  return date.toLocaleString([], {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit"
-  });
+    return date.toLocaleString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+    });
 }
 
 
 function formatTime(dateString) {
-  const date = new Date(dateString);
+    const date = new Date(dateString);
 
-  if (Number.isNaN(date.getTime())) {
-    return "--";
-  }
+    if (Number.isNaN(date.getTime())) {
+        return "--";
+    }
 
-  return date.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit"
-  });
+    return date.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+    });
 }
 
 
